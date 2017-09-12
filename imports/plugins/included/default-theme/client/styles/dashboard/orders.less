@@ -1,0 +1,363 @@
+
+// TODO: Once reaction ui is enabled, use `rui button success`
+.rui.card.order .controls .btn-success {
+  .btn-success();
+  border-radius: 0;
+}
+
+
+.order-panel {
+  cursor: hand;
+  cursor: pointer;
+}
+
+.order-panel.panel-info {
+  box-shadow: 0 0 0 3px @brand-accent-color;
+}
+
+.order-panel > .panel-heading {
+  .display(flex);
+  padding: 0;
+}
+
+.order-panel > .panel-body {
+  .display(flex);
+}
+
+.order-details {
+  .display(flex);
+  .flex-wrap(wrap);
+  .flex(1 1 auto);
+  padding: 10px;
+}
+
+.order-controls {
+  .display(flex);
+  .flex-direction(column);
+  width: 44px;
+  height: 100%;
+  button {
+    flex: 1 1 auto;
+    border-radius: 0;
+    height: 100%;
+    width: 100%;
+  }
+}
+
+.order-detail-item {
+  .display(flex);
+  .flex(1 1 auto);
+}
+
+.order-detail-item .cart-totals {
+  white-space: nowrap;
+}
+
+.order-panel-items {
+  flex: 1 1 auto;
+}
+
+.order-panel-items .order-item {
+  padding: 1rem 1.2rem;
+}
+
+.order-panel-status {
+  flex: 0 0 auto;
+}
+
+.order-item-details .order-detail-title {
+  flex: 1 1 auto;
+}
+
+.order-item-details .order-detail-quantity {
+  flex: 0 0 auto;
+}
+
+.order-item-details .order-detail-price {
+  flex: 1 1 auto;
+  margin-right: 20px;
+}
+
+.order-detail-quantity {
+  margin-right: 50px;
+}
+
+
+.orders-list{
+  .circular-icon {
+    width: 40px;
+    height: 40px;
+    margin: -16px 0px;
+    background-size: 40px;
+    border: 4px solid rgba(129, 122, 122, 0.62);
+    border-radius: 50%;
+    padding: 16px;
+    display: inline-block;
+  }
+
+}
+
+.orders-list-tabs {
+  border-bottom: 1px solid @border-color;
+}
+
+.order-detail {
+    border: 2px solid gray;
+}
+
+.orders-grid .h3 {
+    margin-top: 0px;
+}
+
+.order-list-detail {
+  address {
+    margin-bottom: 0;
+  }
+  .order-group-title {
+    margin-top: 20px;
+    margin-bottom: 5px;
+  }
+
+}
+
+.order-item-img {
+  height: 75px;
+  width: 75px;
+}
+
+.order-list-item-details {
+  margin-top: 25px;
+  padding-bottom: 25px;
+  border-bottom: 1px solid @gray-lighter;
+}
+
+
+.order-items {
+  list-style-type: none;
+}
+
+.order-item {
+  .display(flex);
+}
+
+.invoice .invoice:hover, .invoice:hover {
+  background-color: @list-group-hover-bg;
+  cursor: pointer;
+}
+
+.invoice {
+  margin-left: -15px;
+  margin-right: -15px;
+}
+
+.refund-button {
+  height: 34px;
+  margin-left: 10px;
+}
+
+.refund-container {
+  margin-top: 10px
+}
+
+.roll-up-invoice-list {
+  background-color: @pre-bg;
+  margin-left: -15px;
+  margin-right: -15px;
+}
+
+.roll-up-content {
+  padding: 15px;
+}
+
+.order-item-media {
+  .flex(0 0 auto);
+  width: 50px;
+
+    img {
+      width: 100%;
+    }
+}
+
+.order-item-details {
+  .display(flex);
+  .flex(1 1 auto);
+  .margin-left(20px);
+  align-items: center;
+}
+
+.order-shipments {
+  list-style-type: none;
+}
+
+.order-shipment-item {
+
+}
+
+// Order form summary
+.order-summary-form-group {
+  .display(flex);
+  .align-items(center);
+
+  > .reason {
+    .flex(1 1 auto);
+    .margin-right(20px);
+    .text-align(right);
+  }
+
+
+  > .amount {
+    .flex(0 0 auto);
+    width: 100px;
+  }
+
+  > .invoice-details {
+    .flex(1 1 auto);
+    .text-align(right);
+  }
+}
+
+.invoice-summary {
+  .display(flex);
+  border-bottom: 1px solid @rui-default-disabled;
+  &:first-child {
+    border-top: 1px solid @rui-default-disabled;
+  }
+
+  margin-right: -15px;
+  margin-left: -15px;
+  line-height: 3;
+
+  > .invoice-label {
+    flex: 2;
+    .text-align(left);
+    padding-left: 15px;
+  }
+
+  > .invoice-label.refund {
+    flex: 1;
+    border-right: solid 1px @rui-default-disabled;
+  }
+
+
+
+
+  > .invoice-details {
+    flex: 1;
+    .text-align(right);
+    padding-right: 15px;
+
+
+
+    > .refundAmount {
+      .text-align(left);
+      flex: 2;
+    }
+    > .refundSubmit {
+      flex: 1;
+    }
+  }
+
+
+    .captured-total {
+      background-color: @rui-success-bg;
+    }
+    .adjusted-total {
+      background-color: @rui-brand-bg;
+    }
+    .refund {
+      background-color: @pre-bg;
+    }
+}
+
+// New LESS for React orders panel
+.rui.card.order {
+  width: 100%;
+  border: solid 1px @black20;
+  margin-bottom: 20px;
+
+  .controls {
+    width: 66px;
+    max-width: 66px;
+  }
+
+  .content {
+    padding: 0px;
+  }
+
+  .shipment-info {
+    padding: 10px;
+    border-bottom: solid 1px @black20;
+    .display(flex);
+    flex-direction: row;
+
+    .customer-info {
+      .flex(1 1 auto);
+
+      .rui-order-avatar {
+        .margin-right(10px);
+      }
+    }
+    .workflow-info {
+      .flex(1 1 auto);
+      display: flex;
+      justify-content: flex-end;
+
+      .badge {
+        .margin-left(10px);
+      }
+    }
+  }
+
+  .order-info {
+    padding: 10px;
+    .display(flex);
+    flex-direction: column;
+
+    .order-totals {
+      .display(flex);
+      flex-direction: row;
+
+      .order-data {
+        .flex(1 1);
+
+        &.order-data-date {
+          .text-align(left);
+        }
+        &.order-data-id {
+          text-align: center;
+        }
+        &.order-data-total {
+          .text-align(right);
+        }
+      }
+
+    }
+
+    .order-items {
+      .display(flex);
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: flex-start;
+      margin-top: 20px;
+      margin-bottom: 30px;
+      height: 40px;
+
+      .order-item {
+        flex: 0 0 auto;
+        position: relative;
+        width: 50px;
+        height: 50px;
+
+        .margin-right(20px);
+        margin-bottom: 20px;
+
+        .badge {
+          position: absolute;
+          bottom: -8px;
+          right: -8px;
+          z-index: 10;
+        }
+      }
+    }
+  }
+}

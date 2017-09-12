@@ -1,0 +1,13 @@
+<template name="orders">
+  {{#if hasPermission 'orders'}}
+    <div class="orders-list-tabs">
+      {{> React FilterComponent}}
+    </div>
+    <div>
+      {{> React
+        OrdersListComponent
+        orders=orders
+      }}
+    </div>
+  {{/if}}
+</template>

@@ -1,0 +1,39 @@
+[{
+  "i18n": "bg",
+  "ns": "reaction-orders",
+  "translation": {
+    "reaction-orders": {
+      "admin": {
+        "shortcut": {
+          "ordersLabel": "Поръчки"
+        },
+        "dashboard": {
+          "ordersLabel": "Поръчки",
+          "ordersTitle": "Поръчки",
+          "ordersDescription": "Изпълним вашите поръчки"
+        },
+        "orderWorkflow": {
+          "ordersList": {
+            "date": "Дата",
+            "orderId": "Поръчка ID",
+            "total": "Обща сума",
+            "emailNotFound": "Няма наличен имейл"
+          },
+          "summary": {
+            "cardTitle": "обобщение",
+            "copyOrderLink": "Копиране на връзката по поръчка"
+          },
+          "invoice": {
+            "cardTitle": "фактура",
+            "adjustedTotal": "Корегирана сума",
+            "capturedTotal": "Одобрена сума",
+            "refund": "Възстановяване"
+          },
+          "fulfillment": "изпълняване",
+          "orderDetails": "подробности за поръчката",
+          "shipmentTracking": "пратка"
+        }
+      }
+    }
+  }
+}]

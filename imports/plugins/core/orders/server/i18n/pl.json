@@ -1,0 +1,39 @@
+[{
+  "i18n": "pl",
+  "ns": "reaction-orders",
+  "translation": {
+    "reaction-orders": {
+      "admin": {
+        "shortcut": {
+          "ordersLabel": "Święcenia"
+        },
+        "dashboard": {
+          "ordersLabel": "Święcenia",
+          "ordersTitle": "Święcenia",
+          "ordersDescription": "Spełnij swoje zamówienia"
+        },
+        "orderWorkflow": {
+          "ordersList": {
+            "date": "Data",
+            "orderId": "Identyfikator zamówienia",
+            "total": "Razem",
+            "emailNotFound": "E-mail nie jest dostępny"
+          },
+          "summary": {
+            "cardTitle": "Podsumowanie",
+            "copyOrderLink": "Kopiuj link zamówienia"
+          },
+          "invoice": {
+            "cardTitle": "Faktura",
+            "adjustedTotal": "Skorygowany Razem",
+            "capturedTotal": "schwytany Razem",
+            "refund": "Zwrot"
+          },
+          "fulfillment": "Spełnienie",
+          "orderDetails": "Szczegóły zamówienia",
+          "shipmentTracking": "Wysyłka"
+        }
+      }
+    }
+  }
+}]

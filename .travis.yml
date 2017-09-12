@@ -1,0 +1,24 @@
+sudo: required
+language: node_js
+
+node_js:
+  #- "iojs"
+  - "7"
+
+before_script:
+  - whoami
+  - npm install
+  - npm install -g reaction-cli
+  - curl https://install.meteor.com/ | sh
+
+script:
+  #- node app.js
+  - sudo meteor npm install
+  #- sudo chown -R -h -v root .meteor/local
+  - sudo chown ${USER:=$(/usr/bin/id -run)}:$USER -R -h -v .meteor/local
+  #- meteor npm install
+  - npm test
+  - reaction test
+
+notifications:
+  slack: olgaverkkokauppa:VyuKQR5JBQpHmyOWE6bPRBZp

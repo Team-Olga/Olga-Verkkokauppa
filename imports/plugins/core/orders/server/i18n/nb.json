@@ -1,0 +1,20 @@
+[{
+  "i18n": "nb",
+  "ns": "reaction-orders",
+  "translation": {
+    "reaction-orders": {
+      "admin": {
+        "orderWorkflow": {
+          "ordersList": {
+            "total": "Totalt"
+          },
+          "invoice": {
+            "cardTitle": "Faktura",
+            "adjustedTotal": "Endret Total",
+            "capturedTotal": "Totalt innbetalt"
+          }
+        }
+      }
+    }
+  }
+}]
