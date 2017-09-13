@@ -17,7 +17,7 @@ script:
   #- sudo chown -R -h -v root .meteor/local
   - sudo chown ${USER:=$(/usr/bin/id -run)}:$USER -R -h -v .meteor/local
   #- meteor npm install
-  - npm test
+  - ./node_modules/.bin/jest --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
   - reaction test
 
 notifications:

@@ -1,0 +1,533 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <title>Code coverage report for orders/client/components/orderSummary.js</title>
+    <meta charset="utf-8" />
+    <link rel="stylesheet" href="../../../prettify.css" />
+    <link rel="stylesheet" href="../../../base.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style type='text/css'>
+        .coverage-summary .sorter {
+            background-image: url(../../../sort-arrow-sprite.png);
+        }
+    </style>
+</head>
+<body>
+<div class='wrapper'>
+  <div class='pad1'>
+    <h1>
+      <a href="../../../index.html">All files</a> / <a href="index.html">orders/client/components</a> orderSummary.js
+    </h1>
+    <div class='clearfix'>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">41.18% </span>
+        <span class="quiet">Statements</span>
+        <span class='fraction'>7/17</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">35.71% </span>
+        <span class="quiet">Branches</span>
+        <span class='fraction'>5/14</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">75% </span>
+        <span class="quiet">Functions</span>
+        <span class='fraction'>3/4</span>
+      </div>
+      <div class='fl pad1y space-right2'>
+        <span class="strong">41.18% </span>
+        <span class="quiet">Lines</span>
+        <span class='fraction'>7/17</span>
+      </div>
+    </div>
+  </div>
+  <div class='status-line low'></div>
+<pre><table class="coverage">
+<tr><td class="line-count quiet">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157</td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">import React, { Component } from "react";
+import PropTypes from "prop-types";
+import moment from "moment";
+import { Badge, ClickToCopy } from "/imports/plugins/core/ui/client/components";
+&nbsp;
+class OrderSummary extends Component {
+  static propTypes = {
+    dateFormat: PropTypes.func,
+    order: PropTypes.object,
+    printableLabels: PropTypes.func,
+    profileShippingAddress: PropTypes.object,
+    shipmentStatus: PropTypes.func,
+    tracking: PropTypes.func
+  }
+&nbsp;
+  badgeStatus() {
+    const orderStatus = this.props.order.workflow.status;
+&nbsp;
+    <span class="missing-if-branch" title="else path not taken" >E</span>if (orderStatus === "new") {
+      return "info";
+    } else <span class="cstat-no" title="statement not covered" >if (orderStatus === "coreOrderWorkflow/processing") {</span>
+<span class="cstat-no" title="statement not covered" >      return "success";</span>
+    } else <span class="cstat-no" title="statement not covered" >if (orderStatus === "coreOrderWorkflow/canceled") {</span>
+<span class="cstat-no" title="statement not covered" >      return "danger";</span>
+    } else <span class="cstat-no" title="statement not covered" >if (orderStatus === "coreOrderWorkflow/completed") {</span>
+<span class="cstat-no" title="statement not covered" >      return "primary";</span>
+    }
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    return "default";</span>
+  }
+&nbsp;
+  orderLink() {
+    const orderId = this.props.order._id;
+    return orderId;
+  }
+&nbsp;
+<span class="fstat-no" title="function not covered" >  tr</span>uncateId() {
+    const orderId = <span class="cstat-no" title="statement not covered" >this.props.order._id;</span>
+    const shortId = <span class="cstat-no" title="statement not covered" >orderId.slice(-5);</span>
+&nbsp;
+<span class="cstat-no" title="statement not covered" >    return shortId;</span>
+  }
+&nbsp;
+  render() {
+    const { dateFormat, tracking, order, profileShippingAddress, printableLabels } = this.props;
+&nbsp;
+    return (
+      &lt;div&gt;
+        &lt;div className="order-summary-form-group bg-info" style={{ lineHeight: 3, marginTop: -15, marginRight: -15, marginLeft: -15 }}&gt;
+          &lt;strong style={{ marginLeft: 15 }}&gt;{profileShippingAddress.fullName}&lt;/strong&gt;
+          &lt;div className="invoice-details" style={{ marginRight: 15, position: "relative" }}&gt;
+            {order.email}
+          &lt;/div&gt;
+        &lt;/div&gt;
+&nbsp;
+        &lt;div className="roll-up-invoice-list"&gt;
+          &lt;div className="roll-up-content"&gt;
+            &lt;div style={{ marginBottom: 4 }}&gt;
+              &lt;Badge
+                badgeSize="large"
+                i18nKeyLabel={`cartDrawer.${order.workflow.status}`}
+                label={order.workflow.status}
+                status={this.badgeStatus()}
+              /&gt;
+            &lt;/div&gt;
+&nbsp;
+            &lt;div className="order-summary-form-group"&gt;
+              &lt;strong data-i18n="order.orderId"&gt;Order ID&lt;/strong&gt;
+              &lt;div className="invoice-details" style={{ cursor: "pointer" }}&gt;
+                &lt;ClickToCopy
+                  copyToClipboard={this.orderLink()}
+                  displayText={order._id}
+                  i18nKeyTooltip="admin.orderWorkflow.summary.copyOrderLink"
+                  tooltip="Copy Order Link"
+                /&gt;
+              &lt;/div&gt;
+            &lt;/div&gt;
+&nbsp;
+            &lt;div className="order-summary-form-group"&gt;
+              &lt;strong data-i18n="order.created"&gt;Created&lt;/strong&gt;
+              &lt;div className="invoice-details"&gt;
+                {moment(order.createdAt).fromNow()} | {dateFormat(order.createdAt, "MM/D/YYYY")}
+              &lt;/div&gt;
+            &lt;/div&gt;
+&nbsp;
+            &lt;div className="order-summary-form-group"&gt;
+              &lt;strong data-i18n="order.processor"&gt;Processor&lt;/strong&gt;
+              &lt;div className="invoice-details"&gt;
+                {order.billing[0].paymentMethod.processor}
+              &lt;/div&gt;
+            &lt;/div&gt;
+&nbsp;
+            &lt;div className="order-summary-form-group"&gt;
+              &lt;strong data-i18n="order.payment"&gt;Payment&lt;/strong&gt;
+              &lt;div className="invoice-details"&gt;
+                {order.billing[0].paymentMethod.storedCard} ({order.billing[0].invoice.total})
+              &lt;/div&gt;
+            &lt;/div&gt;
+&nbsp;
+            &lt;div className="order-summary-form-group"&gt;
+              &lt;strong data-i18n="order.transaction"&gt;Transaction&lt;/strong&gt;
+              &lt;div className="invoice-details"&gt;
+                {order.billing[0].paymentMethod.transactionId}
+              &lt;/div&gt;
+            &lt;/div&gt;
+&nbsp;
+            &lt;div className="order-summary-form-group"&gt;
+              &lt;strong data-i18n="orderShipping.carrier"&gt;Carrier&lt;/strong&gt;
+              &lt;div className="invoice-details"&gt;
+                {order.shipping[0].shipmentMethod.carrier} - {order.shipping[0].shipmentMethod.label}
+              &lt;/div&gt;
+            &lt;/div&gt;
+&nbsp;
+            &lt;div className="order-summary-form-group"&gt;
+              &lt;strong data-i18n="orderShipping.tracking"&gt;Tracking&lt;/strong&gt;
+              &lt;div className="invoice-details"&gt;
+                {tracking()}
+              &lt;/div&gt;
+            &lt;/div&gt;
+&nbsp;
+            {printableLabels() &amp;&amp;
+              &lt;div className="order-summary-form-group"&gt;
+                &lt;strong data-i18n="orderShipping.printLabels"&gt;Labels&lt;/strong&gt;
+                {printableLabels().shippingLabelUrl ?
+<span class="branch-0 cbranch-no" title="branch not covered" >                  &lt;a className="invoice-details" href={printableLabels().shippingLabelUrl} target="_blank"&gt;</span>
+                    &lt;span data-i18n="orderShipping.printShippingLabel"&gt;Print Shipping&lt;/span&gt;
+                  &lt;/a&gt; :
+                  &lt;a className="invoice-details" href={printableLabels().customsLabelUrl} target="_blank"&gt;
+                    &lt;span data-i18n="orderShipping.printCustomsLabel"&gt;Print Customs&lt;/span&gt;
+                  &lt;/a&gt;
+                }
+              &lt;/div&gt;
+            }
+          &lt;/div&gt;
+        &lt;/div&gt;
+&nbsp;
+        &lt;br/&gt;
+        &lt;div className="order-summary-form-group"&gt;
+          &lt;strong data-i18n="orderShipping.shipTo"&gt;Ship to&lt;/strong&gt;
+          &lt;div className="invoice-details"&gt;
+            &lt;strong&gt;Phone: &lt;/strong&gt;{profileShippingAddress.phone}
+          &lt;/div&gt;
+        &lt;/div&gt;
+&nbsp;
+        &lt;div style={{ marginTop: 4 }}&gt;
+          &lt;span&gt;{profileShippingAddress.fullName}&lt;/span&gt;
+          &lt;br/&gt;&lt;span&gt;{profileShippingAddress.address1}&lt;/span&gt;
+          {profileShippingAddress.address2 &amp;&amp; <span class="branch-1 cbranch-no" title="branch not covered" >&lt;span&gt;&lt;br/&gt;{profileShippingAddress.address2}&lt;/span&gt;}</span>
+          &lt;br/&gt;&lt;span&gt;{profileShippingAddress.city}, {profileShippingAddress.region}, {profileShippingAddress.country} {profileShippingAddress.postal}&lt;/span&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    );
+  }
+}
+&nbsp;
+export default OrderSummary;
+&nbsp;</pre></td></tr>
+</table></pre>
+<div class='push'></div><!-- for sticky footer -->
+</div><!-- /wrapper -->
+<div class='footer quiet pad2 space-top1 center small'>
+  Code coverage
+  generated by <a href="https://istanbul.js.org/" target="_blank">istanbul</a> at Wed Sep 13 2017 15:09:07 GMT+0300 (EEST)
+</div>
+</div>
+<script src="../../../prettify.js"></script>
+<script>
+window.onload = function () {
+        if (typeof prettyPrint === 'function') {
+            prettyPrint();
+        }
+};
+</script>
+<script src="../../../sorter.js"></script>
+</body>
+</html>

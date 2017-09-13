@@ -26,6 +26,7 @@
     "autoprefixer": "^7.1.1",
     "autosize": "^3.0.20",
     "babel-runtime": "^6.23.0",
+    "blanket": "^1.2.3",
     "bootstrap": "^3.3.7",
     "braintree": "^2.0.2",
     "bunyan": "^2.0.0",
@@ -127,6 +128,7 @@
     "js-yaml": "^3.8.2",
     "mocha": "^3.5.3",
     "mocha-lcov-reporter": "^1.3.0",
+    "react-addons-shallow-compare": "^15.6.0",
     "react-addons-test-utils": "15.4.2"
   },
   "postcss": {
@@ -174,5 +176,16 @@
       "react",
       "stage-2"
     ]
+  },
+  "config": {
+    "blanket": {
+      "pattern": [
+        ""
+      ],
+      "data-cover-never": [
+        "node_modules",
+        "tests"
+      ]
+    }
   }
 }
