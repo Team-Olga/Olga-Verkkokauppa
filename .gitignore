@@ -20,6 +20,7 @@ npm-debug.log
 pids
 results
 allure-results
+coverage
 
 client/plugins.js
 client/plugins.css
