@@ -14,8 +14,10 @@ before_script:
 script:
   #- node app.js
   - sudo meteor npm install
+  - meteor update
   #- sudo chown -R -h -v root .meteor/local
   - sudo chown ${USER:=$(/usr/bin/id -run)}:$USER -R -h -v .meteor/local
+  - sudo chown -R $USER:$(id -gn $USER) /home/travis/.config
   #- meteor npm install
   - ./node_modules/.bin/jest --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
   - reaction test
