@@ -5,7 +5,7 @@ import Blaze from "meteor/gadicc:blaze-react-component";
 import { Template } from "meteor/templating";
 import { registerComponent } from "/imports/plugins/core/layout/lib/components";
 
-class CoreLayoutBeesknees extends Component {
+class CoreLayoutOlga extends Component {
   static propTypes = {
     actionViewIsOpen: PropTypes.bool,
     data: PropTypes.object,
@@ -29,8 +29,8 @@ class CoreLayoutBeesknees extends Component {
 
         { Template[template] &&
         <main>
-          <div className="rui beesknees">
-            <div className="bkdebug"><em>{"Bee's Knees layout"}</em></div>
+          <div className="rui olga">
+            <div className="bkdebug"><em>{"Olga layout"}</em></div>
             <div className="bkdebug"><em>{"layoutHeader template:"}</em> {this.props.structure.layoutHeader}</div>
             <div className="bkdebug"><em>{"layoutFooter template:"}</em> {this.props.structure.layoutFooter}</div>
             <div className="bkdebug"><em>{"Main Template:"}</em> {this.props.structure.template}</div>
@@ -49,8 +49,8 @@ class CoreLayoutBeesknees extends Component {
 
 // Register component for it to be usable
 registerComponent({
-  name: "coreLayoutBeesknees",
-  component: CoreLayoutBeesknees
+  name: "coreLayoutOlga",
+  component: CoreLayoutOlga
 });
 
-export default CoreLayoutBeesknees;
+export default CoreLayoutOlga;
