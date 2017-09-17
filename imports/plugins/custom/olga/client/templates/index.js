@@ -5,3 +5,4 @@ import "./products/productsLanding";
 import "./products/supplierProductsLanding.html";
 import "./products/supplierProductsLanding";
 import "./products/supplierProductsList.html";
+import "./products/supplierProductsList";

@@ -1,5 +1,13 @@
 <template name="supplierProductsList">
-    {{#each products}}
-        <p>{{title}}</p>
+    {{#each product in products}}
+        <div class="productlisting">
+            <p>{{product.title}}</p>
+            {{#if product.ancestors}}
+                Ylätuotteet:
+                {{#each ancestor in ancestors product}}
+                    <span>{{ancestor.title}} </span>
+                {{/each}}
+            {{/if}}
+        </div>
     {{/each}}
 </template>
