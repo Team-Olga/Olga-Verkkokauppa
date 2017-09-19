@@ -27,9 +27,10 @@ Reaction.registerPackage({
   registry: [
     {
       route: "/supplierproducts",
-      name: "supplierproducts",
+      name: "supplierproducts",      
       template: "supplierProductsLanding",
-      workflow: "coreWorkflow"
+      layout: "coreLayoutOlga",
+      workflow: "coreProductGridWorkflow",
     }
   ]
 });

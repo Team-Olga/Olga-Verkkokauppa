@@ -44,14 +44,30 @@ Template.supplierProductsList.helpers({
         let orderArray = _.filter(
             Template.instance().orders.get(),
             function(o) {
-                if(_.some(o.items, { 'productId': productId }))
-                    return o;
+                let match = false;
+                _.forEach(o.items, function(item) {
+                    if(item.variants._id == productId) {
+                        match = true;
+                    }
+                });
+               return match;
             }
         )
         return orderArray.length;
     },
     productOrderQuantity(productId) {
-        return 0;
+        let count = 0;
+        _.forEach(
+            Template.instance().orders.get(),
+            function(o) {
+                _.forEach(o.items, function(item) {
+                    if(item.variants._id == productId) {
+                        count += item.quantity;
+                    }
+                });
+            }
+        )
+        return count;
     },
     productOpenOrderQuantity(productId) {
         return 0;
