@@ -1,24 +1,28 @@
 import { Session } from "meteor/session";
 import _ from "lodash";
 import { Template } from "meteor/templating";
-import { Products } from "/lib/collections";
+import { Products, Orders } from "/lib/collections";
 
 Template.supplierProductsList.onCreated(function () {   
     this.products = ReactiveVar();
-    // subscribe to products
+    this.orders = ReactiveVar();
+    
     this.autorun(() => {
-    //const scrollLimit = Session.get("productScrollLimit");
 
-    //const queryParams = {};
-    this.subscribe("Products");
+        this.subscribe("Products");
+        this.subscribe("Orders");
 
-    const products = Products.find(
-      {},
-      { sort: {
-        createdAt: 1
-      }});
-    this.products.set(products.fetch());
-  });
+        const products = Products.find(
+            {},
+            { sort: { createdAt: 1 } }
+        );
+        const orders = Orders.find(
+            {},
+            { sort: { createdAt: 1 } }
+        );
+        this.products.set(products.fetch());
+        this.orders.set(orders.fetch());
+    });
 });
 
 Template.supplierProductsList.helpers({
@@ -35,5 +39,21 @@ Template.supplierProductsList.helpers({
             return ancestorArray;
         }
         return false;
+    },
+    productOrderCount(productId) {
+        let orderArray = _.filter(
+            Template.instance().orders.get(),
+            function(o) {
+                if(_.some(o.items, { 'productId': productId }))
+                    return o;
+            }
+        )
+        return orderArray.length;
+    },
+    productOrderQuantity(productId) {
+        return 0;
+    },
+    productOpenOrderQuantity(productId) {
+        return 0;
     }
  });
