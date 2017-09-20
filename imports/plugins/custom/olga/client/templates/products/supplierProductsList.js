@@ -1,28 +1,27 @@
-import { Session } from "meteor/session";
 import _ from "lodash";
 import { Template } from "meteor/templating";
 import { Products, Orders } from "/lib/collections";
+import { ReactiveVar } from "meteor/reactive-var";
 
-Template.supplierProductsList.onCreated(function () {   
-    this.products = ReactiveVar();
-    this.orders = ReactiveVar();
-    
-    this.autorun(() => {
+Template.supplierProductsList.onCreated(function () {
+  this.products = ReactiveVar();
+  this.orders = ReactiveVar();
 
-        this.subscribe("Products");
-        this.subscribe("Orders");
+  this.autorun(() => {
+    this.subscribe("Products");
+    this.subscribe("Orders");
 
-        const products = Products.find(
-            {},
-            { sort: { createdAt: 1 } }
-        );
-        const orders = Orders.find(
-            {},
-            { sort: { createdAt: 1 } }
-        );
-        this.products.set(products.fetch());
-        this.orders.set(orders.fetch());
-    });
+    const products = Products.find(
+      {},
+      { sort: { createdAt: 1 } }
+    );
+    const orders = Orders.find(
+      {},
+      { sort: { createdAt: 1 } }
+    );
+    this.products.set(products.fetch());
+    this.orders.set(orders.fetch());
+  });
 });
 
 Template.supplierProductsList.helpers({
@@ -71,5 +70,5 @@ Template.supplierProductsList.helpers({
     },
     productOpenOrderQuantity(productId) {
         return 0;
-    }
- });
+  }
+});

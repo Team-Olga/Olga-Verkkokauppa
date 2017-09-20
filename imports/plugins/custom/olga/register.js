@@ -13,24 +13,31 @@ Reaction.registerPackage({
     theme: "default",
     enabled: true,
     structure: {
-      //template: "productsLanding",
+      // template: "productsLanding",
       template: "products",
       layoutHeader: "layoutHeader",
-      layoutFooter: "layoutFooter",
+      layoutFooter: "layoutFooterOlga",
       notFound: "productNotFound",
       dashboardHeader: "",
       dashboardControls: "dashboardControls",
       dashboardHeaderControls: "",
       adminControlsFooter: "adminControlsFooter"
-    } 
-  },],
+    }
+  }],
   registry: [
     {
       route: "/supplierproducts",
-      name: "supplierproducts",      
-      template: "supplierProductsLanding",
+      name: "supplierproducts",
       layout: "coreLayoutOlga",
-      workflow: "coreProductGridWorkflow",
+      template: "supplierProductsLanding",
+      workflow: "coreProductGridWorkflow"
+    },
+    {
+      route: "/about",
+      name: "about",
+      layout: "coreLayoutOlga",
+      template: "aboutUs",
+      workflow: "coreWorkflow"
     }
   ]
 });

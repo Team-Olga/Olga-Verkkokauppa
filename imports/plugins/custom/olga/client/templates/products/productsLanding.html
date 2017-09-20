@@ -29,5 +29,8 @@
     {{#if hasPermission "createProduct"}}
       {{>productList}}
     {{/if}}
+    {{#if hasOwnerAccess}}
+      <strong>This has owner access</strong>
+    {{/if}}
   </div>
 </template>
