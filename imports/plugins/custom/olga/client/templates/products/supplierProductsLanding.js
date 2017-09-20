@@ -1,6 +1,8 @@
 import { Session } from "meteor/session";
 import { Template } from "meteor/templating";
 import { Products } from "/lib/collections";
+import { ReactiveVar } from "meteor/reactive-var";
+import { ReactiveDict } from "meteor/reactive-dict";
 
 // create reactive variable and dictionary to store product list and
 // user/session-related values
@@ -22,7 +24,7 @@ Template.supplierProductsLanding.onCreated(function () {
       {},
       { sort: {
         createdAt: 1
-      }});
+      } });
     this.products.set(products.fetch());
   });
 });
@@ -35,7 +37,7 @@ Template.supplierProductsLanding.helpers({
     const instance = Template.instance();
     const isReady = instance.subscriptionsReady();
 
-    if(isReady) {
+    if (isReady) {
       return true;
     }
     return false;

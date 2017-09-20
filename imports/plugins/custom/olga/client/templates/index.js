@@ -1,4 +1,7 @@
 import "./layouts/core";
+import "./layouts/footer.html";
+
+import "./static/aboutus.html";
 
 import "./products/productsLanding.html";
 import "./products/productsLanding";
