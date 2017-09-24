@@ -37,7 +37,7 @@ Reaction.registerPackage({
       name: "about",
       layout: "coreLayoutOlga",
       template: "aboutUs",
-      workflow: "coreWorkflow"
+      workflow: "coreProductGridWorkflow"
     }
   ]
 });

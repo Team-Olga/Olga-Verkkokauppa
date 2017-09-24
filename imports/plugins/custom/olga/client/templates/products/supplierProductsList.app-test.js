@@ -97,7 +97,7 @@ describe("SupplierProductsList", function (done) {
     it("renders all products", function (done) {
         withRenderedTemplate("supplierProductsList", {products: testProducts}, el => {
             var listings = $(el).find(".productlisting");
-            chai.assert.equal(testProducts.length, listings.length, "wrong number of product listings");
+            chai.assert.equal(listings.length, testProducts.length, "wrong number of product listings");
             _.forEach(testProducts, function(product) {
                 let found = false;
                 listings.each(function() {
@@ -111,4 +111,45 @@ describe("SupplierProductsList", function (done) {
         });
         done();
     });
+
+    it("shows correct statistics for each product", function(done) {
+        withRenderedTemplate("supplierProductsList", {products: testProducts}, el => {
+            $(el).find(".productlisting").each(function() {
+                let title = $(this).find(".listingtitle").text();
+                $(this).find(".btn-listing").each(function() {
+                    let btnText = $(this).text().split(" ");   
+                    chai.assert.equal(btnText[1], getProductStats(title, btnText[0]), "Stat " + btnText[0] + " wrong for product " + title);
+                });
+            });            
+        });
+        done();
+    });
 });
+
+function getProductStats(title, stat) {
+    let productId = _.find(testProducts, function(p) {
+        if(p.title === title)
+            return true;
+    })._id;
+    let orderCount = 0;
+    let orderedQuantity = 0;    
+    let openOrderCount = 0;
+
+    _.forEach(testOrders, function(o) {
+        _.forEach(o.items, function(item) {
+            if(item.variants._id === productId) {
+                orderCount++;
+                orderedQuantity += item.quantity;
+            }
+        });
+    });
+
+    switch (stat) {
+        case "Avoinna":
+            return openOrderCount;
+        case "Tilauksia":
+            return orderCount;
+        case "Tilattu":
+            return orderedQuantity;
+    }
+}
