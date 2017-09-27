@@ -22,6 +22,7 @@ results
 allure-results
 coverage
 
+
 client/plugins.js
 client/plugins.css
 client/plugins.less

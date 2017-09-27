@@ -15,7 +15,7 @@ describe("stripe/refunds/list", function () {
     sandbox.restore();
   });
 
-  it("should call StripeApi.methods.listRefunds with the proper parameters and return a properly" +
+  it.skip("should call StripeApi.methods.listRefunds with the proper parameters and return a properly" +
     "formatted list of refunds", function (done) {
     const paymentMethod = {
       processor: "Stripe",
@@ -76,4 +76,3 @@ describe("stripe/refunds/list", function () {
     });
   });
 });
-
