@@ -21,6 +21,7 @@ npm-debug.log
 pids
 results
 allure-results
+debug.py
 
 client/plugins.js
 client/plugins.css
