@@ -1,12 +1,13 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { IconButton, Translation } from "@reactioncommerce/reaction-ui";
+import { Components } from "@reactioncommerce/reaction-components";
 
 class GridItemControls extends Component {
   static propTypes = {
     checked: PropTypes.func,
     hasChanges: PropTypes.func,
     hasCreateProductPermission: PropTypes.func,
+    invalidVariant: PropTypes.array,
     product: PropTypes.object
   }
 
@@ -14,17 +15,27 @@ class GridItemControls extends Component {
     if (this.props.product.isDeleted) {
       return (
         <span className="badge badge-danger">
-          <Translation defaultValue="Archived" i18nKey="app.archived" />
+          <Components.Translation defaultValue="Archived" i18nKey="app.archived" />
         </span>
       );
     }
   }
 
   renderVisibilityButton() {
-    if (this.props.hasChanges()) {
+    if (this.props.invalidVariant.length) {
       return (
         <div>
-          <IconButton
+          <Components.IconButton
+            icon=""
+            onIcon=""
+            status="danger"
+          />
+        </div>
+      );
+    } else if (this.props.hasChanges()) {
+      return (
+        <div>
+          <Components.IconButton
             icon=""
             onIcon=""
             status="info"
