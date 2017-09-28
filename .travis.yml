@@ -8,7 +8,7 @@ before_script:
   - curl https://install.meteor.com/ | sh
   - meteor npm install
   - meteor npm install -g reaction-cli
-  - sudo chown travis -R -h -v .meteor/local /home/travis/.config
+  - sudo chown travis -Rh .meteor/local /home/travis/.config
 
 script:
   - reaction test
