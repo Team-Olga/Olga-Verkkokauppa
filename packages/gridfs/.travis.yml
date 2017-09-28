@@ -6,3 +6,4 @@ before_install:
 
 notifications:
   slack: olgaverkkokauppa:VyuKQR5JBQpHmyOWE6bPRBZp
+

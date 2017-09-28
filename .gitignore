@@ -23,6 +23,7 @@ allure-results
 coverage
 debug.py
 
+
 client/plugins.js
 client/plugins.css
 client/plugins.less
