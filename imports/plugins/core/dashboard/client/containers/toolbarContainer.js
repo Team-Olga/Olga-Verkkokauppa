@@ -1,9 +1,9 @@
 import React from "react";
 import { Meteor } from "meteor/meteor";
 import { Session } from "meteor/session";
-import { composeWithTracker } from "/lib/api/compose";
+import { composeWithTracker } from "@reactioncommerce/reaction-components";
 import { Reaction, i18next } from "/client/api";
-import { Tags } from "/lib/collections";
+import { Tags, Shops } from "/lib/collections";
 import { TranslationProvider, AdminContextProvider } from "/imports/plugins/core/ui/client/providers";
 import { isRevisionControlEnabled } from "/imports/plugins/core/revisions/lib/api";
 
@@ -51,9 +51,28 @@ const handleViewContextChange = (event, value) => {
   }
 };
 
+/**
+* Handler that fires when the shop selector is changed
+* @param {Object} event - the `event` coming from the select change event
+* @param {String} shopId - The `value` coming from the select change event
+* @returns {undefined}
+*/
+const handleShopSelectChange = (event, shopId) => {
+  if (/^[A-Za-z0-9]{17}$/.test(shopId)) { // Make sure shopId is a valid ID
+    Reaction.setShopId(shopId);
+  }
+};
+
 function composer(props, onData) {
   // Reactive data sources
   const routeName = Reaction.Router.getRouteName();
+  const user = Meteor.user();
+  let shops;
+
+  if (user && user.roles) {
+    // Get all shops for which user has roles
+    shops = Shops.find({ _id: { $in: Object.keys(user.roles) } }).fetch();
+  }
 
   // Standard variables
   const packageButtons = [];
@@ -64,8 +83,7 @@ function composer(props, onData) {
     for (const item of registryItems) {
       if (Reaction.hasPermission(item.route, Meteor.userId())) {
         let icon = item.icon;
-
-        if (!item.icon && item.provides === "settings") {
+        if (!item.icon && item.provides && item.provides.includes("settings")) {
           icon = "gear";
         }
 
@@ -89,10 +107,13 @@ function composer(props, onData) {
     isEnabled: isRevisionControlEnabled(),
     isActionViewAtRootView: Reaction.isActionViewAtRootView(),
     actionViewIsOpen: Reaction.isActionViewOpen(),
-    hasCreateProductAccess: Reaction.hasPermission("createProduct", Meteor.userId(), Reaction.shopId),
+    hasCreateProductAccess: Reaction.hasPermission("createProduct", Meteor.userId(), Reaction.getShopId()),
+    shopId: Reaction.getShopId(),
+    shops: shops,
 
     // Callbacks
     onAddProduct: handleAddProduct,
+    onShopSelectChange: handleShopSelectChange,
     onViewContextChange: handleViewContextChange
   });
 }
@@ -108,5 +129,5 @@ export default function ToolbarContainer(Comp) {
     );
   }
 
-  return composeWithTracker(composer, null)(CompositeComponent);
+  return composeWithTracker(composer)(CompositeComponent);
 }

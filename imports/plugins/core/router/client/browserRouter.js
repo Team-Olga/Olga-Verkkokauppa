@@ -9,10 +9,10 @@ import { isEqual } from "lodash";
 import queryParse from "query-parse";
 import { Session } from "meteor/session";
 import { Tracker } from "meteor/tracker";
-import App from "/imports/plugins/core/router/client/app";
 import { Router } from "../lib";
 import { MetaData } from "/lib/api/router/metadata";
 import { TranslationProvider } from "/imports/plugins/core/ui/client/providers";
+import { Components } from "@reactioncommerce/reaction-components";
 
 const history = Router.history;
 
@@ -38,17 +38,21 @@ class BrowserRouter extends Component {
 
   handleLocationChange = location => {
     // Find all matching paths
-    const foundPaths = Router.routes.filter((pathObject) => {
+    let foundPaths = Router.routes.filter((pathObject) => {
       return matchPath(location.pathname, {
         path: pathObject.route,
         exact: true
       });
     });
 
-    // If no matching pathis, redirect to the not found page
+    // If no matching path is found, fetch the not-found route definition
     if (foundPaths.length === 0 && location.pathname !== "not-found") {
-      Router.replace("not-found");
-      return undefined;
+      foundPaths = Router.routes.filter((pathObject) => {
+        return matchPath("/not-found", {
+          path: pathObject.route,
+          exact: true
+        });
+      });
     }
 
     // If we have a found path, take the first match
@@ -75,7 +79,7 @@ class BrowserRouter extends Component {
       search = search.substr(1);
     }
 
-    // Create objext of all necessary data for the current route
+    // Create object of all necessary data for the current route
     const routeData = {
       route: {
         ...foundPath,
@@ -148,7 +152,7 @@ export function initBrowserRouter() {
       ReactDOM.render((
         <BrowserRouter history={history}>
           <TranslationProvider>
-            <App children={Router.reactComponents} />
+            <Components.App children={Router.reactComponents} />
           </TranslationProvider>
         </BrowserRouter>
       ), getRootNode());

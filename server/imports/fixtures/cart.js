@@ -31,6 +31,7 @@ export function getCartItem(options = {}) {
     productId: product._id,
     shopId: getShop()._id,
     quantity: _.random(1, selectedOption.inventoryQuantity),
+    product: product,
     variants: selectedOption,
     title: product.title
   };
@@ -53,6 +54,7 @@ export function createCart(productId, variantId) {
     productId: product._id,
     shopId: getShop()._id,
     quantity: 1,
+    product: product,
     variants: variant,
     title: product.title
   };
@@ -66,12 +68,14 @@ export function createCart(productId, variantId) {
     shipping: [
       {
         _id: Random.id(),
+        shopId: getShop()._id,
         address: getAddress()
       }
     ],
     billing: [
       {
         _id: Random.id(),
+        shopId: getShop()._id,
         address: getAddress()
       }
     ],
@@ -153,12 +157,14 @@ export default function () {
     shipping: [
       {
         _id: Random.id(),
+        shopId: getShop()._id,
         address: addressForOrder
       }
     ],
     billing: [
       {
         _id: Random.id(),
+        shopId: getShop()._id,
         address: addressForOrder
       }
     ],
