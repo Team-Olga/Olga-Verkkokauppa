@@ -1,3 +1,4 @@
+import { Components } from "@reactioncommerce/reaction-components";
 import { $ } from "meteor/jquery";
 import { Template } from "meteor/templating";
 import { Meteor } from "meteor/meteor";
@@ -5,7 +6,6 @@ import { ReactiveDict } from "meteor/reactive-dict";
 import { Reaction, i18next } from "/client/api";
 import { ReactionProduct } from "/lib/api";
 import { Media } from "/lib/collections";
-import { Icon } from "/imports/plugins/core/ui/client/components";
 import { Validation } from "@reactioncommerce/reaction-collections";
 import { ProductVariant } from "/lib/collections/schemas/products";
 
@@ -21,7 +21,6 @@ Template.childVariantForm.onCreated(function () {
     validationStatus: {}
   });
 });
-
 
 /**
  * childVariantForm onRendered
@@ -44,10 +43,9 @@ Template.childVariantForm.onRendered(function () {
 /**
  * childVariantForm helpers
  */
-
 Template.childVariantForm.helpers({
   Icon() {
-    return Icon;
+    return Components.Icon;
   },
   childVariantFormId: function () {
     return "child-variant-form-" + this._id;
@@ -132,7 +130,6 @@ Template.childVariantForm.helpers({
 /**
  * childVariantForm events
  */
-
 Template.childVariantForm.events({
   "click .child-variant-form :input, click li": function (event, template) {
     const variantId = template.data._id;
@@ -159,14 +156,13 @@ Template.childVariantForm.events({
     template.state.set("validationStatus", validationStatus);
     template.state.set("variant", updated);
 
-    if (validationStatus.isValid === true) {
-      Meteor.call("products/updateProductField", variant._id, field, value,
-        error => {
-          if (error) {
-            Alerts.toast(error.message, "error");
-          }
-        });
-    }
+    Meteor.call("products/updateProductField", variant._id, field, value,
+      (error) => {
+        if (error) {
+          Alerts.toast(error.message, "error");
+        }
+      }
+    );
 
     return ReactionProduct.setCurrentVariant(variant._id);
   },
@@ -178,7 +174,6 @@ Template.childVariantForm.events({
       variantId: variantId
     });
   },
-
   "click .js-remove-child-variant": function (event, instance) {
     event.stopPropagation();
     event.preventDefault();
@@ -200,7 +195,6 @@ Template.childVariantForm.events({
       }
     });
   },
-
   "click .js-restore-child-variant": function (event, instance) {
     event.stopPropagation();
     event.preventDefault();

@@ -93,7 +93,7 @@ describe("Merge Cart function ", function () {
     expect(cart.items.length).to.equal(2);
   });
 
-  it.skip("should increase product quantity if anonymous cart items exists in user's cart before merge", function () {
+  it("should increase product quantity if anonymous cart items exists in user's cart before merge", function () {
     sandbox.stub(Reaction, "getShopId", () => shop._id);
     const anonymousCart = Factory.create("anonymousCart");
     let cart = Factory.create("cartOne"); // registered user cart

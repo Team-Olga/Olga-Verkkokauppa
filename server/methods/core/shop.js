@@ -5,9 +5,10 @@ import { Random } from "meteor/random";
 import { check, Match } from "meteor/check";
 import { HTTP } from "meteor/http";
 import { Job } from "meteor/vsivsi:job-collection";
+import { GeoCoder, Logger } from "/server/api";
+import { Reaction } from "/lib/api";
 import * as Collections from "/lib/collections";
 import * as Schemas from "/lib/collections/schemas";
-import { GeoCoder, Logger, Reaction } from "/server/api";
 
 /**
  * Reaction Shop Methods
@@ -22,41 +23,92 @@ Meteor.methods({
   "shop/createShop": function (shopAdminUserId, shopData) {
     check(shopAdminUserId, Match.Optional(String));
     check(shopData, Match.Optional(Schemas.Shop));
-    let shop = {};
-    // must have owner access to create new shops
-    if (!Reaction.hasOwnerAccess()) {
+
+    // must have owner access to create new shops when marketplace is disabled
+    if (!Reaction.hasOwnerAccess() && !Reaction.hasMarketplaceAccess("guest")) {
       throw new Meteor.Error(403, "Access Denied");
     }
 
     // this.unblock();
     const count = Collections.Shops.find().count() || "";
-    const currentUser = Meteor.userId();
-    // we'll accept a shop object, or clone the current shop
-    shop = shopData || Collections.Shops.findOne(Reaction.getShopId());
-    // if we don't have any shop data, use fixture
+    const currentUser = Meteor.user();
+    const currentAccount = Collections.Accounts.findOne({ _id: currentUser._id });
 
-    check(shop, Schemas.Shop);
     if (!currentUser) {
       throw new Meteor.Error("Unable to create shop with specified user");
     }
 
-    // identify a shop admin
-    const userId = shopAdminUserId || Meteor.userId();
-    const adminRoles = Roles.getRolesForUser(currentUser, Reaction.getShopId());
+    // we'll accept a shop object, or clone the current shop
+    const shop = shopData || Collections.Shops.findOne(Reaction.getShopId());
+    // if we don't have any shop data, use fixture
+
+    // Never create a second primary shop
+    if (shop.shopType === "primary") {
+      shop.shopType = "merchant";
+    }
+
+    // identify a shop owner
+    const userId = shopAdminUserId || currentUser._id;
+
     // ensure unique id and shop name
     shop._id = Random.id();
     shop.name = shop.name + count;
 
-    check(shop, Schemas.Shop);
+    // We trust the owner's shop clone, check only when shopData is passed as an argument
+    if (shopData) {
+      check(shop, Schemas.Shop);
+    }
+
+    // admin or marketplace needs to be on and guests allowed to create shops
+    if (currentUser && Reaction.hasMarketplaceAccess("guest")) {
+      // add user info for new shop
+      shop.emails = currentUser.emails;
+
+
+      // Reaction currently stores addressBook in Accounts collection not users
+      if (currentAccount && currentAccount.addressBook && Array.isArray(currentAccount.addressBook)) {
+        shop.addressBook = currentAccount.addressBook;
+      }
+
+      // TODO: SEUN REVIEW. Changed to above from below
+      // if (currentUser.profile && currentUser.profile.addressBook) {
+      //   shop.addressBook = [currentUser.profile && currentUser.profile.addressBook];
+      // }
+
+
+      // clean up new shop
+      delete shop.createdAt;
+      delete shop.updatedAt;
+      // TODO audience permissions need to be consolidated into [object] and not [string]
+      // permissions with [string] on layout ie. orders and checkout, cause the insert to fail
+      delete shop.layout;
+    }
+
     try {
       Collections.Shops.insert(shop);
     } catch (error) {
       return Logger.error(error, "Failed to shop/createShop");
     }
+
     // we should have created new shop, or errored
     Logger.info("Created shop: ", shop._id);
-    Roles.addUsersToRoles([currentUser, userId], adminRoles, shop._id);
-    return shop._id;
+
+    // update user
+    Reaction.insertPackagesForShop(shop._id);
+    Reaction.createDefaultGroups({ shopId: shop._id });
+    const ownerGroup = Collections.Groups.findOne({ slug: "owner", shopId: shop._id });
+    Roles.addUsersToRoles([currentUser, userId], ownerGroup.permissions, shop._id);
+    Collections.Accounts.update({ _id: userId }, {
+      $set: {
+        shopId: shop._id
+      },
+      $addToSet: {
+        groups: ownerGroup._id
+      }
+    });
+
+    // Set active shop to new shop.
+    return { shopId: shop._id };
   },
 
   /**
@@ -90,10 +142,9 @@ Meteor.methods({
     });
 
     if (!shop) {
-      throw new Meteor.Error(
-        "Failed to find shop data. Unable to determine locale.");
+      throw new Meteor.Error("Failed to find shop data. Unable to determine locale.");
     }
-    // cofigure default defaultCountryCode
+    // configure default defaultCountryCode
     // fallback to shop settings
     if (shop.addressBook) {
       if (shop.addressBook.length >= 1) {
@@ -268,7 +319,15 @@ Meteor.methods({
   "shop/flushCurrencyRate": function () {
     this.unblock();
 
-    const shopId = Reaction.getShopId();
+    let shopId;
+    const marketplaceSettings = Reaction.getMarketplaceSettings();
+
+    if (marketplaceSettings && marketplaceSettings.public && marketplaceSettings.public.merchantLocale) {
+      shopId = Reaction.getShopId();
+    } else {
+      shopId = Reaction.getPrimaryShopId();
+    }
+
     const shop = Collections.Shops.findOne(shopId, {
       fields: {
         currencies: 1
