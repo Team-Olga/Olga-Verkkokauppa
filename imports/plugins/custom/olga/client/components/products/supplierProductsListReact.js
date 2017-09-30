@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
-import { SupplierProductsListItem } from "./supplierProductsListItem";
+import SupplierProductsListItem from "./supplierProductsListItem";
 
 class SupplierProductsListReact extends Component {
     constructor(props) {
@@ -8,27 +8,19 @@ class SupplierProductsListReact extends Component {
     }
 
     render() {
-        return (
-            // <div>
-            //     {this.props.products.map(function(product){
-            //         return <SupplierProductsListItem product={product} />
-            //     })}
-
-            //     <SupplierProductsListItem
-            //         {...this.props}
-            //     />
-            // </div>
+        console.log(this.props.products);
+        return (   
             <div>
-                <p>
-                SupplierProductsListReact
-                </p>
+                {this.props.products.map((product, index) => (
+                    <SupplierProductsListItem key={index} product={product} />
+                ))}      
             </div>
         );
     }
 }
 
-// SupplierProductsListReact.propTypes = {
-    
-// }
+SupplierProductsListReact.propTypes = {
+    products: PropTypes.arrayOf(PropTypes.object)
+}
 
 export default SupplierProductsListReact;

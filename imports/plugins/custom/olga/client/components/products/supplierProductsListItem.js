@@ -25,7 +25,7 @@ class SupplierProductsListItem extends Component {
                 expanded={true}
             >
                 <CardHeader
-                    title={product.title}
+                    title={this.props.product.title}
                 >
                 </CardHeader>
                 <CardBody>
