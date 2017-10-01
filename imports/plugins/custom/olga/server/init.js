@@ -8,7 +8,13 @@ function addRolesToVisitors() {
     $addToSet: { defaultVisitorRole: "supplierproducts" }
   });
   Shops.update(shop._id, {
+    $addToSet: { defaultVisitorRole: "supplierproductsreact" }
+  });
+  Shops.update(shop._id, {
     $addToSet: { defaultRole: "supplierproducts" }
+  });
+  Shops.update(shop._id, {
+    $addToSet: { defaultRole: "supplierproductsreact" }
   });
 }
 

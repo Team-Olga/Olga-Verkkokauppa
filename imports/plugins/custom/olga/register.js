@@ -33,6 +33,13 @@ Reaction.registerPackage({
       workflow: "coreProductGridWorkflow"
     },
     {
+      route: "/supplierproductsreact",
+      name: "supplierproductsreact",
+      layout: "coreLayoutOlga",
+      template: "supplierProductsReact",
+      workflow: "coreProductGridWorkflow"
+    },
+    {
       route: "/about",
       name: "about",
       layout: "coreLayoutOlga",

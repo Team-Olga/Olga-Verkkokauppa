@@ -9,3 +9,6 @@ import "./products/supplierProductsLanding.html";
 import "./products/supplierProductsLanding";
 import "./products/supplierProductsList.html";
 import "./products/supplierProductsList";
+
+import "./products/supplierProductsReact.html";
+import "./products/supplierProductsReact";
