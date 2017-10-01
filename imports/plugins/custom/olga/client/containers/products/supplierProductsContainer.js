@@ -28,14 +28,9 @@ class SupplierProductsContainer extends Component {
             this.orders.set(orderSet.fetch());
             this.state = {
                 products: this.products.get(),
-                orders: this.orders    
+                orders: this.orders.get()    
             }; 
         });
-        
-        console.log(this.products.get());
-        console.log(this.orders);
-
-       
     }
 
     render() {
@@ -52,6 +47,7 @@ class SupplierProductsContainer extends Component {
                 <h1>Tuotelista</h1>
                 <SupplierProductsListReact
                     products={this.state.products}
+                    orders={this.state.orders}
                 />
             </div>            
         );

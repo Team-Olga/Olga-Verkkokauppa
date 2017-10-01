@@ -8,13 +8,13 @@ class SupplierProductsListItem extends Component {
         super(props);
     }
 
-    orderCount() {
+    orderCount(orders, product) {
         let orderArray = _.filter(
-            this.props.orders,
+            orders,
             function(o) {
                 let match = false;
                 _.forEach(o.items, function(item) {
-                    if(item.variants._id == this.props.product._id) {
+                    if(item.variants._id == product._id) {
                         match = true;
                     }
                 });
@@ -24,13 +24,13 @@ class SupplierProductsListItem extends Component {
         return orderArray.length;
     }
 
-    orderQuantity() {
+    orderQuantity(orders, product) {
         let count = 0;
         _.forEach(
-            this.props.orders,
+            orders,
             function(o) {
                 _.forEach(o.items, function(item) {
-                    if(item.variants._id == this.props.product._id) {
+                    if(item.variants._id == product._id) {
                         count += item.quantity;
                     }
                 });
@@ -39,17 +39,17 @@ class SupplierProductsListItem extends Component {
         return count;
     }
 
-    openOrderQuantity() {
-        return 7;
+    openOrderQuantity(orders, product) {
+        return 0;
     }
 
     render() {
         return(
-            <div className="row">
+            <div className="row supplier-product-row">
                 <span className="listingtitle">{this.props.product.title}</span>
-                <Button status="primary" className="pull-right">Avoinna {this.openOrderQuantity()}</Button>
-                <Button status="primary" className="pull-right">Tilattu {this.orderQuantity()}</Button>
-                <Button status="primary" className="pull-right">Tilauksia {this.orderCount()}</Button>
+                <Button status="primary" className="pull-right listing-button">Avoinna {this.openOrderQuantity(this.props.orders, this.props.product)}</Button>
+                <Button status="primary" className="pull-right listing-button">Tilattu {this.orderQuantity(this.props.orders, this.props.product)}</Button>
+                <Button status="primary" className="pull-right listing-button">Tilauksia {this.orderCount(this.props.orders, this.props.product)}</Button>
             </div>
         );
     }

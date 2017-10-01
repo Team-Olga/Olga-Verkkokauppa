@@ -11,7 +11,6 @@ class SupplierProductsListReact extends Component {
     }
 
     render() {
-        console.log(this.props.products);
         const columns= [
             { 
                 Header: "", 
