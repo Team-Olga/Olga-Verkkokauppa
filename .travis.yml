@@ -2,12 +2,12 @@ sudo: required
 language: node_js
 
 node_js:
-  - "8"
+  - "7"
 
 before_script:
+  - npm install -g reaction-cli
   - curl https://install.meteor.com/ | sh
   - meteor npm install
-  - meteor npm install -g reaction-cli
   - sudo chown travis -Rh .meteor/local /home/travis/.config
 
 script:
