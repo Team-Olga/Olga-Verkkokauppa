@@ -2,11 +2,9 @@ import { Roles } from "meteor/alanning:roles";
 import { Shops, Groups}  from "/lib/collections";
 
 
-const defaultProducerRoles = [ "guest", "account/profile", "product", "tag", "index", "cart/checkout", "cart/completed"];
+export const defaultProducerRoles = [ "guest", "account/profile", "product", "tag", "index", "cart/checkout", "cart/completed"];
 
-export default function createCustomGroups(options = {}) {
-  
-
+export function createCustomGroups(options = {}) {
   const self = this;
   const { shopId } = options;
   const allGroups = Groups.find({}).fetch();
