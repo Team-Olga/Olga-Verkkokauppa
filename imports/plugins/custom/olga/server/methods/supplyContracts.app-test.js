@@ -4,6 +4,7 @@ import { Factory } from "meteor/dburles:factory";
 import StubCollections from "meteor/hwillson:stub-collections";
 import { sinon } from "meteor/practicalmeteor:sinon";
 import { $ } from 'meteor/jquery';
+import { Reaction } from "/server/api";
 import { Products, Orders } from "/lib/collections";
 
 describe("SupplyContracts methods test", function() {
@@ -92,32 +93,43 @@ describe("SupplyContracts methods test", function() {
     afterEach(function () {
         StubCollections.restore();
         Template.deregisterHelper('_');
+        //sandbox.restore();
+        //Reaction.hasPermission.restore();
+        //sinon.restore(Reaction);
         //Meteor.subscribe.restore();
     });
 
-    it("creates a supplyContract when one order covers the quantity", function(done) {
+    it("creates a supplyContract when one order covers the quantity", function() {
+        //sandbox.stub(Reaction, "hasPermission", () => true);
+
+
         chai.assert.equal(1, 1);
-        done();
     });
 
-    it("throws error if there are no orders waiting for supplyContract", function(done) {
+    it("throws error if there are no orders waiting for supplyContract", function() {
         chai.assert.equal(1, 1);
-        done();
     });
 
-    it("creates supplyContracts when multiple orders cover the quantity", function(done) {
+    it("creates supplyContracts when multiple orders cover the quantity", function() {
         chai.assert.equal(1, 1);
-        done();
     });
 
-    it("deletes a supplyContract when user is admin", function(done) {
+    it("deletes a supplyContract when user is admin", function() {
+        // sandbox.stub(Reaction, "hasAdminAccess", () => true);
+        // spyOnMethod()
+
         chai.assert.equal(1, 1);
-        done();
     });
 
-    it("throws error if non-admin tries to delete a supplyContract", function(done) {
+    it("throws error if non-admin tries to delete a supplyContract", function() {
+        // sandbox.stub(Reaction, "hasPermission", () => false);     
+        // function deleteContract() {
+        //     return 0;
+        //     // return Meteor.call("supplyContracts.delete", testOrders[0]._id);
+        // }
+        // chai.expect(deleteContract).to.throw(Meteor.Error, /Access Denied/);
+
         chai.assert.equal(1, 1);
-        done();
     });
 
 })

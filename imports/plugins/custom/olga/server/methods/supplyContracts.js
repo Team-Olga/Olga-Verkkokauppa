@@ -42,5 +42,10 @@ Meteor.methods({
         createSupplyContract.validate.call(this, args);
         createSupplyContract.run.call(this, args);
     },
-
+},
+{
+    [deleteSupplyContract.name]: function(args) {
+        deleteSupplyContract.validate.call(this.args);
+        deleteSupplyContract.run.call(this, args);
+    }
 })
