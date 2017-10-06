@@ -1,4 +1,5 @@
 import { Reaction } from "/server/api";
+import "./server/methods";
 
 // Register package as ReactionCommerce package
 Reaction.registerPackage({

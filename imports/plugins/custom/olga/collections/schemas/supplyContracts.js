@@ -5,9 +5,8 @@ export const SupplyContract = new SimpleSchema({
         type: String,
         unique: false
     },
-    orderId: {
-        type: String,
-        unique: false
+    orders: {
+        type: [String]
     },
     productId: {
         type: String,
@@ -24,5 +23,15 @@ export const SupplyContract = new SimpleSchema({
     receivedQuantity: {
         type: Number,
         defaultValue: 0
+    },
+    createdAt: {
+        type: Date,
+        autoValue: function () {
+        if (this.isUpdate && !this.isSet) {
+            return new Date;
+        }
+        this.unset();
+        },
+        denyUpdate: true
     }
 })
