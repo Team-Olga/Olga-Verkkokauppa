@@ -103,7 +103,7 @@ describe("SupplierProductsReact", function (done) {
         _.forEach(testProducts, function(product) {
             let found = false;
             _.forEach(productRows, function(row) {                
-                if($(row).find(".listingtitle").text() === product.title) {
+                if($(row).find(".olga-listing-title").text() === product.title) {
                     found = true;
                 }                
             });
