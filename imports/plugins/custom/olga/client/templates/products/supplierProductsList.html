@@ -1,0 +1,20 @@
+<template name="supplierProductsList">
+    {{#each product in products}}
+        <div class="productlisting">
+            <div class="row">
+                <span class="listingtitle">{{product.title}}</span>
+                <btn class="btn btn-listing">Tilauksia {{productOrderCount product._id}}</btn>
+                <btn class="btn btn-listing">Tilattu {{productOrderQuantity product._id}}</btn>
+                <btn class="btn btn-listing">Avoinna {{productOpenOrderQuantity product._id}}</btn>
+            </div>
+            {{#if product.ancestors}}
+                Ylätuotteet:
+                {{#each ancestor in ancestors product}}
+                    <span>{{ancestor.title}} </span>
+                {{/each}}
+            {{else}}
+                Ylätuotteet: ei ole
+            {{/if}}
+        </div>
+    {{/each}}
+</template>
