@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import classnames from "classnames";
 import Blaze from "meteor/gadicc:blaze-react-component";
 import { Template } from "meteor/templating";
-import { registerComponent } from "/imports/plugins/core/layout/lib/components";
+import { Components, registerComponent } from "@reactioncommerce/reaction-components";
 
 class CoreLayoutOlga extends Component {
   static propTypes = {
@@ -13,7 +13,7 @@ class CoreLayoutOlga extends Component {
   }
 
   render() {
-    const { layoutHeader, layoutFooter, template } = this.props.structure || {};
+    const { layoutFooter, template } = this.props.structure || {};
     const pageClassName = classnames({
       "page": true,
       "show-settings": this.props.actionViewIsOpen
@@ -21,15 +21,12 @@ class CoreLayoutOlga extends Component {
 
     return (
       <div className={pageClassName} id="reactionAppContainer">
-        { Template[layoutHeader] &&
-        <Blaze template={layoutHeader} className="reaction-navigation-header" />
-        }
+        <Components.NavBar />
 
         <Blaze template="cartDrawer" className="reaction-cart-drawer" />
 
         { Template[template] &&
         <main>
-
           <Blaze template={template} />
         </main>
         }
@@ -50,9 +47,6 @@ class CoreLayoutOlga extends Component {
 }
 
 // Register component for it to be usable
-registerComponent({
-  name: "coreLayoutOlga",
-  component: CoreLayoutOlga
-});
+registerComponent("coreLayoutOlga", CoreLayoutOlga);
 
 export default CoreLayoutOlga;

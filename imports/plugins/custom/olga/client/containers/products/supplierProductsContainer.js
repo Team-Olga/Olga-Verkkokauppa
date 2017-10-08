@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Tracker } from "meteor/tracker";
-import { composeWithTracker } from "/lib/api/compose";
+import { composeWithTracker } from "@reactioncommerce/reaction-components";
 import { Meteor } from "meteor/meteor";
 import PropTypes from "prop-types";;
 import _ from "lodash";
