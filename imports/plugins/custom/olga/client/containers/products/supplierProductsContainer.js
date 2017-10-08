@@ -1,40 +1,25 @@
 import React, { Component } from "react";
 import { Tracker } from "meteor/tracker";
+import { composeWithTracker } from "/lib/api/compose";
 import { Meteor } from "meteor/meteor";
 import PropTypes from "prop-types";;
 import _ from "lodash";
 import { Products, Orders } from "lib/collections";
+import { Loading } from "/imports/plugins/core/ui/client/components";
 import SupplierProductsListReact from "../../components/products/supplierProductsListReact";
 
 class SupplierProductsContainer extends Component {
+    static propTypes = {
+        products: PropTypes.array,
+        orders: PropTypes.array,
+    }
+
     constructor(props) {
         super(props);
-        // let products = [];
-        // for(var i = 1; i <= 1000; i++)
-        //     products.push({ title: "Tuote " + i});
-        // this.state = {
-        //     products: products,
-        //     orders: []
-        // };
-        this.products = ReactiveVar();
-        this.orders = ReactiveVar();
-
-        Tracker.autorun(() => {
-            Meteor.subscribe("Products");
-            Meteor.subscribe("Orders");
-            const productSet = Products.find({}, { sort: { createdAt: 1 } });
-            const orderSet = Orders.find({}, { sort: { createdAt: 1 } });
-            this.products.set(productSet.fetch());
-            this.orders.set(orderSet.fetch());
-            this.state = {
-                products: this.products.get(),
-                orders: this.orders.get()    
-            }; 
-        });
     }
 
     render() {
-        if (_.isEmpty(this.state.products)) {
+        if (_.isEmpty(this.props.products)) {
             return (
                 <div>
                     <p>Tuotteita ei löytynyt!</p>
@@ -44,19 +29,27 @@ class SupplierProductsContainer extends Component {
         
         return (            
             <div>
-                <h1>Tuotelista</h1>
+                <h1 className="olga-list-header">Tuotteet</h1>
                 <SupplierProductsListReact
-                    products={this.state.products}
-                    orders={this.state.orders}
+                    products={this.props.products}
+                    orders={this.props.orders}
                 />
             </div>            
         );
     }
 }
 
-SupplierProductsContainer.propTypes = {
-    products: PropTypes.arrayOf(PropTypes.object),
-    orders: PropTypes.arrayOf(PropTypes.object)
+const loadData = (props, onData) => {
+    const productsSubscription = Meteor.subscribe("Products");
+    const ordersSubscription = Meteor.subscribe("Orders");
+    
+
+    if(productsSubscription.ready() && ordersSubscription.ready()) {
+        onData(null, {
+            products: Products.find({}, { sort: { createdAt: 1 }}).fetch(),
+            orders: Orders.find({}, { sort: { createdAt: 1 }}).fetch()
+        });
+    }
 }
 
-export default SupplierProductsContainer;
+export default composeWithTracker(loadData, Loading)(SupplierProductsContainer);

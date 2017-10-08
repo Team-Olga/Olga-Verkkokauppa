@@ -29,12 +29,7 @@ class CoreLayoutOlga extends Component {
 
         { Template[template] &&
         <main>
-          <div className="rui olga">
-            <div className="bkdebug"><em>{"Olga layout"}</em></div>
-            <div className="bkdebug"><em>{"layoutHeader template:"}</em> {this.props.structure.layoutHeader}</div>
-            <div className="bkdebug"><em>{"layoutFooter template:"}</em> {this.props.structure.layoutFooter}</div>
-            <div className="bkdebug"><em>{"Main Template:"}</em> {this.props.structure.template}</div>
-          </div>
+
           <Blaze template={template} />
         </main>
         }
@@ -44,6 +39,13 @@ class CoreLayoutOlga extends Component {
         }
       </div>
     );
+          // Poistettu <main>-tagin sisältä
+          // <div className="rui olga">
+          //   <div className="bkdebug"><em>{"Olga layout"}</em></div>
+          //   <div className="bkdebug"><em>{"layoutHeader template:"}</em> {this.props.structure.layoutHeader}</div>
+          //   <div className="bkdebug"><em>{"layoutFooter template:"}</em> {this.props.structure.layoutFooter}</div>
+          //   <div className="bkdebug"><em>{"Main Template:"}</em> {this.props.structure.template}</div>
+          // </div>
   }
 }
 
