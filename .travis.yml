@@ -2,26 +2,17 @@ sudo: required
 language: node_js
 
 node_js:
-  #- "iojs"
   - "7"
 
 before_script:
-  - whoami
   - npm install
   - npm install -g reaction-cli
   - curl https://install.meteor.com/ | sh
+  - sudo meteor npm install
+  - sudo chown travis -Rh .meteor/local /home/travis/.config
+  - meteor update --release 1.5.1
 
 script:
-  #- node app.js
-  - sudo meteor npm install
-  #- sudo chown -R -h -v root .meteor/local
-  - sudo chown ${USER:=$(/usr/bin/id -run)}:$USER -R -h -v .meteor/local
-  - sudo chown -R $USER:$(id -gn $USER) /home/travis/.config
-  #- meteor update
-  - meteor update --release 1.5.1
-  #- meteor npm install
-  - ./node_modules/.bin/jest --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js
-  - sudo rm -r coverage # Workaround. See:https://github.com/meteor/meteor/issues/6002
   - reaction test
 
 notifications:

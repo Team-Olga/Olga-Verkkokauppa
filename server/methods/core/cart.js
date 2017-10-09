@@ -21,7 +21,7 @@ function quantityProcessing(product, variant, itemQty = 1) {
   const MIN = variant.minOrderQuantity || 1;
   const MAX = variant.inventoryQuantity || Infinity;
 
-  if (MIN > MAX) {
+  if (variant.inventoryPolicy && MIN > MAX) {
     Logger.debug(`productId: ${product._id}, variantId ${variant._id
     }: inventoryQuantity lower then minimum order`);
     throw new Meteor.Error(`productId: ${product._id}, variantId ${variant._id
@@ -110,6 +110,7 @@ Meteor.methods({
    */
   "cart/mergeCart": function (cartId, currentSessionId) {
     check(cartId, String);
+    // TODO: Review this. currentSessionId sometimes come in as false. e.g from Accounts.onLogin
     check(currentSessionId, Match.Optional(String));
 
     // we don't process current cart, but merge into it.
@@ -241,7 +242,14 @@ Meteor.methods({
     check(userId, String);
     check(sessionId, String);
 
-    const shopId = Reaction.getShopId();
+    const marketplaceSettings = Reaction.getMarketplaceSettings();
+    let shopId;
+    if (marketplaceSettings && marketplaceSettings.public && marketplaceSettings.public.merchantCart) {
+      shopId = Reaction.getShopId();
+    } else {
+      shopId = Reaction.getPrimaryShopId();
+    }
+
     // check if user has `anonymous` role.( this is a visitor)
     const anonymousUser = Roles.userIsInRole(userId, "anonymous", shopId);
     const sessionCartCount = getSessionCarts(userId, sessionId, shopId).length;
@@ -306,12 +314,21 @@ Meteor.methods({
    *  @param {String} productId - productId to add to Cart
    *  @param {String} variantId - product variant _id
    *  @param {Number} [itemQty] - qty to add to cart
+   *  @param {Object} [additionalOptions] - object containing additional options and fields for cart item
    *  @return {Number|Object} Mongo insert response
    */
-  "cart/addToCart": function (productId, variantId, itemQty) {
+  "cart/addToCart": function (productId, variantId, itemQty, additionalOptions) {
     check(productId, String);
     check(variantId, String);
     check(itemQty, Match.Optional(Number));
+    check(additionalOptions, Match.Optional(Object));
+
+    // Copy additionalOptions into an options object to use througout the method
+    const options = {
+      overwriteExistingMetafields: false, // Allows updating of metafields on quantity change
+      metafields: undefined, // Array of MetaFields to set on the CartItem
+      ...additionalOptions || {}
+    };
 
     const cart = Collections.Cart.findOne({ userId: this.userId });
     if (!cart) {
@@ -357,13 +374,26 @@ Meteor.methods({
       .some(item => item.variants._id === variantId);
 
     if (cartVariantExists) {
+      let modifier = {};
+
+      // Allows for updating metafields on an existing item when the quantity also changes
+      if (options.overwriteExistingMetafields) {
+        modifier = {
+          $set: {
+            "items.$.metafields": options.metafields
+          }
+        };
+      }
+
       return Collections.Cart.update({
         "_id": cart._id,
+        "items.product._id": productId,
         "items.variants._id": variantId
       }, {
         $inc: {
           "items.$.quantity": quantity
-        }
+        },
+        ...modifier
       }, function (error, result) {
         if (error) {
           Logger.warn("error adding to cart",
@@ -395,7 +425,9 @@ Meteor.methods({
           shopId: product.shopId,
           productId: productId,
           quantity: quantity,
+          product: product,
           variants: variant,
+          metafields: options.metafields,
           title: product.title,
           type: product.type,
           parcel: product.parcel || null
@@ -470,6 +502,8 @@ Meteor.methods({
             _id: itemId
           }
         }
+      }, {
+        getAutoValues: false // See https://github.com/aldeed/meteor-collection2/issues/245
       }, (error, result) => {
         if (error) {
           Logger.error(error);
@@ -502,169 +536,6 @@ Meteor.methods({
       return result;
     });
   },
-
-  /**
-   * cart/copyCartToOrder
-   * @summary transform cart to order when a payment is processed we want to
-   * copy the cart over to an order object, and give the user a new empty
-   * cart. reusing the cart schema makes sense, but integrity of the order, we
-   * don't want to just make another cart item
-   * @todo:  Partial order processing, shopId processing
-   * @todo:  Review Security on this method
-   * @param {String} cartId - cartId to transform to order
-   * @return {String} returns orderId
-   */
-  "cart/copyCartToOrder": function (cartId) {
-    check(cartId, String);
-    const cart = Collections.Cart.findOne(cartId);
-    // security check
-    if (cart.userId !== this.userId) {
-      throw new Meteor.Error(403, "Access Denied");
-    }
-    const order = Object.assign({}, cart);
-    const sessionId = cart.sessionId;
-
-    if (!order.items || order.items.length === 0) {
-      const msg = "An error occurred saving the order. Missing cart items.";
-      Logger.error(msg);
-      throw new Meteor.Error("no-cart-items", msg);
-    }
-
-    Logger.debug("cart/copyCartToOrder", cartId);
-    // reassign the id, we'll get a new orderId
-    order.cartId = cart._id;
-
-    // a helper for guest login, we let guest add email afterwords
-    // for ease, we'll also add automatically for logged in users
-    if (order.userId && !order.email) {
-      const user = Collections.Accounts.findOne(order.userId);
-      // we could have a use case here when email is not defined by some reason,
-      // we could throw an error, but it's not pretty clever, so let it go w/o
-      // email
-      if (typeof user === "object" && user.emails) {
-        for (const email of user.emails) {
-          // alternate order email address
-          if (email.provides === "orders") {
-            order.email = email.address;
-          } else if (email.provides === "default") {
-            order.email = email.address;
-          }
-        }
-      }
-    }
-
-    // schema should provide order defaults
-    // so we'll delete the cart autovalues
-    delete order.createdAt; // autovalues
-    delete order.updatedAt;
-    delete order.cartCount;
-    delete order.cartShipping;
-    delete order.cartSubTotal;
-    delete order.cartTaxes;
-    delete order.cartDiscounts;
-    delete order.cartTotal;
-    delete order._id;
-
-    // `order.shipping` is array ?
-    if (Array.isArray(order.shipping)) {
-      if (order.shipping.length > 0) {
-        order.shipping[0].paymentId = order.billing[0]._id;
-
-        if (!Array.isArray(order.shipping[0].items)) {
-          order.shipping[0].items = [];
-        }
-      }
-    } else { // if not - create it
-      order.shipping = [];
-    }
-
-    // Add current exchange rate into order.billing.currency
-    // If user currenct === shop currency, exchange rate = 1.0
-    const currentUser = Meteor.user();
-    let userCurrency = Reaction.getShopCurrency();
-    let exchangeRate = "1.00";
-
-    if (currentUser && currentUser.profile && currentUser.profile.currency) {
-      userCurrency = Meteor.user().profile.currency;
-    }
-
-    if (userCurrency !== Reaction.getShopCurrency()) {
-      const userExchangeRate = Meteor.call("shop/getCurrencyRates", userCurrency);
-
-      if (typeof userExchangeRate === "number") {
-        exchangeRate = userExchangeRate;
-      } else {
-        Logger.warn("Failed to get currency exchange rates. Setting exchange rate to null.");
-        exchangeRate = null;
-      }
-    }
-
-    if (!order.billing[0].currency) {
-      order.billing[0].currency = {
-        userCurrency: userCurrency
-      };
-    }
-
-    _.each(order.items, (item) => {
-      if (order.shipping[0].items) {
-        order.shipping[0].items.push({
-          _id: item._id,
-          productId: item.productId,
-          shopId: item.shopId,
-          variantId: item.variants._id
-        });
-      }
-    });
-
-    order.shipping[0].items.packed = false;
-    order.shipping[0].items.shipped = false;
-    order.shipping[0].items.delivered = false;
-
-    order.billing[0].currency.exchangeRate = exchangeRate;
-    order.workflow.status = "new";
-    order.workflow.workflow = ["coreOrderWorkflow/created"];
-
-    // insert new reaction order
-    const orderId = Collections.Orders.insert(order);
-
-    if (orderId) {
-      Collections.Cart.remove({
-        _id: order.cartId
-      });
-      // create a new cart for the user
-      // even though this should be caught by
-      // subscription handler, it's not always working
-      const newCartExists = Collections.Cart.find({ userId: order.userId });
-      if (newCartExists.count() === 0) {
-        Meteor.call("cart/createCart", this.userId, sessionId);
-        // after recreate new cart we need to make it looks like previous by
-        // updating `cart/workflow/status` to "coreCheckoutShipping"
-        // by calling `workflow/pushCartWorkflow` three times. This is the only
-        // way to do that without refactoring of `workflow/pushCartWorkflow`
-        Meteor.call("workflow/pushCartWorkflow", "coreCartWorkflow", "checkoutLogin");
-        Meteor.call("workflow/pushCartWorkflow", "coreCartWorkflow", "checkoutAddressBook");
-        Meteor.call("workflow/pushCartWorkflow", "coreCartWorkflow", "coreCheckoutShipping");
-      }
-
-      Logger.info("Transitioned cart " + cartId + " to order " + orderId);
-      // catch send notification, we don't want
-      // to block because of notification errors
-
-      if (order.email) {
-        Meteor.call("orders/sendNotification", Collections.Orders.findOne(orderId), (err) => {
-          if (err) {
-            Logger.error(err, `Error in orders/sendNotification for order ${orderId}`);
-          }
-        });
-      }
-
-      // order success
-      return orderId;
-    }
-    // we should not have made it here, throw error
-    throw new Meteor.Error(400, "cart/copyCartToOrder: Invalid request");
-  },
-
   /**
    * cart/setShipmentMethod
    * @summary saves method as order default
@@ -686,19 +557,24 @@ Meteor.methods({
         "Cart not found for user with such id");
     }
 
-    // temp hack until we build out multiple shipping handlers
+    // Sets all shipping methods to the one selected
+    // TODO: Accept an object of shopId to method map to ship via different methods per shop
     let selector;
     let update;
-    // temp hack until we build out multiple shipment handlers
     // if we have an existing item update it, otherwise add to set.
     if (cart.shipping) {
+      const updatedShipping = [];
+      cart.shipping.map((shipRecord) => {
+        shipRecord.shipmentMethod = method;
+        updatedShipping.push(shipRecord);
+      });
+
       selector = {
-        "_id": cartId,
-        "shipping._id": cart.shipping[0]._id
+        _id: cartId
       };
       update = {
         $set: {
-          "shipping.$.shipmentMethod": method
+          shipping: updatedShipping
         }
       };
     } else {
@@ -708,7 +584,8 @@ Meteor.methods({
       update = {
         $addToSet: {
           shipping: {
-            shipmentMethod: method
+            shipmentMethod: method,
+            shopId: cart.shopId
           }
         }
       };
@@ -833,6 +710,7 @@ Meteor.methods({
 
     let selector;
     let update;
+    const primaryShopId = Reaction.getPrimaryShopId();
     // temp hack until we build out multiple shipment handlers
     // if we have an existing item update it, otherwise add to set.
     if (Array.isArray(cart.shipping) && cart.shipping.length > 0) {
@@ -842,7 +720,8 @@ Meteor.methods({
       };
       update = {
         $set: {
-          "shipping.$.address": address
+          "shipping.$.address": address,
+          "shopId": primaryShopId
         }
       };
     } else {
@@ -852,7 +731,8 @@ Meteor.methods({
       update = {
         $addToSet: {
           shipping: {
-            address: address
+            address: address,
+            shopId: primaryShopId
           }
         }
       };
@@ -1021,57 +901,93 @@ Meteor.methods({
    * @summary saves a submitted payment to cart, triggers workflow
    * and adds "paymentSubmitted" to cart workflow
    * Note: this method also has a client stub, that forwards to cartCompleted
-   * @param {Object} paymentMethod - paymentMethod object
-   * directly within this method, just throw down though hooks
+   * @param {Object|Array} paymentMethods - an array of paymentMethods or (deprecated) a single paymentMethod object
    * @return {String} returns update result
    */
-  "cart/submitPayment": function (paymentMethod) {
-    check(paymentMethod, Reaction.Schemas.PaymentMethod);
+  "cart/submitPayment": function (paymentMethods) {
+    if (Array.isArray((paymentMethods))) {
+      check(paymentMethods, [Reaction.Schemas.PaymentMethod]);
+    } else {
+      check(paymentMethods, Reaction.Schemas.PaymentMethod);
+    }
 
-    const checkoutCart = Collections.Cart.findOne({
+
+    const cart = Collections.Cart.findOne({
       userId: Meteor.userId()
     });
 
-    const cart = _.clone(checkoutCart);
     const cartId = cart._id;
-    const invoice = {
-      shipping: cart.cartShipping(),
-      subtotal: cart.cartSubTotal(),
-      taxes: cart.cartTaxes(),
-      discounts: cart.cartDiscounts(),
-      total: cart.cartTotal()
-    };
+
+    const cartShipping = cart.getShippingTotal();
+    const cartSubTotal = cart.getSubTotal();
+    const cartSubtotalByShop = cart.getSubtotalByShop();
+    const cartTaxes = cart.getTaxTotal();
+    const cartTaxesByShop = cart.getTaxesByShop();
+    const cartDiscounts = cart.getDiscounts();
+    const cartTotal = cart.getTotal();
+    const cartTotalByShop = cart.getTotalByShop();
 
     // we won't actually close the order at this stage.
     // we'll just update the workflow and billing data where
     // method-hooks can process the workflow update.
 
-    let selector;
-    let update;
-    // temp hack until we build out multiple billing handlers
-    // if we have an existing item update it, otherwise add to set.
-    if (cart.billing) {
-      selector = {
-        "_id": cartId,
-        "billing._id": cart.billing[0]._id
-      };
-      update = {
-        $set: {
-          "billing.$.paymentMethod": paymentMethod,
-          "billing.$.invoice": invoice
-        }
-      };
-    } else {
-      selector = {
-        _id: cartId
-      };
-      update = {
-        $addToSet: {
-          "billing.paymentMethod": paymentMethod,
-          "billing.invoice": invoice
-        }
-      };
+    const payments = [];
+    let paymentAddress;
+
+    // Find the payment address associated that the user input during the
+    // checkout process
+    if (Array.isArray(cart.billing) && cart.billing[0]) {
+      paymentAddress = cart.billing[0].address;
     }
+
+    // Payment plugins which have been updated for marketplace are passing an array as paymentMethods
+    if (Array.isArray(paymentMethods)) {
+      paymentMethods.forEach((paymentMethod) => {
+        const shopId = paymentMethod.shopId;
+        const invoice = {
+          shipping: parseFloat(cartShipping),
+          subtotal: parseFloat(cartSubtotalByShop[shopId]),
+          taxes: parseFloat(cartTaxesByShop[shopId]),
+          discounts: parseFloat(cartDiscounts),
+          total: parseFloat(cartTotalByShop[shopId])
+        };
+
+        payments.push({
+          paymentMethod: paymentMethod,
+          invoice: invoice,
+          address: paymentAddress,
+          shopId: shopId
+        });
+      });
+    } else {
+      // Legacy payment integration - transactions are not split by shop
+      // Create an invoice based on cart totals.
+      const invoice = {
+        shipping: cartShipping,
+        subtotal: cartSubTotal,
+        taxes: cartTaxes,
+        discounts: cartDiscounts,
+        total: cartTotal
+      };
+
+      // Legacy payment plugins are passing in a single paymentMethod object
+      payments.push({
+        paymentMethod: paymentMethods,
+        invoice: invoice,
+        address: paymentAddress,
+        shopId: Reaction.getPrimaryShopId()
+      });
+    }
+
+    const selector = {
+      _id: cartId
+    };
+
+    const update = {
+      $set: {
+        billing: payments
+      }
+    };
 
     try {
       Collections.Cart.update(selector, update);

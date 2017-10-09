@@ -1,0 +1,12 @@
+<template name="supplierProductsLanding">
+    <h1>Toimittajan tuotelista</h1>
+    {{#if ready}}
+        {{>supplierProductsList products=products}}
+
+        {{#unless Template.subscriptionsReady}}
+        <div class="spinner-container">
+            <div class="spinner"></div>
+        </div>
+        {{/unless}}
+    {{/if}}
+</template>

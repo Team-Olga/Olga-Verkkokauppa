@@ -38,8 +38,8 @@ function createShippoParcel(reactionParcel, reactionMassUnit, reactionDistanceUn
     length: reactionParcel.length || "",
     height: reactionParcel.height || "",
     weight: reactionParcel.weight || "",
-    distance_unit: reactionDistanceUnit.toLowerCase(), // Propably we need to have for each shop a uom/baseuom for distance
-    mass_unit: reactionMassUnit.toLowerCase()
+    distance_unit: reactionDistanceUnit,
+    mass_unit: reactionMassUnit
   };
 
   return shippoParcel;
@@ -338,17 +338,49 @@ export const methods = {
   },
 
   /**
-   * Returns the available Shippo Methods/Rates for a selected cart, in the same form shipping/getShippingRates
-   * returns them.
+   * Returns the available Shippo Methods/Rates for a selected cart,
+   * in the same form shipping/getShippingRates returns them.
    * @param {String} cartId - The id of the cart that rates are to be supplied.
-   * @param {Object} shippoDocs - Contains all the Enabled Shipping Objects with provider.shippoProvider property.
-   * Each property has as key the Shippo's carrierAccountId and as value the corresponding document of shipping
+   * @param {Object} shippoDocs - Contains all the enabled shipping objects with
+   * provider.shippoProvider property. Each property has as key the Shippo's
+   * carrierAccountId and as value the corresponding document of shipping
    * collection.
-   * @return {Array} rates - The rates of the enabled and available Shippo carriers.
-   * */
-  "shippo/getShippingRatesForCart"(cartId, shippoDocs) {
+   * @param {Array} retrialTargets - An array with the details of which
+   * methods for getting shipping methods failed in the most recent
+   * query of Shippo's API.
+   * @return {Array} errorDetailsAndRetryInfo - Details of any error that
+   * occurred while querying Shippo's API, and info about this package so
+   * as to know if this specific query is to be retried.
+   * @return {Array} rates - The rates of the enabled and available
+   * Shippo carriers, and an empty array.
+   */
+  "shippo/getShippingRatesForCart"(cartId, shippoDocs, retrialTargets) {
     check(cartId, String);
     check(shippoDocs, Object);
+    check(retrialTargets, Array);
+
+    const currentMethodInfo = {
+      packageName: "shippo",
+      fileName: "shippo.js"
+    };
+    const errorDetails = {
+      requestStatus: "error",
+      shippingProvider: "shippo"
+    };
+
+    let isRetry;
+    if (retrialTargets.length > 0) {
+      const isNotAmongFailedRequests = retrialTargets.every((target) =>
+        target.packageName !== currentMethodInfo.packageName &&
+        target.fileName !== currentMethodInfo.fileName
+      );
+      if (isNotAmongFailedRequests) {
+        return [[], retrialTargets];
+      }
+
+      isRetry = true;
+    }
+
     const cart = Cart.findOne(cartId);
     if (cart && cart.userId === this.userId) { // confirm user has the right
       let shippoAddressTo;
@@ -368,18 +400,21 @@ export const methods = {
       const apiKey = getApiKey(cart.shopId);
       // If for a weird reason Shop hasn't a Shippo Api key anymore return no-rates.
       if (!apiKey) {
-        return [];
+        // In this case, and some similar ones below, there's no need
+        // for a retry.
+        errorDetails.message = "No Shippo API key was found in this cart.";
+        return [[errorDetails], []];
       }
       // TODO create a shipping address book record for shop.
       const shippoAddressFrom = createShippoAddress(shop.addressBook[0], shop.emails[0].address, purpose);
       // product in the cart has to have parcel property with the dimensions
       if (cart.items && cart.items[0] && cart.items[0].parcel) {
-        const unitOfMeasure = shop && shop.unitsOfMeasure && shop.unitsOfMeasure[0].uom || "KG";
-        // at the moment shops don't have a kind of unitOfMeasure for distance
-        // so we put CM...
-        shippoParcel = createShippoParcel(cart.items[0].parcel, unitOfMeasure, "CM");
+        const unitOfMeasure = shop && shop.baseUOM || "kg";
+        const unitOfLength = shop && shop.baseUOL || "cm";
+        shippoParcel = createShippoParcel(cart.items[0].parcel, unitOfMeasure, unitOfLength);
       } else {
-        return [];
+        errorDetails.message = "This cart has no items, or the first item has no 'parcel' property.";
+        return [[errorDetails], []];
       }
 
       const buyer = Accounts.findOne({
@@ -399,24 +434,58 @@ export const methods = {
         }
         shippoAddressTo = createShippoAddress(cart.shipping[0].address, email, purpose);
       } else {
-        return [];
+        errorDetails.message = "The 'shipping' property of this cart is either missing or incomplete.";
+        return [[errorDetails], []];
       }
       const carrierAccounts = Object.keys(shippoDocs);
-      const shippoShipment = ShippoApi.methods.createShipment.call({
-        shippoAddressFrom,
-        shippoAddressTo,
-        shippoParcel,
-        purpose,
-        carrierAccounts,
-        apiKey
-      });
+      let shippoShipment;
+      try {
+        shippoShipment = ShippoApi.methods.createShipment.call({
+          shippoAddressFrom,
+          shippoAddressTo,
+          shippoParcel,
+          purpose,
+          carrierAccounts,
+          apiKey
+        });
+      } catch (error) {
+        const errorData = {
+          requestStatus: "error",
+          shippingProvider: "shippo",
+          message: error.message
+        };
+
+        if (isRetry) {
+          errorDetails.message = "The Shippo API call has failed again.";
+          return [[errorDetails], []];
+        }
+
+        return [[errorData], [currentMethodInfo]];
+      }
+
+      if (!shippoShipment.rates_list || shippoShipment.rates_list.length === 0) {
+        const noShippingMethods = {
+          requestStatus: "error",
+          shippingProvider: "shippo",
+          message: "Couldn't find any shipping methods. Try using another address."
+        };
+
+        if (isRetry) {
+          errorDetails.message = "Didn't get any shipping methods. The Shippo API call has failed again.";
+          return [[errorDetails], []];
+        }
+
+        return [[noShippingMethods], [currentMethodInfo]];
+      }
+
       const shippoRates = shippoShipment.rates_list;
       const reactionRates = ratesParser(shippoRates, shippoDocs);
 
-      return reactionRates;
+      return [reactionRates, []];
     }
 
-    return false;
+    errorDetails.message = "Error. Your cart is either undefined or has the wrong userId.";
+    return [[errorDetails], []];
   },
 
   /**
