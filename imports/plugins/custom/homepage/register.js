@@ -5,13 +5,19 @@ Reaction.registerPackage({
   name: "homepage",
   icon: "fa fa-home",
   autoenable: true,
+  layout: [{
+    layout: "coreLayoutOlga",
+    workflow: "coreProductGridWorkflow",
+    theme: "default",
+    enabled: true
+  }],
   registry: [
     {
       route: "/home",
-      name: "homepage",
+      name: "home",
       layout: "coreLayoutOlga",
       template: "homepageReact",
-      workflow: "coreWorkflow"
+      workflow: "coreProductGridWorkflow"
     }
   ]
-})
+});
