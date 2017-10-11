@@ -32,7 +32,7 @@ if (Meteor.isClient) {
   history = createMemoryHistory();
 }
 
-/** Class representing a static base router */
+/** Class representing a homepage base router */
 class Router {
   /**
    * history
