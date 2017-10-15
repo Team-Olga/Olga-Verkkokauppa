@@ -25,6 +25,8 @@ class SupplierProductsListReact extends Component {
                 <ReactTable
                     data={this.props.products}
                     columns={columns}
+                    defaultPageSize={10}
+                    className="olga-list-table"
                 />
             </div>
         );

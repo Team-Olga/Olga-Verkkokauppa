@@ -3,7 +3,6 @@ import _ from "lodash";
 import { ValidatedMethod } from "meteor/mdg:validated-method";
 import { Meteor } from "meteor/meteor";
 import { SimpleSchema } from "meteor/aldeed:simple-schema";
-import { Packages } from "/lib/collections";
 import { Reaction, Logger } from "/server/api";
 
 export const StripeApi = {};
@@ -48,14 +47,14 @@ StripeApi.methods.getApiKey = new ValidatedMethod({
   name: "StripeApi.methods.getApiKey",
   validate: null,
   run() {
-    const settings = Packages.findOne({
-      name: "reaction-stripe",
-      shopId: Reaction.getShopId()
-    }).settings;
-    if (!settings.api_key) {
-      throw new Meteor.Error("403", "Invalid Stripe Credentials");
+    const stripePkg = Reaction.getPackageSettingsWithOptions({
+      shopId: Reaction.getPrimaryShopId(),
+      name: "reaction-stripe"
+    });
+    if (stripePkg || stripePkg.settings && stripePkg.settings.api_key) {
+      return stripePkg.settings.api_key;
     }
-    return settings.api_key;
+    throw new Meteor.Error("access-denied", "Invalid Stripe Credentials");
   }
 });
 

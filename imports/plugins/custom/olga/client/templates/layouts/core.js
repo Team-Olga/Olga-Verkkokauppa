@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import classnames from "classnames";
 import Blaze from "meteor/gadicc:blaze-react-component";
 import { Template } from "meteor/templating";
-import { registerComponent } from "/imports/plugins/core/layout/lib/components";
+import { Components, registerComponent } from "@reactioncommerce/reaction-components";
 
 class CoreLayoutOlga extends Component {
   static propTypes = {
@@ -13,7 +13,7 @@ class CoreLayoutOlga extends Component {
   }
 
   render() {
-    const { layoutHeader, layoutFooter, template } = this.props.structure || {};
+    const { layoutFooter, template } = this.props.structure || {};
     const pageClassName = classnames({
       "page": true,
       "show-settings": this.props.actionViewIsOpen
@@ -21,20 +21,12 @@ class CoreLayoutOlga extends Component {
 
     return (
       <div className={pageClassName} id="reactionAppContainer">
-        { Template[layoutHeader] &&
-        <Blaze template={layoutHeader} className="reaction-navigation-header" />
-        }
+        <Components.NavBar />
 
         <Blaze template="cartDrawer" className="reaction-cart-drawer" />
 
         { Template[template] &&
         <main>
-          <div className="rui olga">
-            <div className="bkdebug"><em>{"Olga layout"}</em></div>
-            <div className="bkdebug"><em>{"layoutHeader template:"}</em> {this.props.structure.layoutHeader}</div>
-            <div className="bkdebug"><em>{"layoutFooter template:"}</em> {this.props.structure.layoutFooter}</div>
-            <div className="bkdebug"><em>{"Main Template:"}</em> {this.props.structure.template}</div>
-          </div>
           <Blaze template={template} />
         </main>
         }
@@ -44,13 +36,17 @@ class CoreLayoutOlga extends Component {
         }
       </div>
     );
+          // Poistettu <main>-tagin sisältä
+          // <div className="rui olga">
+          //   <div className="bkdebug"><em>{"Olga layout"}</em></div>
+          //   <div className="bkdebug"><em>{"layoutHeader template:"}</em> {this.props.structure.layoutHeader}</div>
+          //   <div className="bkdebug"><em>{"layoutFooter template:"}</em> {this.props.structure.layoutFooter}</div>
+          //   <div className="bkdebug"><em>{"Main Template:"}</em> {this.props.structure.template}</div>
+          // </div>
   }
 }
 
 // Register component for it to be usable
-registerComponent({
-  name: "coreLayoutOlga",
-  component: CoreLayoutOlga
-});
+registerComponent("coreLayoutOlga", CoreLayoutOlga);
 
 export default CoreLayoutOlga;
