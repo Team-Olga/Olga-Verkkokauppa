@@ -11,20 +11,35 @@ class SupplierProductsListReact extends Component {
     }
 
     render() {
-        const columns= [
+        // const adminColumns = [
+        //     { 
+        //         Header: "", 
+        //         accessor: "title",
+        //         Cell: cellInfo => (
+        //             <AdminProductsListItem product={cellInfo.original} orders={this.props.orders}/>
+        //         )
+        //     }
+        // ];
+
+        const supplierColumns = [
             { 
                 Header: "", 
                 accessor: "title",
                 Cell: cellInfo => (
-                    <SupplierProductsListItem product={cellInfo.original} orders={this.props.orders}/>
+                    <SupplierProductsListItem 
+                        product={cellInfo.original} 
+                        orders={this.props.orders}
+                        userStatus={this.props.userStatus}
+                    />
                 )
             }
         ];
+
         return (   
             <div>
                 <ReactTable
                     data={this.props.products}
-                    columns={columns}
+                    columns={supplierColumns}
                     defaultPageSize={10}
                     className="olga-list-table"
                 />
@@ -34,7 +49,9 @@ class SupplierProductsListReact extends Component {
 }
 
 SupplierProductsListReact.propTypes = {
-    products: PropTypes.arrayOf(PropTypes.object)
+    products: PropTypes.arrayOf(PropTypes.object),
+    orders: PropTypes.arrayOf(PropTypes.object),
+    userStatus: PropTypes.string
 }
 
 export default SupplierProductsListReact;
