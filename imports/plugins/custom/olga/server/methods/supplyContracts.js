@@ -1,9 +1,74 @@
 import { Meteor } from "meteor/meteor";
 import { check, Match } from "meteor/check"; 
-import { SupplyContracts } from "../../collections";
+import { SupplyContracts, Orders } from "../../collections";
 import { ValidatedMethod } from "meteor/mdg:validated-method";
 import { SimpleSchema } from "meteor/aldeed:simple-schema";
 import { Reaction } from "/server/api";
+import _ from "lodash";
+
+function coverOrders(product, quantity, supplyContract) {
+    let openOrders = Orders.find({}, { sort: { createdAt: 1 }}).fetch();
+    // filters those orders where product matches and at least part of the
+    // quantity ordered is not matched by supply contracts
+    openOrders = _.filter(
+        openOrders,
+        function(o) {
+            let match = false;            
+            _.forEach(o.items, function(item) {
+                if(item.variants._id == product._id
+                    && item.openQuantity > 0
+                    ) {
+                    match = true;
+                }
+            });
+            return match;
+        });
+
+    // loops through open orders (assumed to be in ascending chronological order)
+    // and "spends" contractQuantity on each of them in turn until contractQuantity == 0
+    let coveredOrders = [];
+    let contractQuantity = quantity;
+    let i = 0;
+    while(contractQuantity > 0 && i < coverOrders.length) {
+        let supplyQuantity = Math.min(contractQuantity, getOpenQuantity(openOrders[i], product));
+        updateOpenQuantity(openOrders[i], product, supplyQuantity, supplyContract);
+        coveredOrders.push(openOrders[i]._id);
+        contractQuantity -= supplyQuantity;
+        i++;
+    }
+
+    // updates supplyContract with covered orders
+    SupplyContracts.update(
+        { _id: supplyContract._id },
+        { $set: {
+            orders: coveredOrders    
+        }});
+}
+
+function getOpenQuantity(order, product) {
+    _.forEach(order.items, function(item) {
+        if(item.variants._id == product._id) {
+            return item.openQuantity;
+        }
+    });
+    return 0;
+}
+
+function updateOpenQuantity(order, product, supplyQuantity, supplyContract) {
+    let newItems = order.items;
+    _.forEach(newItems, function(item) {
+        if(item.variants._id == product._id) {
+            item.openQuantity -= supplyQuantity;
+            item.supplyContracts.push(supplyContract);
+            return false;
+        }
+    });
+    Orders.update(
+        { _id: order._id },
+        { $set: {
+            items: newItems
+        }});
+}
 
 export const methods = {
 
@@ -37,50 +102,3 @@ export const methods = {
 };
 
 Meteor.methods(methods);
-
-// export const createSupplyContract = new ValidatedMethod({
-//     name: "supplyContracts.create",
-//     validate: new SimpleSchema({
-//         userId: { type: String },
-//         productId: { type: String },
-//         quantity: { type: Number }
-//     }).validator(),
-//     run({ userId, productId, quantity }) {
-//         // tähän ensin haku, joka etsii aikajärjestyksessä ensimmäisen
-//         // tilauksen, jossa on tuotteita odottamassa toimituslupauksia;
-//         // jos sellaista ei ole, heitettävä virhe;
-//         // jos ensimmäisen tilauksen avoin tilausmäärä ei riitä 
-//         // parameterina annettuun quantityyn, etsitään seuraavia
-//         // niin kauan kunnes toimituslupaus täyttyy;
-//         // jos pystytään kattamaan vain osittain, pitää jotenkin
-//         // saada clientille ilmoitus tästä
-//         SupplyContracts.insert({
-//             userId: userId,
-//             productId: productId,
-//             quantity: quantity
-//         });
-//     }    
-// });
-
-// export const deleteSupplyContract = new ValidatedMethod({
-//     name: "supplyContracts.delete",
-//     validate: new SimpleSchema({
-//         supplyContractId: { type: String }
-//     }).validator(),
-//     run({ supplyContractId }) {
-//         SupplyContracts.remove(supplyContractId);
-//     }
-// });
-
-// Meteor.methods({
-//     [createSupplyContract.name]: function (args) {
-//         createSupplyContract.validate.call(this, args);
-//         createSupplyContract.run.call(this, args);
-//     },
-// },
-// {
-//     [deleteSupplyContract.name]: function(args) {
-//         deleteSupplyContract.validate.call(this.args);
-//         deleteSupplyContract.run.call(this, args);
-//     }
-// })

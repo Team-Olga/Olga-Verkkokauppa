@@ -4,12 +4,7 @@ export const CartItem = new SimpleSchema({
     supplyContracts: {
         type: [String]
     },
-    contractedQuantity: {
-        type: Number,
-        min: 0,
-        defaultValue: 0
-    },
-    deliveredQuantity: {
+    openQuantity: {
         type: Number,
         min: 0,
         defaultValue: 0
