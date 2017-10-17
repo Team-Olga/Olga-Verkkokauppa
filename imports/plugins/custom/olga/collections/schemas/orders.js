@@ -2,7 +2,8 @@ import { SimpleSchema } from "meteor/aldeed:simple-schema";
 
 export const Order = new SimpleSchema({
     productSupplies: {
-        type: [Object] 
+        type: [Object],
+        optional: true 
     },
     "productSupplies.$.productId": {
         type: String
@@ -11,7 +12,7 @@ export const Order = new SimpleSchema({
         type: [String]
     },
     "productSupplies.$.openQuantity": {
-        type: [Number],
+        type: Number,
         min: 0,
         defaultValue: 0
     }

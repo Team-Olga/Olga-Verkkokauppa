@@ -3,7 +3,7 @@ import { Meteor } from "meteor/meteor";
 import { check } from "meteor/check";
 import * as Collections from "/lib/collections";
 import { Logger, Reaction } from "/server/api";
-
+const util = require('util');
 
 /**
  * cart/copyCartToOrder
@@ -135,6 +135,9 @@ export function copyCartToOrder(cartId) {
       status: "new",
       workflow: ["coreOrderWorkflow/created"]
     };
+    // // customoidut olga-kentät
+    // item.supplyContracts = [];
+    // item.openQuantity = 0;
 
     return item;
   });
@@ -165,8 +168,15 @@ export function copyCartToOrder(cartId) {
   order.billing[0].currency.exchangeRate = exchangeRate;
   order.workflow.status = "new";
   order.workflow.workflow = ["coreOrderWorkflow/created"];
+  // // customoidut olga-kentät
+  //   order.supplyContracts = [];
+  //   order.openQuantity = 0;
 
   // insert new reaction order
+  console.log("Converting cart to order");
+  console.log("Order: ");
+  console.log(util.inspect(order, {showHidden: false, depth: null}));
+
   const orderId = Collections.Orders.insert(order);
 
   if (orderId) {
