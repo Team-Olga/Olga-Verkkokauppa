@@ -1,6 +1,6 @@
-import { Reaction } from 'server/api';
+import { Reaction } from "server/api";
 
-Reaction.registerPackage({
+/*Reaction.registerPackage({
   label: "Homepage",
   name: "homepage",
   icon: "fa fa-home",
@@ -9,7 +9,14 @@ Reaction.registerPackage({
     layout: "coreLayoutOlga",
     workflow: "coreProductGridWorkflow",
     theme: "default",
-    enabled: true
+    enabled: true,
+    structure: {
+      template: "homepage",
+      dashboardHeader: "",
+      dashboardControls: "dashboardControls",
+      dashboardHeaderControls: "",
+      adminControlsFooter: "adminControlsFooter"
+    }
   }],
   registry: [
     {
@@ -21,3 +28,4 @@ Reaction.registerPackage({
     }
   ]
 });
+*/

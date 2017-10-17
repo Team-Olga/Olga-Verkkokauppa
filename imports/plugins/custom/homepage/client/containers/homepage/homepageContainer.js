@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React from "react";
 import HomepageComponent from "../../components/homepage/homepageComponent";
 
 export default class HomepageContainer extends React.Component {

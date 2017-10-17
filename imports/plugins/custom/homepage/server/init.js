@@ -4,10 +4,10 @@ import { Hooks, Reaction} from "/server/api";
 function addRolesToVisitors() {
   const shop = Shops.findOne(Reaction.getShopId());
   Shops.update(shop._id, {
-    $addToSet: { defaultVisitorRole: "homepage" }
+    $addToSet: { defaultVisitorRole: "home" }
   });
   Shops.update(shop._id, {
-    $addToSet: { defaultRole: "homepage" }
+    $addToSet: { defaultRole: "home" }
   });
 }
 
