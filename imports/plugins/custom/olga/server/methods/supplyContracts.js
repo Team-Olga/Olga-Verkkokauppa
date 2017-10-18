@@ -6,17 +6,26 @@ import { SimpleSchema } from "meteor/aldeed:simple-schema";
 import { Reaction } from "/server/api";
 import _ from "lodash";
 
-function coverOrders(product, quantity, supplyContract) {
+function initializeContract(userId, productId, quantity) {
+    var supplyContractId = SupplyContracts.insert({
+        userId: userId,
+        productId: productId,
+        quantity: quantity
+    });
+    return supplyContractId;
+}
+
+function coverOrders(productId, quantity, supplyContractId) {
     let openOrders = Orders.find({}, { sort: { createdAt: 1 }}).fetch();
     // filters those orders where product matches and at least part of the
-    // quantity ordered is not matched by supply contracts
+    // quantity ordered is not matched by other supply contracts
     openOrders = _.filter(
         openOrders,
         function(o) {
             let match = false;            
-            _.forEach(o.items, function(item) {
-                if(item.variants._id == product._id
-                    && item.openQuantity > 0
+            _.forEach(o.productSupplies, function(productSupply) {
+                if(productSupply.productId == productId
+                    && productSupply.openQuantity > 0
                     ) {
                     match = true;
                 }
@@ -30,14 +39,15 @@ function coverOrders(product, quantity, supplyContract) {
     let contractQuantity = quantity;
     let i = 0;
     while(contractQuantity > 0 && i < coverOrders.length) {
-        let supplyQuantity = Math.min(contractQuantity, getOpenQuantity(openOrders[i], product));
-        updateOpenQuantity(openOrders[i], product, supplyQuantity, supplyContract);
+        let supplyQuantity = Math.min(contractQuantity, getOpenQuantity(openOrders[i], productId));
+        updateOpenQuantity(openOrders[i], productId, supplyQuantity, supplyContractId);
         coveredOrders.push(openOrders[i]._id);
         contractQuantity -= supplyQuantity;
         i++;
     }
+}
 
-    // updates supplyContract with covered orders
+function enrichContract(supplyContractId, coveredOrders) {
     SupplyContracts.update(
         { _id: supplyContract._id },
         { $set: {
@@ -45,28 +55,28 @@ function coverOrders(product, quantity, supplyContract) {
         }});
 }
 
-function getOpenQuantity(order, product) {
-    _.forEach(order.items, function(item) {
-        if(item.variants._id == product._id) {
-            return item.openQuantity;
+function getOpenQuantity(order, productId) {
+    _.forEach(order.productSupplies, function(productSupply) {
+        if(productSupply.productId == productId) {
+            return productSupply.openQuantity;
         }
     });
     return 0;
 }
 
-function updateOpenQuantity(order, product, supplyQuantity, supplyContract) {
-    let newItems = order.items;
-    _.forEach(newItems, function(item) {
-        if(item.variants._id == product._id) {
-            item.openQuantity -= supplyQuantity;
-            item.supplyContracts.push(supplyContract);
+function updateOpenQuantity(order, productId, supplyQuantity, supplyContractId) {
+    let newSupplies = order.productSupplies;
+    _.forEach(newSupplies, function(productSupply) {
+        if(productSupply.productId == productId) {
+            productSupply.openQuantity -= supplyQuantity;
+            productSupply.supplyContracts.push(supplyContractId);
             return false;
         }
     });
     Orders.update(
         { _id: order._id },
         { $set: {
-            items: newItems
+            productSupplies: newSupplies
         }});
 }
 
@@ -78,13 +88,9 @@ export const methods = {
         check(productId, String);
         check(quantity, Number);
 
-        console.log("SupplyContracts collection: " + SupplyContracts);
-
-        var resultId = SupplyContracts.insert({
-            userId: userId,
-            productId: productId,
-            quantity: quantity
-        });
+        let supplyContractId = initializeContract(userId, productId, quantity);
+        let coveredOrders = coverOrders(productId, quantity, supplyContractId);
+        enrichContract(supplyContractId, coveredOrders);
 
         return resultId;
     },
