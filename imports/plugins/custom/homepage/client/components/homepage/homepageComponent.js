@@ -7,9 +7,10 @@ export default class HomepageComponent extends React.Component {
 
   render() {
 
-    return(
+    return (
       <div>
         <p>Tämä on testi!</p>
+        <p>{this.props.haloo}</p>
       </div>
     );
   }
