@@ -47,7 +47,7 @@ Reaction.registerPackage({
       workflow: "coreProductGridWorkflow"
     },
     {
-      route: "/home",
+      route: "/",
       name: "home",
       layout: "coreLayoutOlga",
       template: "homepageReact",
