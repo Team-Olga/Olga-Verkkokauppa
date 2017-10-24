@@ -11,6 +11,7 @@ before_script:
   - sudo meteor npm install
   - sudo chown travis -Rh .meteor/local /home/travis/.config
   - meteor update --release 1.5.1
+  - TOOL_NODE_FLAGS="--max-old-space-size=4096"
 
 script:
   - reaction test
