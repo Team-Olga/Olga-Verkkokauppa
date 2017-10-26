@@ -112,6 +112,7 @@ class SupplierProductsListItem extends Component {
     handleOpenOrdersClick(e) {
         e.preventDefault();
         console.log("Avoinna-nappia klikattu");
+        this.props.showContractModal(this.props.product, 7);
     }
 
     handleOrdersClick(e) {
@@ -171,7 +172,8 @@ class SupplierProductsListItem extends Component {
 SupplierProductsListItem.propTypes = {
     product: PropTypes.object,
     orders: PropTypes.arrayOf(PropTypes.object),
-    userStatus: PropTypes.string
+    userStatus: PropTypes.string,
+    showContractModal: PropTypes.func,
 };
 
 export default SupplierProductsListItem;
