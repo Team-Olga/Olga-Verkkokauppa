@@ -4,16 +4,39 @@ import ReactTable from "react-table";
 import SupplierProductsListItem from "./supplierProductsListItem";
 import { SortableTable } from "/imports/plugins/core/ui/client/components";
 import { Products } from "/lib/collections";
+import Modal from 'react-modal';
 
 class SupplierProductsListReact extends Component {
     constructor(props) {
         super(props);
+
+        this.state = {
+          modalIsOpen: true
+        };
+        this.openModal = this.openModal.bind(this);
+        this.closeModal = this.closeModal.bind(this);
+
+    }
+
+    openModal() {
+      this.setState({modalIsOpen: true});
+    }
+
+    closeModal(productId, supplyQuantity) {
+
+      if (supplyQuantity || supplyQuantity === 0 ) {
+      this.setState({modalIsOpen: false});
+      } else {
+      this.setState({modalIsOpen: false});
+      //Kutsu serveriä tässä
+      }
+
     }
 
     render() {
         // const adminColumns = [
-        //     { 
-        //         Header: "", 
+        //     {
+        //         Header: "",
         //         accessor: "title",
         //         Cell: cellInfo => (
         //             <AdminProductsListItem product={cellInfo.original} orders={this.props.orders}/>
@@ -22,12 +45,12 @@ class SupplierProductsListReact extends Component {
         // ];
 
         const supplierColumns = [
-            { 
-                Header: "", 
+            {
+                Header: "",
                 accessor: "title",
                 Cell: cellInfo => (
-                    <SupplierProductsListItem 
-                        product={cellInfo.original} 
+                    <SupplierProductsListItem
+                        product={cellInfo.original}
                         orders={this.props.orders}
                         userStatus={this.props.userStatus}
                     />
@@ -35,8 +58,20 @@ class SupplierProductsListReact extends Component {
             }
         ];
 
-        return (   
+        return (
             <div>
+              <Modal
+                isOpen={this.state.modalIsOpen}
+                onRequestClose={this.state.closeModal}
+                contentLabel="Create supllyContract"
+                >
+                <h2>Modal</h2>
+                <label>Määrä</label>
+                <input type="number" id="quantity" name="quantity"/>
+                <button onClick={() => this.closeModal()} >Vahvista</button>
+                <button onClick={this.closeModal} >Peruuta</button>
+                </Modal>
+
                 <ReactTable
                     data={this.props.products}
                     columns={supplierColumns}
