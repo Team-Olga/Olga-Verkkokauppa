@@ -1,5 +1,7 @@
+
 /* global Gravatar */
-import { Meteor } from "meteor/meteor";
+import
+{ Meteor } from "meteor/meteor";
 import _ from "lodash";
 import { Reaction } from "/client/api";
 import * as Collections from "/lib/collections";

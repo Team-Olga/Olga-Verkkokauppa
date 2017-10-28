@@ -34,6 +34,9 @@ Reaction.registerPackage({
     },
     {
       route: "/supplierproductsreact",
+      label: "Supplier products",
+      provides: ["supplierAccountDropdown"],
+      icon: "fa fa-telegram",
       name: "supplierproductsreact",
       layout: "coreLayoutOlga",
       template: "supplierProductsReact",

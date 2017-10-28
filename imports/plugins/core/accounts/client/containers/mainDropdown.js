@@ -122,6 +122,10 @@ const handlers = {
   userShortcuts: {
     provides: "userAccountDropdown",
     enabled: true
+  },
+  supplierShortcuts: {
+    provides: "supplierAccountDropdown",
+    enabled: true
   }
 };
 

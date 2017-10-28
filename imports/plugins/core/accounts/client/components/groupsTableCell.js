@@ -15,7 +15,7 @@ const GroupsTableCell = ({ account, columnName, group, adminGroups, handleRemove
     const name = account.name || email.split("@")[0];
     return (
       <div className="table-cell body-first">
-        <img className="accounts-img-tag" src={getGravatar(account)} />
+        <img className="accounts-img-tag" src={getGravatar(account)}/>
         <span><b>{name}</b></span>
       </div>
     );
