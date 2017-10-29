@@ -3,7 +3,7 @@ import { Meteor } from "meteor/meteor";
 import { check } from "meteor/check";
 import * as Collections from "/lib/collections";
 import { Logger, Reaction } from "/server/api";
-
+const util = require('util');
 
 /**
  * cart/copyCartToOrder
@@ -167,6 +167,10 @@ export function copyCartToOrder(cartId) {
   order.workflow.workflow = ["coreOrderWorkflow/created"];
 
   // insert new reaction order
+  console.log("Converting cart to order");
+  console.log("Order: ");
+  console.log(util.inspect(order, {showHidden: false, depth: null}));
+
   const orderId = Collections.Orders.insert(order);
 
   if (orderId) {
