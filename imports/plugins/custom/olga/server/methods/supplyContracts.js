@@ -1,18 +1,33 @@
 import { Meteor } from "meteor/meteor";
 import { check, Match } from "meteor/check"; 
-import { SupplyContracts, Orders } from "../../collections";
+import { SupplyContracts } from "../../collections";
+import { Orders } from "/lib/collections";
 import { ValidatedMethod } from "meteor/mdg:validated-method";
 import { SimpleSchema } from "meteor/aldeed:simple-schema";
 import { Reaction } from "/server/api";
+import { Roles } from "meteor/alanning:roles";
 import _ from "lodash";
 
 function initializeContract(userId, productId, quantity) {
+    if(!hasOpenOrders(productId)) {
+        return null;
+    }
+    let createdAt = new Date;
     var supplyContractId = SupplyContracts.insert({
         userId: userId,
         productId: productId,
-        quantity: quantity
+        quantity: quantity,
+        orders: [],
+        sentQuantity: 0,
+        receivedQuantity: 0,
+        // createdAt: createdAt
     });
     return supplyContractId;
+}
+
+function hasOpenOrders(productId) {
+    let openOrders = Orders.find({ "productSupplies.productId": productId }).fetch();
+    return openOrders.length > 0;
 }
 
 function coverOrders(productId, quantity, supplyContractId) {
@@ -38,37 +53,47 @@ function coverOrders(productId, quantity, supplyContractId) {
     let coveredOrders = [];
     let contractQuantity = quantity;
     let i = 0;
-    while(contractQuantity > 0 && i < coverOrders.length) {
-        let supplyQuantity = Math.min(contractQuantity, getOpenQuantity(openOrders[i], productId));
-        updateOpenQuantity(openOrders[i], productId, supplyQuantity, supplyContractId);
-        coveredOrders.push(openOrders[i]._id);
-        contractQuantity -= supplyQuantity;
+    while(contractQuantity > 0 && i < openOrders.length) {
+        let openQuantity = getOpenQuantity(openOrders[i], productId);
+        let supplyQuantity = openQuantity < contractQuantity ? openQuantity : contractQuantity;
+        // console.log("Verrataan tarjottua määrää " + contractQuantity + " avoimeen " + openQuantity);
+        // console.log("Toimitettavaa " + supplyQuantity + " tilaukselle " + openOrders[i]._id);
+        if(supplyQuantity > 0) {
+            updateOpenQuantity(openOrders[i], productId, supplyQuantity, supplyContractId);
+            coveredOrders.push(openOrders[i]._id);
+            contractQuantity = contractQuantity - supplyQuantity;
+        }
         i++;
     }
+    // console.log(coveredOrders);
+    // console.log("Tilauksia: " + coveredOrders.length);
+    return coveredOrders;
 }
 
 function enrichContract(supplyContractId, coveredOrders) {
     SupplyContracts.update(
-        { _id: supplyContract._id },
+        { _id: supplyContractId },
         { $set: {
             orders: coveredOrders    
-        }});
+        }}
+    );
 }
 
 function getOpenQuantity(order, productId) {
+    let openQuantity = 0;
     _.forEach(order.productSupplies, function(productSupply) {
-        if(productSupply.productId == productId) {
-            return productSupply.openQuantity;
+        if(productSupply.productId === productId) {
+            openQuantity = productSupply.openQuantity;
         }
-    });
-    return 0;
+    });   
+    return openQuantity; 
 }
 
 function updateOpenQuantity(order, productId, supplyQuantity, supplyContractId) {
     let newSupplies = order.productSupplies;
     _.forEach(newSupplies, function(productSupply) {
         if(productSupply.productId == productId) {
-            productSupply.openQuantity -= supplyQuantity;
+            productSupply.openQuantity = productSupply.openQuantity - supplyQuantity;
             productSupply.supplyContracts.push(supplyContractId);
             return false;
         }
@@ -82,17 +107,25 @@ function updateOpenQuantity(order, productId, supplyQuantity, supplyContractId) 
 
 export const methods = {
 
-    "supplyContracts/create": function (userId, productId, quantity) {
-        console.log("within supplyContracts/create");
-        check(userId, String);
+    "supplyContracts/create": function (productId, quantity) {
         check(productId, String);
         check(quantity, Number);
 
+        let userId = Meteor.userId();
+
+        if(!Reaction.hasAdminAccess(Reaction.getShopId())
+            || !Roles.userIsInRole("supplier")) {
+            throw new Meteor.Error(403, "Access Denied");
+        }
+
         let supplyContractId = initializeContract(userId, productId, quantity);
+        if(!supplyContractId) {
+            return null;
+        }
         let coveredOrders = coverOrders(productId, quantity, supplyContractId);
         enrichContract(supplyContractId, coveredOrders);
 
-        return resultId;
+        return supplyContractId;
     },
 
     "supplyContracts/delete": function (supplyContractId) {
@@ -104,7 +137,6 @@ export const methods = {
 
         SupplyContracts.remove(supplyContractId);
     }
-
 };
 
 Meteor.methods(methods);

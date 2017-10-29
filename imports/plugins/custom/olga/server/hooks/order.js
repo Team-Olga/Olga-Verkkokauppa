@@ -2,7 +2,6 @@ import { Orders } from "/lib/collections/collections";
 import _ from "lodash";
 
 Orders.before.insert(function(userId, order) {
-    console.log("Adding Olga-specific fields on Order");
     let productSupplies = [];
     if(order.items) {
         _.forEach(order.items, function(item) {

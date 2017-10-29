@@ -135,9 +135,6 @@ export function copyCartToOrder(cartId) {
       status: "new",
       workflow: ["coreOrderWorkflow/created"]
     };
-    // // customoidut olga-kentät
-    // item.supplyContracts = [];
-    // item.openQuantity = 0;
 
     return item;
   });
@@ -168,9 +165,6 @@ export function copyCartToOrder(cartId) {
   order.billing[0].currency.exchangeRate = exchangeRate;
   order.workflow.status = "new";
   order.workflow.workflow = ["coreOrderWorkflow/created"];
-  // // customoidut olga-kentät
-  //   order.supplyContracts = [];
-  //   order.openQuantity = 0;
 
   // insert new reaction order
   console.log("Converting cart to order");
