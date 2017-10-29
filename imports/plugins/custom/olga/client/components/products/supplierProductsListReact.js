@@ -30,30 +30,20 @@ class SupplierProductsListReact extends Component {
       });
     }
 
-    closeModal(productId, supplyQuantity) {
+    closeModal(supplyQuantity) {
 
-      if (supplyQuantity || supplyQuantity === 0 ) {
+      if (!supplyQuantity || supplyQuantity == 0 ) {
         this.setState({modalIsOpen: false});
         console.log("Suljettu ilman palvelinkutsua");
       } else {
         this.setState({modalIsOpen: false});
-        console.log("Suljettu palvelinkutsulla");
+        console.log("Suljettu palvelinkutsulla, määrä " + supplyQuantity);
         //Kutsu serveriä tässä
       }
 
     }
 
     render() {
-        // const adminColumns = [
-        //     {
-        //         Header: "",
-        //         accessor: "title",
-        //         Cell: cellInfo => (
-        //             <AdminProductsListItem product={cellInfo.original} orders={this.props.orders}/>
-        //         )
-        //     }
-        // ];
-
         const supplierColumns = [
             {
                 Header: "",
@@ -74,14 +64,26 @@ class SupplierProductsListReact extends Component {
               <Modal
                 isOpen={this.state.modalIsOpen}
                 onRequestClose={this.state.closeModal}
-                contentLabel="Create supllyContract"
+                contentLabel="Create supplyContract"
+                className={{
+                    base: "contractModal",
+                    afterOpen: "contractModal_after-open",
+                    beforeClose: "contractModal_before-close"
+                }}
+                overlayClassName={{
+                    base: "contractModalOverlay",
+                    afterOpen: "contractModalOverlay_after-open",
+                    beforeClose: "contractModalOverlay_before-close"
+                }}
                 >
                 <h2>{this.state.productName}</h2>
                 <h3>Avoin määrä: {this.state.openQuantity} </h3>
-                <label>Määrä</label>
-                <input type="number" id="quantity" name="quantity"/>
-                <button onClick={() => this.closeModal()} >Vahvista</button>
-                <button onClick={this.closeModal} >Peruuta</button>
+                <h3><label htmlFor="quantity">Toimitettava määrä: </label>
+                <input type="number" id="quantity" name="quantity" className="right-justified" min="0" max={this.state.openQuantity}/></h3>
+                <div>
+                    <button className="rui btn btn-primary flat olga-listing-btn-default pull-right" onClick={() => this.closeModal()} >Peruuta</button>
+                    <button className="rui btn btn-primary flat olga-listing-btn-success pull-right" onClick={() => this.closeModal($('#quantity').val())} >Vahvista</button>                    
+                </div>
                 </Modal>
 
                 <ReactTable
