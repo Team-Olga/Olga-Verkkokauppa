@@ -5,10 +5,10 @@ import { Accounts } from "meteor/accounts-base";
 import { Roles } from "meteor/alanning:roles";
 import { Session } from "meteor/session";
 import { Gravatar } from "meteor/jparker:gravatar";
-import { Reaction, Logger } from "/client/api/index";
-import { i18nextDep, i18next } from "/client/api/index";
-import * as Collections from "/lib/collections/index";
-import { Tags } from "/lib/collections/index";
+import { Reaction, Logger } from "/client/api";
+import { i18nextDep, i18next } from  "/client/api";
+import * as Collections from "/lib/collections";
+import { Tags } from "/lib/collections";
 import MainDropdown from "../components/mainDropdown";
 
 function getUserGravatar(currentUser, size) {
@@ -49,7 +49,7 @@ function displayName(displayUser) {
     // todo: previous check was user.services !== "anonymous", "resume". Is this
     // new check covers previous check?
     if (Roles.userIsInRole(user._id || user.userId, "account/profile",
-      Reaction.getShopId())) {
+        Reaction.getShopId())) {
       return i18next.t("accountsUI.guest", { defaultValue: "Guest" });
     }
   }
@@ -97,7 +97,11 @@ function handleChange(event, value) {
         });
       }
     });
-  } else if (value.name !== "account/profile" || value.name !== "supplierproductsreact") {
+  } else if (value.name === "supplierproductsreact") {
+    console.log("Haloo?");
+    return Reaction.Router.go(value.route);
+  } else if (value.name !== "account/profile") {
+    console.log("Haloo profiili");
     return Reaction.showActionView(value);
   } else if (value.route || value.name) {
     const route = value.name || value.route;
@@ -105,3 +109,38 @@ function handleChange(event, value) {
   }
 }
 
+const composer = ({ currentAccount }, onData) => {
+  const userImage = getUserGravatar(currentAccount, 40);
+  const userName = displayName(currentAccount);
+  const adminShortcuts = getAdminShortcutIcons();
+
+  onData(null, {
+    adminShortcuts,
+    userImage,
+    userName
+  });
+};
+
+const handlers = {
+  handleChange,
+  userShortcuts: {
+    provides: "userAccountDropdown",
+    enabled: true
+  },
+  supplierShortcuts: {
+    provides: "supplierAccountDropdown",
+    enabled: true
+  }
+};
+
+registerComponent("MainDropdown", MainDropdown, [
+  withCurrentAccount,
+  withProps(handlers),
+  composeWithTracker(composer)
+]);
+
+export default compose(
+  withCurrentAccount,
+  withProps(handlers),
+  composeWithTracker(composer)
+)(MainDropdown);

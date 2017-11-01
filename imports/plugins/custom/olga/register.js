@@ -34,10 +34,10 @@ Reaction.registerPackage({
     },
     {
       route: "/supplierproductsreact",
+      name: "supplierproductsreact",
       label: "Supplier products",
       provides: ["supplierAccountDropdown"],
       icon: "fa fa-telegram",
-      name: "supplierproductsreact",
       layout: "coreLayoutOlga",
       template: "supplierProductsReact",
       workflow: "coreProductGridWorkflow"
