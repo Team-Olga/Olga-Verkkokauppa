@@ -55,7 +55,7 @@ class SupplierProductsListReact extends Component {
       } else {
         this.setState({modalIsOpen: false});
         console.log("Suljettu palvelinkutsulla, määrä " + supplyQuantity);
-        //Kutsu serveriä tässä
+        Meteor.call("supplyContracts/create", this.state.productId, supplyQuantity);
         this.showAlert('Toimitussopimus tehty ('+this.state.productName+' '+supplyQuantity+' kpl)');
       }
 
@@ -94,13 +94,15 @@ class SupplierProductsListReact extends Component {
                     beforeClose: "contractModalOverlay_before-close"
                 }}
                 >
-                <h2>{this.state.productName}</h2>
-                <h3>Avoin määrä: {this.state.openQuantity} </h3>
+                <h2 id="contractModalTitle">{this.state.productName}</h2>
+                <h3>Avoin määrä: <span id="openQuantity">{this.state.openQuantity}</span> </h3>
                 <h3><label htmlFor="quantity">Toimitettava määrä: </label>
                 <input type="number" id="quantity" name="quantity" className="right-justified" min="0" max={this.state.openQuantity}/></h3>
                 <div>
-                    <button className="rui btn btn-primary flat olga-listing-btn-default pull-right" onClick={() => this.closeModal()} >Peruuta</button>
-                    <button className="rui btn btn-primary flat olga-listing-btn-success pull-right" onClick={() => this.closeModal($('#quantity').val())} >Vahvista</button>                    
+                    <button id="cancelModal" className="rui btn btn-primary flat olga-listing-btn-default pull-right" 
+                        onClick={() => this.closeModal()} >Peruuta</button>
+                    <button id="confirmContract" className="rui btn btn-primary flat olga-listing-btn-success pull-right" 
+                        onClick={() => this.closeModal($('#quantity').val())} >Vahvista</button>                    
                 </div>
                 </Modal>
 

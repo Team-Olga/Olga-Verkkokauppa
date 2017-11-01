@@ -1,9 +1,11 @@
 import { Meteor } from "meteor/meteor";
 import React, { Component } from "react";
+import { findDOMNode } from "react-dom";
 import { Tracker } from "meteor/tracker";
 import { DDP } from "meteor/ddp-client";
 import { Promise } from "meteor/promise";
 import { chai } from "meteor/practicalmeteor:chai";
+import { mount, ReactWrapper } from "enzyme";
 import faker from "faker";
 import { Factory } from "meteor/dburles:factory";
 import { Random } from "meteor/random";
@@ -11,6 +13,7 @@ import StubCollections from "meteor/hwillson:stub-collections";
 import { sinon } from "meteor/practicalmeteor:sinon";
 import { $ } from 'meteor/jquery';
 import { Template } from "meteor/templating";
+import Modal from 'react-modal';
 import { Products, Orders } from "/lib/collections";
 import ReactTestUtils from "react-addons-test-utils";
 
@@ -114,15 +117,6 @@ describe("SupplierProductsReact", function (done) {
     });
 
     it("shows correct statistics for each product", function(done) {
-        // withRenderedTemplate("supplierProductsReact", {products: testProducts}, el => {
-        //     $(el).find(".productlisting").each(function() {
-        //         let title = $(this).find(".listingtitle").text();
-        //         $(this).find(".btn-listing").each(function() {
-        //             let btnText = $(this).text().split(" ");   
-        //             chai.assert.equal(btnText[1], getProductStats(title, btnText[0]), "Stat " + btnText[0] + " wrong for product " + title);
-        //         });
-        //     });            
-        // });
         var component = ReactTestUtils.renderIntoDocument(
             <SupplierProductsContainer />
         );
@@ -150,30 +144,68 @@ describe("SupplierProductsReact", function (done) {
         chai.assert.equal(buttons.length, 3, "Wrong number of buttons found.");
         ReactTestUtils.Simulate.click(buttons[0]);
         var modal = ReactTestUtils.scryRenderedDOMComponentsWithClass(component, "contractModalOverlay");
-        chai.assert.isNotNull(modal, "Modal not found");
+        chai.assert.isNotNull(modal, "Modal is not open");
         done();
-    })
+    });
 
     it("should open SupplyContractModal with correct info", function(done) {
-        var component = ReactTestUtils.renderIntoDocument(
-            <SupplierProductsContainer />
-        );
-        var productRows = ReactTestUtils.scryRenderedDOMComponentsWithClass(component, "supplier-product-row");
-        var productRow = productRows[1];
-        // var button = $(productRow).find(".olga-listing-btn-success");
-        var button = ReactTestUtils.findRenderedDOMComponentWithClass(component, "olga-listing-btn-success");
+        const wrapper = mount(<SupplierProductsContainer />);
+        let productRow = wrapper.find(".supplier-product-row").at(1);
+        let button = productRow.find(".olga-listing-btn-success");
+        let productTitle = productRow.find(".olga-listing-title").first().text();
 
-        var productTitle = $(productRow).find(".olga-listing-title").text();
-        chai.assert.isNotNull(button);
-        chai.assert.equal(button.text(), "Button");
-        ReactTestUtils.Simulate.click(button);
-        // var modal = ReactTestUtils.scryRenderedDOMComponentsWithClass(component, "contractModalOverlay");
-        // var modalTitle = $(modal).find("h2").text();
-        // chai.assert.equal(modalTitle, productTitle, "Modal shows wrong title");
+        button.simulate('click');
+        chai.assert.equal(wrapper.find(Modal).prop('isOpen'), true, "Modal not found");
+        let modalWrapper = new ReactWrapper(wrapper.find(Modal).node.portal, true);
+        chai.assert.equal(modalWrapper.find("#contractModalTitle").first().text(), productTitle, 
+            "Modal title doesn'tmatch product title");
+        chai.assert.equal(modalWrapper.find('#openQuantity').first().text(), 7, 
+            "Modal open quantity is incorrect");
+
         done();
-    })
+    });
 
+    it("should close cancelled SupplyContractModal without calling server method", function(done) {
+        const wrapper = mount(<SupplierProductsContainer />);
+        let button = wrapper.find(".supplier-product-row").at(1).find(".olga-listing-btn-success");
+        let spy = sinon.spy(Meteor, "call");
 
+        button.simulate('click');
+        chai.assert.equal(wrapper.find(Modal).prop('isOpen'), true, "Modal is not open");
+        let modalWrapper = new ReactWrapper(wrapper.find(Modal).node.portal, true);
+        let cancelButton = modalWrapper.find("#cancelModal");
+        cancelButton.simulate('click');
+        chai.assert.equal(wrapper.find(Modal).prop('isOpen'), false, "Modal is not closed");
+        chai.assert.isFalse(spy.called, "Server method was called");
+
+        Meteor.call.restore();
+        done();
+    });
+
+    it("should close confirmed SupplyContractModal and call server method", function(done) {
+        const wrapper = mount(<SupplierProductsContainer />);
+        let button = wrapper.find(".supplier-product-row").at(1).find(".olga-listing-btn-success");
+        let spy = sinon.spy(Meteor, "call");
+
+        button.simulate('click');
+        chai.assert.equal(wrapper.find(Modal).prop('isOpen'), true, "Modal is not open");
+        let modalWrapper = new ReactWrapper(wrapper.find(Modal).node.portal, true);
+        let quantityInput = modalWrapper.find("#quantity").first();
+        quantityInput.simulate("focus");
+        quantityInput.simulate("change", { target: { value: 1 } });
+        let confirmButton = modalWrapper.find("#confirmContract");
+        confirmButton.simulate('click');
+        chai.assert.equal(wrapper.find(Modal).prop('isOpen'), false, "Modal is not closed");
+        chai.assert.isTrue(spy.calledOnce, "Server method was not called");
+        chai.assert.isTrue(spy.calledWith("supplyContracts/create"));
+
+        Meteor.call.restore();
+        done();
+    });
+
+    it("should close confirmed SupplyContractModal with 0 quantity without calling server method", function() {
+        chai.assert.equal(1, 0);
+    });
 });
 
 function getProductStats(title, stat) {
