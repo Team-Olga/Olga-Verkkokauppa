@@ -12,6 +12,7 @@ before_script:
   - sudo chown travis -Rh .meteor/local /home/travis/.config
   - meteor update --release 1.5.1
 
+
 script:
   - reaction test
 

@@ -10,3 +10,4 @@ export const productExtensionSchema = new SimpleSchema({
 });
 
 Accounts.attachSchema(productExtensionSchema);
+
