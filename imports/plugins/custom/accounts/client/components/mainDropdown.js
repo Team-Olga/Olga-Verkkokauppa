@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { Components } from "@reactioncommerce/reaction-components";
 import { Reaction } from "/client/api";
-import Login from "./login";
+import Login from "imports/plugins/core/accounts/client/components/login.js";
 
 const iconStyle = {
   margin: "10px 10px 10px 6px",
@@ -42,8 +42,6 @@ class MainDropdown extends Component {
   }
 
   renderAdminIcons() {
-    console.log("AdminShortcuts: " + Reaction.Apps(this.props.adminShortcuts) + " UserShortcuts: " +
-    Reaction.Apps(this.props.userShortcuts).toSource());
     return (
       Reaction.Apps(this.props.adminShortcuts).map((shortcut) => (
         <Components.MenuItem

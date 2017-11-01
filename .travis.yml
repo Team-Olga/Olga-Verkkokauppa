@@ -16,5 +16,13 @@ before_script:
 script:
   - reaction test
 
+branches:
+
+  only:
+
+  - master
+
+  - dev
+
 notifications:
   slack: olgaverkkokauppa:VyuKQR5JBQpHmyOWE6bPRBZp

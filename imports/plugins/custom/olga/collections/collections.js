@@ -1,8 +1,13 @@
-import { Mongo } from "meteor/mongo";
-import * as Schemas from "./schemas";
-import { Orders } from "/lib/collections/collections";
+import { Accounts } from "/lib/collections";
+import { SimpleSchema } from "meteor/aldeed:simple-schema";
+import { Product } from "../../../../../lib/collections/schemas/products";
 
-export const SupplyContracts = new Mongo.Collection("SupplyContracts");
-SupplyContracts.attachSchema(Schemas.SupplyContract);
+export const productExtensionSchema = new SimpleSchema({
+  products: {
+    type: [Product],
+    optional: true
+  }
+});
 
-Orders.attachSchema(Schemas.Order);
+Accounts.attachSchema(productExtensionSchema);
+

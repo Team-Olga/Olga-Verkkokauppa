@@ -29,7 +29,7 @@ class BlazeLayout extends BlazeComponent {
       if (!template) {
         throw new Error(`No Template["${tArg}"] exists.  If this template `
           + "originates in your app, make sure you have the `templating` "
-          + "package installed (and not, for e.g. `static-html`)");
+          + "package installed (and not, for e.g. `homepage-html`)");
       }
     } else if (tArg instanceof Blaze.Template) {
       template = tArg;

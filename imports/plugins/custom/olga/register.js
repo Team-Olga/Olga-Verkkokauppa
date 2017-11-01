@@ -37,6 +37,9 @@ Reaction.registerPackage({
     {
       route: "/supplierproductsreact",
       name: "supplierproductsreact",
+      label: "Supplier products",
+      provides: ["supplierAccountDropdown"],
+      icon: "fa fa-telegram",
       layout: "coreLayoutOlga",
       template: "supplierProductsReact",
       workflow: "coreProductGridWorkflow"
@@ -47,6 +50,14 @@ Reaction.registerPackage({
       layout: "coreLayoutOlga",
       template: "aboutUs",
       workflow: "coreProductGridWorkflow"
+    },
+    {
+      route: "/",
+      name: "home",
+      layout: "coreLayoutOlga",
+      template: "homepageReact",
+      workflow: "coreProductGridWorkflow"
     }
+
   ]
 });
