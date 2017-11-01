@@ -5,6 +5,8 @@ import SupplierProductsListItem from "./supplierProductsListItem";
 import { SortableTable } from "/imports/plugins/core/ui/client/components";
 import { Products } from "/lib/collections";
 import Modal from 'react-modal';
+import AlertContainer from 'react-alert';
+
 
 class SupplierProductsListReact extends Component {
     constructor(props) {
@@ -19,6 +21,21 @@ class SupplierProductsListReact extends Component {
         this.openModal = this.openModal.bind(this);
         this.closeModal = this.closeModal.bind(this);
 
+    }
+
+    alertOptions = {
+        offset: 14,
+        position: 'top left',
+        theme: 'light',
+        time: 5000,
+        transition: 'scale'
+    }
+
+    showAlert = (message) => {
+        this.msg.show(message, {
+            time: 2000,
+            type: 'success'
+        })
     }
 
     openModal(product, openQuantity) {
@@ -39,6 +56,7 @@ class SupplierProductsListReact extends Component {
         this.setState({modalIsOpen: false});
         console.log("Suljettu palvelinkutsulla, määrä " + supplyQuantity);
         //Kutsu serveriä tässä
+        this.showAlert('Toimitussopimus tehty ('+this.state.productName+' '+supplyQuantity+' kpl)');
       }
 
     }
@@ -85,6 +103,8 @@ class SupplierProductsListReact extends Component {
                     <button className="rui btn btn-primary flat olga-listing-btn-success pull-right" onClick={() => this.closeModal($('#quantity').val())} >Vahvista</button>                    
                 </div>
                 </Modal>
+
+                <AlertContainer ref={a => this.msg = a} {...this.alertOptions} />
 
                 <ReactTable
                     data={this.props.products}

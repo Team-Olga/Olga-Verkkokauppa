@@ -149,7 +149,8 @@ class SupplierProductsListItem extends Component {
                     Sovittu {this.contractedQuantity(this.props.product)}
                 </Button>
                 <Button status="primary" bezelStyle="flat" className="olga-listing-btn-success pull-right"
-                    onClick={this.handleOpenOrdersClick}>
+                    onClick={this.handleOpenOrdersClick} data-productId={this.props.product._id} >
+
                     Avoinna {this.openOrderQuantity(this.props.orders, this.props.product)}
                 </Button>
                 {this.props.userStatus == "admin" && 

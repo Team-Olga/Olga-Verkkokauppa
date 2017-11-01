@@ -129,9 +129,9 @@ describe("SupplierProductsReact", function (done) {
         var productRows = ReactTestUtils.scryRenderedDOMComponentsWithClass(component, "supplier-product-row");
 
         _.forEach(productRows, function(row) {
-            let title = $(row).find(".listingtitle").text();
+            let title = $(row).find(".olga-listing-title").text();
             console.log("Prodcut: " + title);
-            $(row).find(".listing-button").each(function() {
+            $(row).find(".olga-listing-btn-success").each(function() {
                 console.log("Button: " + $(this).text());
                 let btnText = $(this).text().split(" ");   
                 console.log("")
@@ -139,9 +139,41 @@ describe("SupplierProductsReact", function (done) {
             })
         });
 
-        chai.assert.equal(1, 1);
         done();
     });
+
+    it("should open SupplyContractModal", function(done) {
+        var component = ReactTestUtils.renderIntoDocument(
+            <SupplierProductsContainer />
+        );
+        var  buttons = ReactTestUtils.scryRenderedDOMComponentsWithClass(component, "olga-listing-btn-success");
+        chai.assert.equal(buttons.length, 3, "Wrong number of buttons found.");
+        ReactTestUtils.Simulate.click(buttons[0]);
+        var modal = ReactTestUtils.scryRenderedDOMComponentsWithClass(component, "contractModalOverlay");
+        chai.assert.isNotNull(modal, "Modal not found");
+        done();
+    })
+
+    it("should open SupplyContractModal with correct info", function(done) {
+        var component = ReactTestUtils.renderIntoDocument(
+            <SupplierProductsContainer />
+        );
+        var productRows = ReactTestUtils.scryRenderedDOMComponentsWithClass(component, "supplier-product-row");
+        var productRow = productRows[1];
+        // var button = $(productRow).find(".olga-listing-btn-success");
+        var button = ReactTestUtils.findRenderedDOMComponentWithClass(component, "olga-listing-btn-success");
+
+        var productTitle = $(productRow).find(".olga-listing-title").text();
+        chai.assert.isNotNull(button);
+        chai.assert.equal(button.text(), "Button");
+        ReactTestUtils.Simulate.click(button);
+        // var modal = ReactTestUtils.scryRenderedDOMComponentsWithClass(component, "contractModalOverlay");
+        // var modalTitle = $(modal).find("h2").text();
+        // chai.assert.equal(modalTitle, productTitle, "Modal shows wrong title");
+        done();
+    })
+
+
 });
 
 function getProductStats(title, stat) {
