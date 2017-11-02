@@ -122,21 +122,17 @@ const handlers = {
   userShortcuts: {
     provides: "userAccountDropdown",
     enabled: true
-  },
-  supplierShortcuts: {
-    provides: "supplierAccountDropdown",
-    enabled: true
   }
 };
 
 registerComponent("MainDropdown", MainDropdown, [
   withCurrentAccount,
   withProps(handlers),
-  composeWithTracker(composer)
+  composeWithTracker(composer, false)
 ]);
 
 export default compose(
   withCurrentAccount,
   withProps(handlers),
-  composeWithTracker(composer)
+  composeWithTracker(composer, false)
 )(MainDropdown);

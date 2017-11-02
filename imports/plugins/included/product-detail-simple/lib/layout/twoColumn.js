@@ -100,7 +100,7 @@ export default function twoColumn() {
           axis: "horizontal",
           align: "center",
           type: "block",
-          size: "homepage variable",
+          size: "static variable",
           permissions: ["createProduct"],
           audience: ["guest", "anonymous"],
           style: {
