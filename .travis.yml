@@ -9,7 +9,7 @@ before_script:
   - npm install -g reaction-cli
   - curl https://install.meteor.com/ | sh
   - sudo meteor npm install
-  - sudo chown travis -Rh .meteor/local /home/travis/.config
+  - sudo chown travis -Rh .meteor/local /home/travis/.config /home/travis/build/Team-Olga/Olga-Verkkokauppa/node_modules/fibers/build
   - meteor update --release 1.5.1
 
 script:
