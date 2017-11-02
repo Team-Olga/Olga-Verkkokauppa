@@ -9,8 +9,6 @@ import { ReactionProduct } from "/lib/api";
 import { Media } from "/lib/collections";
 import { SortableItem } from "/imports/plugins/core/ui/client/containers";
 import ProductGridItems from "../components/productGridItems";
-import { ProductVariant } from "/lib/collections/schemas/products";
-import { Validation } from "@reactioncommerce/reaction-collections";
 
 const wrapComponent = (Comp) => (
   class ProductGridItemsContainer extends Component {
@@ -25,8 +23,6 @@ const wrapComponent = (Comp) => (
 
     constructor() {
       super();
-
-      this.validation = new Validation(ProductVariant);
 
       this.productPath = this.productPath.bind(this);
       this.positions = this.positions.bind(this);
@@ -176,8 +172,10 @@ const wrapComponent = (Comp) => (
           }
         }
       } else {
-        checkbox.checked = !checkbox.checked;
-        this.props.itemSelectHandler(checkbox.checked, product._id);
+        if (checkbox) {
+          checkbox.checked = !checkbox.checked;
+          this.props.itemSelectHandler(checkbox.checked, product._id);
+        }
       }
     }
 
@@ -185,33 +183,18 @@ const wrapComponent = (Comp) => (
       const product = this.props.product;
       const handle = product.__published && product.__published.handle || product.handle;
 
-      // validate the products variant
-      const variants = ReactionProduct.getVariants(this.props.product._id);
-      let validationStatus;
-      if (variants) {
-        validationStatus = variants.map((variant) => {
-          return this.validation.validate(variant);
-        });
-      }
-      const invalidVariant = validationStatus.filter(status => status.isValid === false);
-
       Reaction.Router.go("product", {
         handle: handle
       });
-      // open edit variant card if variant is not valid
-      if (invalidVariant.length) {
-        Reaction.setActionView({
-          label: "Edit Variant",
-          i18nKeyLabel: "productDetailEdit.editVariant",
-          template: "variantForm"
-        });
-      } else {
-        Reaction.setActionView({
-          i18nKeyLabel: "productDetailEdit.productSettings",
-          label: "Product Settings",
-          template: "ProductAdmin"
-        });
-      }
+
+      // Open actionView to productDetails panel
+      Reaction.state.set("edit/focus", "productDetails");
+
+      Reaction.setActionView({
+        i18nKeyLabel: "productDetailEdit.productSettings",
+        label: "Product Settings",
+        template: "ProductAdmin"
+      });
 
       if (this.props.isSearch) {
         this.props.unmountMe();
@@ -252,8 +235,10 @@ const wrapComponent = (Comp) => (
           } else {
             const checkbox = list.querySelector(`input[type=checkbox][value="${product._id}"]`);
             Session.set("productGrid/selectedProducts", []);
-            checkbox.checked = true;
-            this.props.itemSelectHandler(checkbox.checked, product._id);
+            if (checkbox) {
+              checkbox.checked = true;
+              this.props.itemSelectHandler(checkbox.checked, product._id);
+            }
           }
         }
       } else {

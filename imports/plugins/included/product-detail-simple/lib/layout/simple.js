@@ -101,7 +101,7 @@ export default function blocks() {
           axis: "horizontal",
           align: "center",
           type: "block",
-          size: "homepage variable",
+          size: "static variable",
           permissions: ["createProduct"],
           audience: ["guest", "anonymous"],
           style: {

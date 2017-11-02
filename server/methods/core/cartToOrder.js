@@ -1,18 +1,21 @@
 import _ from "lodash";
 import { Meteor } from "meteor/meteor";
 import { check } from "meteor/check";
+import { Roles } from "meteor/alanning:roles";
 import * as Collections from "/lib/collections";
 import { Logger, Reaction } from "/server/api";
-const util = require('util');
+
 
 /**
- * cart/copyCartToOrder
- * @summary transform cart to order when a payment is processed we want to
- * copy the cart over to an order object, and give the user a new empty
- * cart. reusing the cart schema makes sense, but integrity of the order, we
- * don't want to just make another cart item
- * @todo:  Partial order processing, shopId processing
- * @todo:  Review Security on this method
+ * @name cart/copyCartToOrder
+ * @method
+ * @memberof Methods/Cart
+ * @summary Transform Cart to Order when a payment is processed.
+ * We want to copy the cart over to an order object, and give the user a new empty
+ * cart. Reusing the cart schema makes sense, but integrity of the order,
+ * we don't want to just make another cart item
+ * @todo  Partial order processing, shopId processing
+ * @todo  Review Security on this method
  * @param {String} cartId - cartId to transform to order
  * @return {String} returns orderId
  */
@@ -167,10 +170,6 @@ export function copyCartToOrder(cartId) {
   order.workflow.workflow = ["coreOrderWorkflow/created"];
 
   // insert new reaction order
-  console.log("Converting cart to order");
-  console.log("Order: ");
-  console.log(util.inspect(order, {showHidden: false, depth: null}));
-
   const orderId = Collections.Orders.insert(order);
 
   if (orderId) {
@@ -183,13 +182,21 @@ export function copyCartToOrder(cartId) {
     const newCartExists = Collections.Cart.find({ userId: order.userId });
     if (newCartExists.count() === 0) {
       Meteor.call("cart/createCart", this.userId, sessionId);
-      // after recreate new cart we need to make it looks like previous by
-      // updating `cart/workflow/status` to "coreCheckoutShipping"
-      // by calling `workflow/pushCartWorkflow` three times. This is the only
-      // way to do that without refactoring of `workflow/pushCartWorkflow`
-      Meteor.call("workflow/pushCartWorkflow", "coreCartWorkflow", "checkoutLogin");
-      Meteor.call("workflow/pushCartWorkflow", "coreCartWorkflow", "checkoutAddressBook");
-      Meteor.call("workflow/pushCartWorkflow", "coreCartWorkflow", "coreCheckoutShipping");
+
+      // reset the checkout workflow to the beginning for an anonymous user.
+      // Using `Roles.userIsInRole` here because currently `Reaction.hasPermission("anonymous")`
+      // will not return the correct result for actual anonymous users
+      if (Roles.userIsInRole(currentUser, "anonymous", Reaction.getShopId())) {
+        Meteor.call("workflow/pushCartWorkflow", "coreCartWorkflow", "checkoutLogin");
+      } else {
+        // after recreate new cart we need to make it looks like previous by
+        // updating `cart/workflow/status` to "coreCheckoutShipping"
+        // by calling `workflow/pushCartWorkflow` three times. This is the only
+        // way to do that without refactoring of `workflow/pushCartWorkflow`
+        Meteor.call("workflow/pushCartWorkflow", "coreCartWorkflow", "checkoutLogin");
+        Meteor.call("workflow/pushCartWorkflow", "coreCartWorkflow", "checkoutAddressBook");
+        Meteor.call("workflow/pushCartWorkflow", "coreCartWorkflow", "coreCheckoutShipping");
+      }
     }
 
     Logger.info("Transitioned cart " + cartId + " to order " + orderId);

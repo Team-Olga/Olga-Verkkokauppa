@@ -2,10 +2,11 @@ import _ from "lodash";
 import { Meteor } from "meteor/meteor";
 import { check, Match } from "meteor/check";
 import { SimpleSchema } from "meteor/aldeed:simple-schema";
-import { Products, Revisions } from "/lib/collections";
+import { Products, Shops, Revisions } from "/lib/collections";
 import { Reaction, Logger } from "/server/api";
 import { RevisionApi } from "/imports/plugins/core/revisions/lib/api/revisions";
 import { findProductMedia } from "./product";
+import { registerSchema } from "@reactioncommerce/reaction-collections";
 
 //
 // define search filters as a schema so we can validate
@@ -66,6 +67,8 @@ const filters = new SimpleSchema({
   }
 });
 
+registerSchema("filters", filters);
+
 /**
  * products publication
  * @param {Number} [productScrollLimit] - optional, defaults to 24
@@ -92,6 +95,14 @@ Meteor.publish("Products", function (productScrollLimit = 24, productFilters, so
     return this.ready();
   }
 
+  // Get active shop id's to use for filtering
+  const activeShopsIds = Shops.find({
+    $or: [
+      { "workflow.status": "active" },
+      { _id: Reaction.getPrimaryShopId() }
+    ]
+  }).fetch().map(activeShop => activeShop._id);
+
   // if there are filter/params that don't match the schema
   // validate, catch except but return no results
   try {
@@ -99,6 +110,30 @@ Meteor.publish("Products", function (productScrollLimit = 24, productFilters, so
   } catch (e) {
     Logger.debug(e, "Invalid Product Filters");
     return this.ready();
+  }
+
+  const shopIdsOrSlugs = productFilters && productFilters.shops;
+
+  if (shopIdsOrSlugs) {
+    // Get all shopIds associated with the slug or Id
+    const shopIds = Shops.find({
+      $or: [{
+        _id: {
+          $in: shopIdsOrSlugs
+        }
+      }, {
+        slug: {
+          $in: shopIdsOrSlugs
+        }
+      }]
+    }).map((shop) => shop._id);
+
+    // If we found shops, update the productFilters
+    if (shopIds) {
+      productFilters.shops = shopIds;
+    } else {
+      return this.ready();
+    }
   }
 
   // Init default selector - Everyone can see products that fit this selector
@@ -251,7 +286,7 @@ Meteor.publish("Products", function (productScrollLimit = 24, productFilters, so
       $in: [true, false, null, undefined]
     };
     selector.shopId = {
-      $in: userAdminShopIds
+      $in: activeShopsIds
     };
 
     // Get _ids of top-level products
@@ -489,6 +524,15 @@ Meteor.publish("Products", function (productScrollLimit = 24, productFilters, so
       }]
     });
   }
+
+  // Adjust the selector to include only active shops
+  newSelector = {
+    ...newSelector,
+    shopId: {
+      $in: activeShopsIds
+    }
+  };
+
   // Returning Complete product tree for top level products to avoid sold out warning.
   const productCursor = Products.find(newSelector, {
     sort: sort

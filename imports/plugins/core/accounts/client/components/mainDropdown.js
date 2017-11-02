@@ -42,8 +42,6 @@ class MainDropdown extends Component {
   }
 
   renderAdminIcons() {
-    console.log("AdminShortcuts: " + Reaction.Apps(this.props.adminShortcuts) + " UserShortcuts: " +
-    Reaction.Apps(this.props.userShortcuts).toSource());
     return (
       Reaction.Apps(this.props.adminShortcuts).map((shortcut) => (
         <Components.MenuItem
@@ -70,22 +68,6 @@ class MainDropdown extends Component {
           icon={option.icon && option.icon}
           iconStyle={iconStyle}
           value={option}
-        />
-      ))
-    );
-  }
-
-  renderSupplierIcons() {
-    return (
-      Reaction.Apps(this.props.supplierShortcuts).map((products) => (
-        <Components.MenuItem
-          key={products.packageId}
-          className="accounts-a-tag"
-          label={products.label}
-          i18nKeyLabel={products.i18nKeyLabel}
-          icon={products.icon && products.icon}
-          iconStyle={iconStyle}
-          value={products}
         />
       ))
     );
@@ -132,7 +114,6 @@ class MainDropdown extends Component {
             >
               {this.renderUserIcons()}
               {this.renderAdminIcons()}
-              {this.renderSupplierIcons()}
               {this.renderSignOutButton()}
             </Components.DropDownMenu>
           </div>
