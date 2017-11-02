@@ -191,20 +191,40 @@ describe("SupplierProductsReact", function (done) {
         chai.assert.equal(wrapper.find(Modal).prop('isOpen'), true, "Modal is not open");
         let modalWrapper = new ReactWrapper(wrapper.find(Modal).node.portal, true);
         let quantityInput = modalWrapper.find("#quantity").first();
-        quantityInput.simulate("focus");
         quantityInput.simulate("change", { target: { value: 1 } });
+
         let confirmButton = modalWrapper.find("#confirmContract");
         confirmButton.simulate('click');
         chai.assert.equal(wrapper.find(Modal).prop('isOpen'), false, "Modal is not closed");
         chai.assert.isTrue(spy.calledOnce, "Server method was not called");
-        chai.assert.isTrue(spy.calledWith("supplyContracts/create"));
+        var args = spy.getCalls()[0].args;
+        _.forEach(args, function(arg) {
+            console.log("Argumentti: " + arg);
+        });
+        chai.assert.isTrue(spy.calledWith("supplyContracts/create", testProducts[1]._id, 1), "Wrong server method called");
 
         Meteor.call.restore();
         done();
     });
 
-    it("should close confirmed SupplyContractModal with 0 quantity without calling server method", function() {
-        chai.assert.equal(1, 0);
+    it("should close confirmed SupplyContractModal with 0 quantity without calling server method", function(done) {
+        const wrapper = mount(<SupplierProductsContainer />);
+        let button = wrapper.find(".supplier-product-row").at(1).find(".olga-listing-btn-success");
+        let spy = sinon.spy(Meteor, "call");
+
+        button.simulate('click');
+        chai.assert.equal(wrapper.find(Modal).prop('isOpen'), true, "Modal is not open");
+        let modalWrapper = new ReactWrapper(wrapper.find(Modal).node.portal, true);
+        let quantityInput = modalWrapper.find("#quantity").first();
+        quantityInput.simulate("change", { target: { value: 0 } });
+
+        let confirmButton = modalWrapper.find("#confirmContract");
+        confirmButton.simulate('click');
+        chai.assert.equal(wrapper.find(Modal).prop('isOpen'), false, "Modal is not closed");
+        chai.assert.isFalse(spy.called, "Server method was called");
+
+        Meteor.call.restore();
+        done();
     });
 });
 

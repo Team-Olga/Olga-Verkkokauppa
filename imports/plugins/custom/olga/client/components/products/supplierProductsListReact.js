@@ -17,10 +17,11 @@ class SupplierProductsListReact extends Component {
           productId: "xxxx",
           openQuantity: 2,
           productName: "qqqq",
+          supplyQuantity: 0
         };
         this.openModal = this.openModal.bind(this);
         this.closeModal = this.closeModal.bind(this);
-
+        this.updateSupplyQuantity = this.updateSupplyQuantity.bind(this);
     }
 
     alertOptions = {
@@ -44,21 +45,24 @@ class SupplierProductsListReact extends Component {
         productId: product._id,
         productName: product.title,
         openQuantity: openQuantity,
+        supplyQuantity: 0
       });
     }
 
-    closeModal(supplyQuantity) {
-
-      if (!supplyQuantity || supplyQuantity == 0 ) {
+    closeModal() {
+      if (this.state.supplyQuantity == 0 ) {
         this.setState({modalIsOpen: false});
         console.log("Suljettu ilman palvelinkutsua");
       } else {
         this.setState({modalIsOpen: false});
-        console.log("Suljettu palvelinkutsulla, määrä " + supplyQuantity);
-        Meteor.call("supplyContracts/create", this.state.productId, supplyQuantity);
-        this.showAlert('Toimitussopimus tehty ('+this.state.productName+' '+supplyQuantity+' kpl)');
+        console.log("Suljettu palvelinkutsulla, määrä " + this.state.supplyQuantity);
+        Meteor.call("supplyContracts/create", this.state.productId, this.state.supplyQuantity);
+        this.showAlert('Toimitussopimus tehty (' + this.state.productName + ' ' + this.state.supplyQuantity + ' kpl)');
       }
+    }
 
+    updateSupplyQuantity(e) {
+        this.setState({ supplyQuantity: e.target.value });
     }
 
     render() {
@@ -97,7 +101,8 @@ class SupplierProductsListReact extends Component {
                 <h2 id="contractModalTitle">{this.state.productName}</h2>
                 <h3>Avoin määrä: <span id="openQuantity">{this.state.openQuantity}</span> </h3>
                 <h3><label htmlFor="quantity">Toimitettava määrä: </label>
-                <input type="number" id="quantity" name="quantity" className="right-justified" min="0" max={this.state.openQuantity}/></h3>
+                <input type="number" id="quantity" name="quantity" className="right-justified" min="0" max={this.state.openQuantity}
+                    onChange={this.updateSupplyQuantity} value={this.state.supplyQuantity}/></h3>
                 <div>
                     <button id="cancelModal" className="rui btn btn-primary flat olga-listing-btn-default pull-right" 
                         onClick={() => this.closeModal()} >Peruuta</button>
