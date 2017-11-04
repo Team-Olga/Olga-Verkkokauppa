@@ -11,7 +11,7 @@ import { Roles } from "meteor/alanning:roles";
 import { addProduct } from "/server/imports/fixtures/products";
 import Fixtures from "/server/imports/fixtures";
 import { Products, Orders } from "/lib/collections";
-import { SupplyContracts } from "../../collections";
+import { SupplyContracts } from "../../lib/collections";
 
 Fixtures();
 

@@ -62,7 +62,15 @@ class SupplierProductsContainer extends Component {
 
 const loadData = (props, onData) => {
     const productsSubscription = Meteor.subscribe("Products");
-    const ordersSubscription = Meteor.subscribe("Orders");
+    //const ordersSubscription = Meteor.subscribe("Orders")
+    console.log("Loading Supplycontracts");
+    const contractSubscription = Meteor.subscribe("SupplyContracts");
+    console.log("Loading SupplierOrders");
+    const ordersSubscription = Meteor.subscribe("SupplierOrders");
+    console.log("Loaded SupplierOrders");
+    console.log("Products status: " + productsSubscription.ready());
+    console.log("Contracts status: " + contractSubscription.ready());
+    console.log("Orders status: " + ordersSubscription.ready());
 
     if(productsSubscription.ready() && ordersSubscription.ready()) {
         const allProducts = Products.find({}, { sort: { createdAt: 1 }}).fetch();

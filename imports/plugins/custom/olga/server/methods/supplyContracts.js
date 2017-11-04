@@ -1,6 +1,6 @@
 import { Meteor } from "meteor/meteor";
 import { check, Match } from "meteor/check"; 
-import { SupplyContracts } from "../../collections";
+import { SupplyContracts } from "../../lib/collections";
 import { Orders } from "/lib/collections";
 import { ValidatedMethod } from "meteor/mdg:validated-method";
 import { SimpleSchema } from "meteor/aldeed:simple-schema";
