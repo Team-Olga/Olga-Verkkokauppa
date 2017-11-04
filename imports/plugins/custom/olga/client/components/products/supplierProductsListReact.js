@@ -72,8 +72,7 @@ class SupplierProductsListReact extends Component {
                 accessor: "title",
                 Cell: cellInfo => (
                     <SupplierProductsListItem
-                        product={cellInfo.original}
-                        orders={this.props.orders}
+                        productStat={cellInfo.original}
                         userStatus={this.props.userStatus}
                         showContractModal={this.openModal}
                     />
@@ -114,7 +113,7 @@ class SupplierProductsListReact extends Component {
                 <AlertContainer ref={a => this.msg = a} {...this.alertOptions} />
 
                 <ReactTable
-                    data={this.props.products}
+                    data={this.props.productStats}
                     columns={supplierColumns}
                     defaultPageSize={10}
                     className="olga-list-table"
@@ -127,6 +126,7 @@ class SupplierProductsListReact extends Component {
 SupplierProductsListReact.propTypes = {
     products: PropTypes.arrayOf(PropTypes.object),
     orders: PropTypes.arrayOf(PropTypes.object),
+    productStats: PropTypes.arrayOf(PropTypes.object),
     userStatus: PropTypes.string
 }
 
