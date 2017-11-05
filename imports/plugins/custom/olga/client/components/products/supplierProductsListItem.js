@@ -16,7 +16,6 @@ class SupplierProductsListItem extends Component {
 
     handleOpenOrdersClick(e) {
         e.preventDefault();
-        console.log("Avoinna-nappia klikattu");
         this.props.showContractModal(
             this.props.productStat.productId, 
             this.props.productStat.title,
@@ -26,22 +25,18 @@ class SupplierProductsListItem extends Component {
 
     handleOrdersClick(e) {
         e.preventDefault;
-        console.log("Tilauksia-nappia klikattu");
     }
 
     handleOrderCountClick(e) {
         e.preventDefault();
-        console.log("Tilattu-nappia klikattu");
     }
 
     handleContractedCountClick(e) {
         e.preventDefault();
-        console.log("Sovittu-nappia klikattu");
     }
 
     handleSuppliedCountClick(e) {
         e.preventDefault();
-        console.log("Toimitettu-nappia klikattu");
     }
    
     // two order-related buttons shown to admins only
@@ -80,8 +75,6 @@ class SupplierProductsListItem extends Component {
 }
 
 SupplierProductsListItem.propTypes = {
-    // product: PropTypes.object,
-    // orders: PropTypes.arrayOf(PropTypes.object),
     productStat: PropTypes.object,
     userStatus: PropTypes.string,
     showContractModal: PropTypes.func,

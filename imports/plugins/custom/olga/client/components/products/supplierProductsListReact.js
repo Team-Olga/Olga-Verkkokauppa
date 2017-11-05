@@ -52,10 +52,8 @@ class SupplierProductsListReact extends Component {
     closeModal() {
       if (this.state.supplyQuantity == 0 ) {
         this.setState({modalIsOpen: false});
-        console.log("Suljettu ilman palvelinkutsua");
       } else {
         this.setState({modalIsOpen: false});
-        console.log("Suljettu palvelinkutsulla, määrä " + this.state.supplyQuantity);
         Meteor.call("supplyContracts/create", this.state.productId, parseInt(this.state.supplyQuantity));
         this.showAlert('Toimitussopimus tehty (' + this.state.productName + ' ' + this.state.supplyQuantity + ' kpl)');
       }
@@ -124,8 +122,6 @@ class SupplierProductsListReact extends Component {
 }
 
 SupplierProductsListReact.propTypes = {
-    products: PropTypes.arrayOf(PropTypes.object),
-    orders: PropTypes.arrayOf(PropTypes.object),
     productStats: PropTypes.arrayOf(PropTypes.object),
     userStatus: PropTypes.string
 }

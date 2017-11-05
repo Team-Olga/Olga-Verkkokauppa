@@ -6,13 +6,12 @@ import PropTypes from "prop-types";;
 import _ from "lodash";
 import { isInRole, getAllRoles } from "../../../lib/userChecks";
 import { Products, Orders } from "lib/collections";
+import { SupplyContracts } from "../../../lib/collections";
 import { Loading } from "/imports/plugins/core/ui/client/components";
 import SupplierProductsListReact from "../../components/products/supplierProductsListReact";
 
 class SupplierProductsContainer extends Component {
     static propTypes = {
-        products: PropTypes.array,
-        orders: PropTypes.array,
         productStats: PropTypes.array
     }
 
@@ -21,7 +20,7 @@ class SupplierProductsContainer extends Component {
     }
 
     render() {
-        if (_.isEmpty(this.props.products)) {
+        if (_.isEmpty(this.props.productStats)) {
             return (
                 <div>
                     <p>Tuotteita ei löytynyt!</p>
@@ -41,8 +40,6 @@ class SupplierProductsContainer extends Component {
             <div>
                 <h1 className="olga-list-header">Tuotteet</h1>
                 <SupplierProductsListReact
-                    products={this.props.products}
-                    orders={this.props.orders}
                     productStats={this.props.productStats}
                     userStatus={userStatus}
                 />
@@ -65,33 +62,26 @@ const loadData = (props, onData) => {
     const contractSubscription = Meteor.subscribe("SupplyContracts");
     const ordersSubscription = Meteor.subscribe("SupplierOrders");
 
-    if(productsSubscription.ready() && ordersSubscription.ready()) {
+    if(productsSubscription.ready() && contractSubscription.ready() && ordersSubscription.ready()) {
         const allProducts = Products.find({}, { sort: { createdAt: 1 }}).fetch();
         const allOrders = Orders.find({}, { sort: { createdAt: 1 }}).fetch();
-        const productStats = getProductStats(allOrders, allProducts);
-
+        const allContracts = SupplyContracts.find({}, { sort: { createdAt: 1 }}).fetch();
+        const productStats = getProductStats(allOrders, allContracts, allProducts);
 
         onData(null, {
-            products: allProducts,
-            orders: allOrders,
             productStats: productStats
         });
     }
 }
 
-function getProductStats(orders, products) {
+function getProductStats(orders, contracts, products) {
     let productStats = [];
 
     _.forEach(products, function(product) {
-        let productStat = {};
+        let productStat = calculateProductFigures(orders, contracts, product._id);
         productStat.title = product.title;
         productStat.detailsHref = "#";
         productStat.productId = product._id;
-        productStat.orderCount = orderCount(orders, product._id);
-        productStat.orderQuantity = orderQuantity(orders, product._id);
-        productStat.openQuantity = openQuantity(orders, product._id);
-        productStat.contractedQuantity = 0;
-        productStat.sentQuantity = 0;
         
         productStats.push(productStat);
     });
@@ -99,50 +89,42 @@ function getProductStats(orders, products) {
     return productStats;
 }
 
-function orderCount(orders, productId) {
-    let orderArray = _.filter(
-        orders,
-        function(o) {
-            let match = false;
-            _.forEach(o.items, function(item) {
-                if(item.variants._id == productId) {
-                    match = true;
-                }
-            });
-           return match;
-        }
-    )
-    return orderArray.length;
-}
-
-function orderQuantity(orders, productId) {
-    let count = 0;
-    _.forEach(
-        orders,
-        function(o) {
-            _.forEach(o.items, function(item) {
-                if(item.variants._id == productId) {
-                    count += item.quantity;
-                }
-            });
-        }
-    )
-    return count;
-}
-
-function openQuantity(orders, productId) {
+function calculateProductFigures(orders, contracts, productId) {
+    let productFigures = {};
+    let orderCount = 0;
+    let orderQuantity = 0;
     let openQuantity = 0;
-    _.forEach(
-        orders,
-        function(o) {
-            _.forEach(o.productSupplies, function(productSupply) {
-                if(productSupply.productId == productId) {
-                    openQuantity += productSupply.openQuantity;
-                }
-            });
+    let contractedQuantity = 0;
+    let sentQuantity = 0;
+
+    _.forEach(orders, function(o) {
+        _.forEach(o.items, function(item) {
+            if(item.variants._id == productId) {
+                orderCount++;
+                orderQuantity += item.quantity;
+            }
+        });
+        _.forEach(o.productSupplies, function(productSupply) {
+            if(productSupply.productId == productId) {
+                openQuantity += productSupply.openQuantity;
+            }
+        });        
+    });
+
+    _.forEach(contracts, function(contract) {
+        if(contract.productId == productId) {
+            contractedQuantity += contract.quantity;
+            sentQuantity += contract.sentQuantity;
         }
-    );
-    return openQuantity;
+    });
+
+    productFigures.orderCount = orderCount;
+    productFigures.orderQuantity = orderQuantity;
+    productFigures.openQuantity = openQuantity;
+    productFigures.contractedQuantity = contractedQuantity;
+    productFigures.sentQuantity = sentQuantity;
+
+    return productFigures;
 }
 
 export default composeWithTracker(loadData, Loading)(SupplierProductsContainer);
