@@ -14,9 +14,9 @@ class SupplierProductsListReact extends Component {
 
         this.state = {
           modalIsOpen: false,
-          productId: "xxxx",
+          productId: "id",
           openQuantity: 2,
-          productName: "qqqq",
+          productName: "name",
           supplyQuantity: 0
         };
         this.openModal = this.openModal.bind(this);
@@ -39,11 +39,11 @@ class SupplierProductsListReact extends Component {
         })
     }
 
-    openModal(product, openQuantity) {
+    openModal(productId, productTitle, openQuantity) {
       this.setState({
         modalIsOpen: true,
-        productId: product._id,
-        productName: product.title,
+        productId: productId,
+        productName: productTitle,
         openQuantity: openQuantity,
         supplyQuantity: 0
       });
@@ -56,7 +56,7 @@ class SupplierProductsListReact extends Component {
       } else {
         this.setState({modalIsOpen: false});
         console.log("Suljettu palvelinkutsulla, määrä " + this.state.supplyQuantity);
-        Meteor.call("supplyContracts/create", this.state.productId, this.state.supplyQuantity);
+        Meteor.call("supplyContracts/create", this.state.productId, parseInt(this.state.supplyQuantity));
         this.showAlert('Toimitussopimus tehty (' + this.state.productName + ' ' + this.state.supplyQuantity + ' kpl)');
       }
     }

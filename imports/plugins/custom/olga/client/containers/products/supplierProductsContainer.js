@@ -62,15 +62,8 @@ class SupplierProductsContainer extends Component {
 
 const loadData = (props, onData) => {
     const productsSubscription = Meteor.subscribe("Products");
-    //const ordersSubscription = Meteor.subscribe("Orders")
-    console.log("Loading Supplycontracts");
     const contractSubscription = Meteor.subscribe("SupplyContracts");
-    console.log("Loading SupplierOrders");
     const ordersSubscription = Meteor.subscribe("SupplierOrders");
-    console.log("Loaded SupplierOrders");
-    console.log("Products status: " + productsSubscription.ready());
-    console.log("Contracts status: " + contractSubscription.ready());
-    console.log("Orders status: " + ordersSubscription.ready());
 
     if(productsSubscription.ready() && ordersSubscription.ready()) {
         const allProducts = Products.find({}, { sort: { createdAt: 1 }}).fetch();
@@ -143,12 +136,8 @@ function openQuantity(orders, productId) {
         orders,
         function(o) {
             _.forEach(o.productSupplies, function(productSupply) {
-                console.log("Order: "  + o._id + " / productId " + productSupply.productId + " " + productSupply.openQuantity + " kpl");
                 if(productSupply.productId == productId) {
-                    console.log("Matches");
                     openQuantity += productSupply.openQuantity;
-                } else {
-                    console.log("Doesn't match");
                 }
             });
         }

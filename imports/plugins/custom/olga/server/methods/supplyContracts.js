@@ -112,9 +112,12 @@ export const methods = {
         check(quantity, Number);
 
         let userId = Meteor.userId();
+        
+        //if(!Reaction.hasAdminAccess(Reaction.getShopId())
+console.log("Käyttäjä: " + userId + "/ admin? " + Reaction.hasAdminAccess() + " supplier? " + Roles.userIsInRole("supplier"));
 
-        if(!Reaction.hasAdminAccess(Reaction.getShopId())
-            || !Roles.userIsInRole("supplier")) {
+        if(!Reaction.hasAdminAccess()
+            && !Roles.userIsInRole("supplier")) {
             throw new Meteor.Error(403, "Access Denied");
         }
 

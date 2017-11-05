@@ -17,7 +17,11 @@ class SupplierProductsListItem extends Component {
     handleOpenOrdersClick(e) {
         e.preventDefault();
         console.log("Avoinna-nappia klikattu");
-        this.props.showContractModal(this.props.product, 7);
+        this.props.showContractModal(
+            this.props.productStat.productId, 
+            this.props.productStat.title,
+            this.props.productStat.openQuantity
+        );
     }
 
     handleOrdersClick(e) {
