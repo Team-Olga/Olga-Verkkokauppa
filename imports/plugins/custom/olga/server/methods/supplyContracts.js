@@ -1,6 +1,6 @@
 import { Meteor } from "meteor/meteor";
 import { check, Match } from "meteor/check"; 
-import { SupplyContracts } from "../../collections";
+import { SupplyContracts } from "../../lib/collections";
 import { Orders } from "/lib/collections";
 import { ValidatedMethod } from "meteor/mdg:validated-method";
 import { SimpleSchema } from "meteor/aldeed:simple-schema";
@@ -112,9 +112,12 @@ export const methods = {
         check(quantity, Number);
 
         let userId = Meteor.userId();
+        
+        //if(!Reaction.hasAdminAccess(Reaction.getShopId())
+console.log("Käyttäjä: " + userId + "/ admin? " + Reaction.hasAdminAccess() + " supplier? " + Roles.userIsInRole("supplier"));
 
-        if(!Reaction.hasAdminAccess(Reaction.getShopId())
-            || !Roles.userIsInRole("supplier")) {
+        if(!Reaction.hasAdminAccess()
+            && !Roles.userIsInRole("supplier")) {
             throw new Meteor.Error(403, "Access Denied");
         }
 
