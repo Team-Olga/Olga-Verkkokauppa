@@ -7,13 +7,9 @@ node_js:
 before_script:
   - npm install
   - npm install -g reaction-cli
-<<<<<<< HEAD
   - curl https://install.meteor.com/ | sh
-  - sudo chown -R $USER:$GROUP ~/.npm
-=======
-  - curl https://install.meteor.com/ | sh  
+  - sudo chown -R $USER:$GROUP ~/.npm  
   - sudo chown travis -Rh /home/travis/.config /home/travis/build
->>>>>>> 5ffc37dfb64e2f9297c6e6073beb98dde0598eed
   - sudo meteor npm install
   - sudo chown travis -Rh .meteor/local
   - meteor update --release 1.5.1
