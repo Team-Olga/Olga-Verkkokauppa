@@ -6,7 +6,7 @@ import { Reaction } from "/lib/api";
 export const defaultSupplierRoles = [ "guest", "account/profile", "product", "tag", "index", "cart/checkout", "cart/completed"];
 
 export function createCustomGroups() {
-  const shopId = Reaction.getPrimaryShopId();
+  const shopId = "J8Bhq3uTtdgwZx3rz";
   console.log('PRIMARY SHOPID: ' + shopId)
 
   const allGroups = Groups.find({}).fetch();
