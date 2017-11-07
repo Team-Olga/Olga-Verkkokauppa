@@ -3,11 +3,12 @@ import { Shops, Groups }  from "/lib/collections";
 import { Reaction } from "/lib/api";
 
 
-export const defaultSupplierRoles = [ "guest", "account/profile", "product", "tag", "index", "cart/checkout", "cart/completed"];
+export const defaultSupplierRoles = [ "customer" ];
+const defaultCustomerRoles = [ "guest", "account/profile", "product", "tag", "index", "cart/checkout", "cart/completed"];
+const defaultVisitorRoles = ["anonymous", "guest", "product", "tag", "index", "cart/checkout", "cart/completed"];
 
 export function createCustomGroups() {
-  const shopId = Reaction.getPrimaryShopId();
-  console.log('PRIMARY SHOPID: ' + shopId)
+  const shopId = "J8Bhq3uTtdgwZx3rz";
 
   const allGroups = Groups.find({}).fetch();
 
