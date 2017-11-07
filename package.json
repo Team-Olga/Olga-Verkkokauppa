@@ -43,7 +43,7 @@
     "dnd-core": "^2.5.4",
     "escape-string-regexp": "^1.0.5",
     "faker": "^4.1.0",
-    "fibers": "^2.0.0",
+    "fibers": "2.0.0",
     "flatten-obj": "^3.1.0",
     "font-awesome": "^4.7.0",
     "handlebars": "^4.0.11",
