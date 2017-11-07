@@ -15,17 +15,19 @@ import { $ } from 'meteor/jquery';
 import { Template } from "meteor/templating";
 import Modal from 'react-modal';
 import { Products, Orders } from "/lib/collections";
+import { SupplyContracts } from "../../../lib/collections";
 import ReactTestUtils from "react-addons-test-utils";
 
 import SupplierProductsContainer from "../../containers/products/supplierProductsContainer";
 
 var testProducts;
 var testOrders;
+var testContracts;
 
 describe("SupplierProductsReact", function (done) {
 
     beforeEach(function () {
-        StubCollections.stub([Products, Orders]);
+        StubCollections.stub([Products, Orders, SupplyContracts]);
         Template.registerHelper('_', key => key);
         sinon.stub(Meteor, 'subscribe', () => ({
             subscriptionId: 0,
@@ -37,21 +39,35 @@ describe("SupplierProductsReact", function (done) {
             title: "TestProduct",
             ancestors: [],
             createdAt: Date.now(),
-
         });
 
         Factory.define('order', Orders, {
             _id: Random.id(),
             items: [
-                {variants: 
-                    {_id:  Random.id()}
+                { 
+                    variants: 
+                        { _id:  Random.id() },
+                    quantity: 0
                 }
             ],
+            productSupplies: [],
+            createdAt: Date.now()
+        });
+
+        Factory.define('contract', SupplyContracts, {
+            _id: Random.id(),
+            userId: Random.id(),
+            orders: [],
+            productId: Random.id(),
+            quantity: 0,
+            sentQuantity: 0,
+            receivedQuantity: 0,
             createdAt: Date.now()
         });
 
         testProducts = [];
         testOrders = [];
+        testContracts = [];
 
         _.times(3, function (index) {
             let product = Factory.create('product', {
@@ -77,17 +93,77 @@ describe("SupplierProductsReact", function (done) {
             },
         ];
 
+        let productSupplies0 = [
+            {
+                productId: testProducts[0]._id,
+                supplyContracts: [],
+                openQuantity: 1
+            }
+        ];
+
+        let productSupplies1 = [
+            {
+                productId: testProducts[1]._id,
+                supplyContracts: [],
+                openQuantity: 6
+            },
+            {
+                productId: testProducts[0]._id,
+                supplyContracts: [],
+                openQuantity: 4
+            }
+        ];
+
         let order0 = Factory.create('order', {
                 _id: Random.id(),
-                items: items0
+                items: items0,
+                productSupplies: productSupplies0
             });
         testOrders.push(order0);
 
         let order1 = Factory.create('order', {
                 _id: Random.id(),
-                items: items1
+                items: items1,
+                productSupplies: productSupplies1
             });
         testOrders.push(order1);
+
+        let contract0 = Factory.create('contract', {
+                _id: Random.id(),
+                userId: Random.id(),
+                orders: [],
+                productId: testProducts[0]._id,
+                quantity: 1,
+                sentQuantity: 0,
+                receivedQuantity: 0,
+                createdAt: Date.now()
+        });
+        testContracts.push(contract0);
+
+        let contract1 = Factory.create('contract', {
+                _id: Random.id(),
+                userId: Random.id(),
+                orders: [],
+                productId: testProducts[1]._id,
+                quantity: 1,
+                sentQuantity: 0,
+                receivedQuantity: 0,
+                createdAt: Date.now()
+        });
+        testContracts.push(contract1);
+
+        let contract2 = Factory.create('contract', {
+                _id: Random.id(),
+                userId: Random.id(),
+                orders: [],
+                productId: testProducts[0]._id,
+                quantity: 1,
+                sentQuantity: 1,
+                receivedQuantity: 0,
+                createdAt: Date.now()
+        });
+        testContracts.push(contract2);
+
     });
 
     afterEach(function () {
@@ -159,7 +235,7 @@ describe("SupplierProductsReact", function (done) {
         let modalWrapper = new ReactWrapper(wrapper.find(Modal).node.portal, true);
         chai.assert.equal(modalWrapper.find("#contractModalTitle").first().text(), productTitle, 
             "Modal title doesn'tmatch product title");
-        chai.assert.equal(modalWrapper.find('#openQuantity').first().text(), 7, 
+        chai.assert.equal(modalWrapper.find('#openQuantity').first().text(), "6", 
             "Modal open quantity is incorrect");
 
         done();
@@ -236,6 +312,8 @@ function getProductStats(title, stat) {
     let orderCount = 0;
     let orderedQuantity = 0;    
     let openOrderCount = 0;
+    let contractedQuantity = 0;
+    let sentQuantity = 0;
 
     _.forEach(testOrders, function(o) {
         _.forEach(o.items, function(item) {
@@ -244,6 +322,18 @@ function getProductStats(title, stat) {
                 orderedQuantity += item.quantity;
             }
         });
+        _.forEach(o.productSupplies, function(productSupply) {
+            if(productSupply.productId === productId) {
+                openOrderCount += productSupply.openQuantity;
+            }
+        });
+    });
+
+    _.forEach(testContracts, function(c) {
+        if(c.productId === productId) {
+            contractedQuantity += c.contractedQuantity;
+            sentQuantity += c.sentQuantity;
+        }
     });
 
     switch (stat) {
@@ -253,5 +343,9 @@ function getProductStats(title, stat) {
             return orderCount;
         case "Tilattu":
             return orderedQuantity;
+        case "Sovittu":
+            return contractedQuantity;
+        case "Toimitettu":
+            return sentQuantity;
     }
 }

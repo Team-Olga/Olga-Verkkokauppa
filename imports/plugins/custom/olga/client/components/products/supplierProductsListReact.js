@@ -14,9 +14,9 @@ class SupplierProductsListReact extends Component {
 
         this.state = {
           modalIsOpen: false,
-          productId: "xxxx",
+          productId: "id",
           openQuantity: 2,
-          productName: "qqqq",
+          productName: "name",
           supplyQuantity: 0
         };
         this.openModal = this.openModal.bind(this);
@@ -39,11 +39,11 @@ class SupplierProductsListReact extends Component {
         })
     }
 
-    openModal(product, openQuantity) {
+    openModal(productId, productTitle, openQuantity) {
       this.setState({
         modalIsOpen: true,
-        productId: product._id,
-        productName: product.title,
+        productId: productId,
+        productName: productTitle,
         openQuantity: openQuantity,
         supplyQuantity: 0
       });
@@ -52,11 +52,9 @@ class SupplierProductsListReact extends Component {
     closeModal() {
       if (this.state.supplyQuantity == 0 ) {
         this.setState({modalIsOpen: false});
-        console.log("Suljettu ilman palvelinkutsua");
       } else {
         this.setState({modalIsOpen: false});
-        console.log("Suljettu palvelinkutsulla, määrä " + this.state.supplyQuantity);
-        Meteor.call("supplyContracts/create", this.state.productId, this.state.supplyQuantity);
+        Meteor.call("supplyContracts/create", this.state.productId, parseInt(this.state.supplyQuantity));
         this.showAlert('Toimitussopimus tehty (' + this.state.productName + ' ' + this.state.supplyQuantity + ' kpl)');
       }
     }
@@ -72,8 +70,7 @@ class SupplierProductsListReact extends Component {
                 accessor: "title",
                 Cell: cellInfo => (
                     <SupplierProductsListItem
-                        product={cellInfo.original}
-                        orders={this.props.orders}
+                        productStat={cellInfo.original}
                         userStatus={this.props.userStatus}
                         showContractModal={this.openModal}
                     />
@@ -114,7 +111,7 @@ class SupplierProductsListReact extends Component {
                 <AlertContainer ref={a => this.msg = a} {...this.alertOptions} />
 
                 <ReactTable
-                    data={this.props.products}
+                    data={this.props.productStats}
                     columns={supplierColumns}
                     defaultPageSize={10}
                     className="olga-list-table"
@@ -125,8 +122,7 @@ class SupplierProductsListReact extends Component {
 }
 
 SupplierProductsListReact.propTypes = {
-    products: PropTypes.arrayOf(PropTypes.object),
-    orders: PropTypes.arrayOf(PropTypes.object),
+    productStats: PropTypes.arrayOf(PropTypes.object),
     userStatus: PropTypes.string
 }
 

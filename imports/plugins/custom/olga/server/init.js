@@ -1,6 +1,8 @@
 import { check } from "meteor/check";
 import { Shops } from "/lib/collections";
 import { Hooks, Reaction, Logger } from "/server/api";
+import "./publications";
+
 
 function addRolesToVisitors() {
   const shop = Shops.findOne(Reaction.getShopId());
