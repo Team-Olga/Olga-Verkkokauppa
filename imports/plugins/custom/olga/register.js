@@ -50,14 +50,14 @@ Reaction.registerPackage({
       layout: "coreLayoutOlga",
       template: "aboutUs",
       workflow: "coreProductGridWorkflow"
-    }
-    /*{
+    },
+    {
       route: "/",
       name: "home",
       layout: "coreLayoutOlga",
       template: "homepageReact",
       workflow: "coreProductGridWorkflow"
-    }*/
+    }
 
   ]
 });
