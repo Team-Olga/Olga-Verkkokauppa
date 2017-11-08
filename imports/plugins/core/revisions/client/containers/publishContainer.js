@@ -70,6 +70,7 @@ class PublishContainer extends Component {
   }
 
   render() {
+    console.log("why?");
     return (
       <TranslationProvider>
         <PublishControls

@@ -50,7 +50,7 @@ class SupplierProductsListReact extends Component {
     }
 
     closeModal() {
-      if (this.state.supplyQuantity == 0 ) {
+      if (this.state.supplyQuantity == 0 || this.state.openQuantity <= 0) {
         this.setState({modalIsOpen: false});
       } else {
         this.setState({modalIsOpen: false});
@@ -101,10 +101,10 @@ class SupplierProductsListReact extends Component {
                 <input type="number" id="quantity" name="quantity" className="right-justified" min="0" max={this.state.openQuantity}
                     onChange={this.updateSupplyQuantity} value={this.state.supplyQuantity}/></h3>
                 <div>
-                    <button id="cancelModal" className="rui btn btn-primary flat olga-listing-btn-default pull-right" 
+                    <button id="cancelModal" className="rui btn btn-primary flat olga-listing-btn-default pull-right"
                         onClick={() => this.closeModal()} >Peruuta</button>
-                    <button id="confirmContract" className="rui btn btn-primary flat olga-listing-btn-success pull-right" 
-                        onClick={() => this.closeModal($('#quantity').val())} >Vahvista</button>                    
+                    <button id="confirmContract" className="rui btn btn-primary flat olga-listing-btn-success pull-right"
+                        onClick={() => this.closeModal($('#quantity').val())} >Vahvista</button>
                 </div>
                 </Modal>
 
