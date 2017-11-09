@@ -13,7 +13,7 @@ supplier2@localhost
 password: test
 */
 
-const supplierRoles = [ "customer",  "/supplierproducts", "/supplierproductsreact" ];
+const supplierRoles = [ "customer",  "supplierproducts", "supplierproductsreact" ];
 const defaultCustomerRoles = [ "guest", "account/profile", "product", "tag", "index", "cart/checkout", "cart/completed", "about"];
 const defaultVisitorRoles = ["anonymous", "guest", "product", "tag", "index", "cart/checkout", "cart/completed", "about"];
 const defaultSupplierRoles = supplierRoles.concat(defaultCustomerRoles);
@@ -23,14 +23,13 @@ function createSupplierUsers() {
   const accounts = require('./Accounts.json');
 
   accounts.forEach((doc) => {
-    console.log('Adding account: ' + doc.emails[0].address);
     if (Meteor.users.find({ "emails.address": doc.emails[0].address }).count() !== 0) {
       Meteor.users.remove({'emails.address': doc.emails[0].address});
       console.log('Removing account: ' + doc.emails[0].address);
     }
 
     if (Accounts.find({ "emails.address": doc.emails[0].address }).count() !== 0) {
-      Meteor.users.remove({'emails.address': doc.emails[0].address});
+      Accounts.remove({'emails.address': doc.emails[0].address});
       console.log('Removing account 2: ' + doc.emails[0].address);
     }
 
