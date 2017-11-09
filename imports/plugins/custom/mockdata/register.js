@@ -9,39 +9,18 @@ import { Reaction, Hooks } from "/server/api";
 /*
 Accounts:
 supplier1@localhost
-...
-supplier10@localhost
-password: test
-
-customer@localhost
-customer2@localhost
-custome3@localhost
+supplier2@localhost
 password: test
 */
-/*console.log("HELLO WORLD");
 
-var accounts = require('./Accounts.json');
-
-const allAccounts = Meteor.users.find({}).fetch();
-
-accounts.forEach((doc) => {
-  const accountExists = allAccounts.find(acc => acc._id === doc._id);
-  
-  if (accountExists) {
-    Meteor.users.remove({'_id': doc._id});
-    console.log('Removing account: ' + doc._id);
-  }
-  console.log(doc);
-  
-  Meteor.users.insert(doc);
-});*/
+const supplierRoles = [ "customer",  "/supplierproducts", "/supplierproductsreact" ];
+const defaultCustomerRoles = [ "guest", "account/profile", "product", "tag", "index", "cart/checkout", "cart/completed", "about"];
+const defaultVisitorRoles = ["anonymous", "guest", "product", "tag", "index", "cart/checkout", "cart/completed", "about"];
+const defaultSupplierRoles = supplierRoles.concat(defaultCustomerRoles);
 
 function createSupplierUsers() {
   const shopId = "J8Bhq3uTtdgwZx3rz";
   const accounts = require('./Accounts.json');
-  console.log(accounts);
-
-  const allAccounts = Meteor.users.find({}).fetch();
 
   accounts.forEach((doc) => {
     console.log('Adding account: ' + doc.emails[0].address);
@@ -52,80 +31,34 @@ function createSupplierUsers() {
 
     if (Accounts.find({ "emails.address": doc.emails[0].address }).count() !== 0) {
       Meteor.users.remove({'emails.address': doc.emails[0].address});
-      console.log('Removing account: ' + doc.emails[0].address);
+      console.log('Removing account 2: ' + doc.emails[0].address);
     }
 
     let options = {};
 
-    // defaults use either env or generated values
     options.email = doc.emails[0].address;
     options.password = 'test';
-    //options.username = doc.emails[0].address.split('@')[0];
-    //options.name = doc.name;
 
     // create the new supplier user
     let accountId = AccountsBase.createUser(options);
-    console.log('Created account with id: ' + accountId);
 
     // update the user's name if it was provided
     // (since Accounts.createUser() doesn't allow that field and strips it out)
     Meteor.users.update(accountId, {
       $set: {
-        name: doc.name
+        name: doc.name,
+        profile: doc.profile
       }
     });
 
-/*    Roles.setUserRoles(accountId, 
-      [ "supplier", 
-        "guest",
-        "account/profile",
-        "product",
-        "tag",
-        "index",
-        "cart/checkout",
-        "cart/completed",
-        "notifications",
-        "reaction-paypal/paypalDone",
-        "reaction-paypal/paypalCancel",
-        "stripe/connect/authorize",
-      ], Roles.GLOBAL_GROUP);*/
-
-
-/*    Meteor.users.update(accountId, {
+    Accounts.update(accountId, {
       $set: {
+        name: doc.profile.addressBook[0].fullName,
         profile: doc.profile
       }
-    });*/
-/*    Roles.setUserRoles(accountId, ownerRoles, shopId);
+    });
 
-    // unless strict security is enabled, mark the admin's email as validated
-    if (!isSecureSetup) {
-      Meteor.users.update({
-        "_id": accountId,
-        "emails.address": options.email
-      }, {
-        $set: {
-          "emails.$.verified": true
-        }
-      });
-    } else {
-      // send verification email to admin
-      sendVerificationEmail(accountId);
-    }*/
-
-    //const defaultSupplierRoles = ["supplier"];
-
-    // Set default owner roles
-    //const defaultAdminRoles = ["owner", "admin", "guest", "account/profile"];
-    // Join other roles with defaultAdminRoles for owner.
-    // this is needed as owner should not just have "owner" but all other defined roles
-    //let ownerRoles = defaultAdminRoles.concat(this.defaultCustomerRoles);
-    //ownerRoles = _.uniq(ownerRoles);
-
-    // we don't use accounts/addUserPermissions here because we may not yet have permissions
-    //Roles.setUserRoles(accountId, ownerRoles, shopId);
-    // // the reaction owner has permissions to all sites by default
-    
+    Roles.setUserRoles(accountId, defaultSupplierRoles, shopId);
   });
 }
 
@@ -135,11 +68,14 @@ Meteor.methods({
   }
 });
 
-Meteor.call('createSuppliers', {}, 
-  (err, res) => {
-  if (err) {
-    alert(err);
-  } else {
-    // success!
-  }
+Hooks.Events.add("afterCoreInit", () => {
+  Meteor.call('createSuppliers', {}, 
+    (err, res) => {
+    if (err) {
+      alert(err);
+    } else {
+      // success!
+    }
+  });
 });
+

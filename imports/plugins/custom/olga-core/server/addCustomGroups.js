@@ -3,9 +3,10 @@ import { Shops, Groups }  from "/lib/collections";
 import { Reaction } from "/lib/api";
 
 
-export const defaultSupplierRoles = [ "customer",  "/supplierproducts", "/supplierproductsreact" ];
-const defaultCustomerRoles = [ "guest", "account/profile", "product", "tag", "index", "cart/checkout", "cart/completed"];
+const supplierRoles = [ "customer",  "/supplierproducts", "/supplierproductsreact" ];
+const defaultCustomerRoles = [ "guest", "account/profile", "product", "tag", "index", "cart/checkout", "cart/completed", "about"];
 const defaultVisitorRoles = ["anonymous", "guest", "product", "tag", "index", "cart/checkout", "cart/completed", "about"];
+export const defaultSupplierRoles = supplierRoles.concat(defaultCustomerRoles);
 
 export function createCustomGroups() {
   const shopId = "J8Bhq3uTtdgwZx3rz";
@@ -14,7 +15,8 @@ export function createCustomGroups() {
 
   const roles = {
     "supplier": defaultSupplierRoles,
-    
+    "customer": Reaction.defaultCustomerRoles,
+    "guest": Reaction.defaultVisitorRoles
   };
 
   Object.keys(roles).forEach(groupKeys => {
