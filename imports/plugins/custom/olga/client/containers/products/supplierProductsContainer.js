@@ -27,7 +27,7 @@ class SupplierProductsContainer extends Component {
         );
       }
 
-      let userStatus;
+      let userStatus;p
       if (isInRole("admin")) {
         userStatus = "admin";
       } else if (isInRole("supplierproductsreact")) {
