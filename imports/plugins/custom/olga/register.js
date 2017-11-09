@@ -53,7 +53,7 @@ Reaction.registerPackage({
     },
     {
       route: "/",
-      name: "home",
+      name: "index",
       layout: "coreLayoutOlga",
       template: "homepageReact",
       workflow: "coreProductGridWorkflow"
