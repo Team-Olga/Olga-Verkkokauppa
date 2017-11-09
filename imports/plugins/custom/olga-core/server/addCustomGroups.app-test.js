@@ -20,10 +20,10 @@ describe("CustomGroups", function () {
       CustomGroups.createCustomGroups();
       
       let group = Groups.findOne({
-        slug: "producer"
+        slug: "supplier"
       });
 
-      expect(group.permissions).to.have.members(CustomGroups.defaultProducerRoles);
+      expect(group.permissions).to.have.members(CustomGroups.defaultSupplierRoles);
     });
   });
 });

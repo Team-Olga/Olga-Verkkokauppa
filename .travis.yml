@@ -1,6 +1,17 @@
 sudo: required
 language: node_js
 
+env:
+  - CXX=g++-4.8
+
+addons:
+    apt:
+      sources:
+        - ubuntu-toolchain-r-test
+      packages:
+        - g++-4.8
+
+
 node_js:
   - "7"
 
@@ -9,7 +20,6 @@ before_script:
   - npm install -g reaction-cli
   - curl https://install.meteor.com/ | sh
   - sudo chown travis -Rh /home/travis/.config /home/travis/build
-  - sudo chown -R $USER:$GROUP ~/.npm
   - sudo meteor npm install
   - sudo chown travis -Rh .meteor/local
   - meteor update --release 1.5.1

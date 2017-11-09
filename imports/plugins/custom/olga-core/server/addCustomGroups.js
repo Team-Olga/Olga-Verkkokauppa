@@ -11,6 +11,7 @@ export const defaultSupplierRoles = supplierRoles.concat(defaultCustomerRoles);
 export function createCustomGroups() {
   const shopId = "J8Bhq3uTtdgwZx3rz";
 
+
   const allGroups = Groups.find({}).fetch();
 
   const roles = {
