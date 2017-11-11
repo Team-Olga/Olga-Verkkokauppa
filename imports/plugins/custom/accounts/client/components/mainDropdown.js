@@ -89,6 +89,23 @@ class MainDropdown extends Component {
     );
   }
 
+  renderContractIcons() {
+    return (
+      Reaction.Apps(this.props.contractShortcuts).map((contracts) => (
+        <Components.MenuItem
+          key={contracts.packageId}
+          className="accounts-a-tag"
+          label={contracts.label}
+          i18nKeyLabel={contracts.i18nKeyLabel}
+          icon={contracts.icon && contracts.icon}
+          iconStyle={iconStyle}
+          value={contracts}
+        />
+      ))
+    );
+  }
+
+
   renderSignOutButton() {
     return (
       <Components.MenuItem
@@ -131,6 +148,7 @@ class MainDropdown extends Component {
               {this.renderUserIcons()}
               {this.renderAdminIcons()}
               {this.renderSupplierIcons()}
+              {this.renderContractIcons()}
               {this.renderSignOutButton()}
             </Components.DropDownMenu>
           </div>
