@@ -24,7 +24,7 @@ class SupplierProductsListItem extends Component {
     }
 
     handleOrdersClick(e) {
-        e.preventDefault;
+        e.preventDefault();
     }
 
     handleOrderCountClick(e) {

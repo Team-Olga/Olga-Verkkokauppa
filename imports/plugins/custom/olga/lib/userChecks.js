@@ -5,6 +5,9 @@ import _ from "lodash";
 export function isInRole(role) {
     let loggedInUser = Meteor.user();
     let result = false;
+    if(role === "supplier") {
+        role = "supplierproducts";
+    }
     if(loggedInUser) {
         if(Roles.userIsInRole(loggedInUser, role) || roleIsInArray(loggedInUser, role)) {
             result = true;

@@ -6,6 +6,7 @@ import { ValidatedMethod } from "meteor/mdg:validated-method";
 import { SimpleSchema } from "meteor/aldeed:simple-schema";
 import { Reaction } from "/server/api";
 import { Roles } from "meteor/alanning:roles";
+import { isInRole } from "../../lib/userChecks";
 import _ from "lodash";
 
 function initializeContract(userId, productId, quantity) {
@@ -116,8 +117,9 @@ export const methods = {
         //if(!Reaction.hasAdminAccess(Reaction.getShopId())
 console.log("Käyttäjä: " + userId + "/ admin? " + Reaction.hasAdminAccess() + " supplier? " + Roles.userIsInRole("supplier"));
 
-        if(!Reaction.hasAdminAccess()
-            && !Roles.userIsInRole("supplier")) {
+        // if(!Reaction.hasAdminAccess()
+        //     && !Roles.userIsInRole("supplier")) {
+       if(!isInRole("admin") && !isInRole("supplier")) {
             throw new Meteor.Error(403, "Access Denied");
         }
 

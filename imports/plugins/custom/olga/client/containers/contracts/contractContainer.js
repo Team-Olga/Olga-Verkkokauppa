@@ -5,8 +5,9 @@ import PropTypes from "prop-types";
 import _ from "lodash";
 import { isInRole, getAllRoles } from "../../../lib/userChecks";
 import { SupplyContracts } from "../../../lib/collections";
+import { Products, Accounts } from "lib/collections";
 import { Loading } from "/imports/plugins/core/ui/client/components";
-
+import ContractList from "../../components/contracts/contractList";
 
 class ContractContainer extends Component {
     static propTypes = {
@@ -35,23 +36,50 @@ class ContractContainer extends Component {
 
         return (
             <div>
-                Toimitussopimuslista!
+                <h1 className="olga-list-header">Toimitussopimukset</h1>
+                <ContractList
+                    contracts={this.props.contracts}
+                    userStatus={userStatus}
+                />
             </div>
         );
     }
-
 }
 
 const loadData = (props, onData) => {
     const contractSubscription = Meteor.subscribe("SupplyContracts");
+    const productSubscription = Meteor.subscribe("Products");
+    const accountSubscription = Meteor.subscribe("Accounts", Meteor.userId());
 
-    if(contractSubscription.ready()) {
-        const allContracts = SupplyContracts.find({}, { sort: { createdAt: 1 } }).fetch();
+    if(contractSubscription.ready() && productSubscription.ready()) {
+        const baseContracts = SupplyContracts.find({}, { sort: { createdAt: 1 } }).fetch();
+        const products = Products.find({}).fetch();
+        const accounts = Accounts.find({}).fetch();
+        const contracts = enrichContracts(baseContracts, products, accounts);
 
         onData(null, {
-            contracts: allContracts
+            contracts: contracts
         });
     }
 };
+
+function enrichContracts(contracts, products, accounts) {
+    _.forEach(contracts, function(contract) {
+        let productMatch = _.find(products, function(product) {
+            return product._id == contract.productId;
+        });
+        if(productMatch) {
+            contract.productName = productMatch.title;
+        }
+        let accountMatch = _.find(accounts, function(account) {
+            return account._id == contract.userId;
+        });
+        if(accountMatch) {
+            contract.supplierName = accountMatch.name;
+        }
+    });
+
+    return contracts;
+}
 
 export default composeWithTracker(loadData, Loading)(ContractContainer);
