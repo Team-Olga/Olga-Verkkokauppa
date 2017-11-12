@@ -98,10 +98,8 @@ function handleChange(event, value) {
       }
     });
   } else if (value.name === "supplierproductsreact") {
-    console.log("Haloo?");
     return Reaction.Router.go(value.route);
-  } else if (value.name !== "account/profile") {
-    console.log("Haloo profiili");
+  } else if (value.name !== "account/profile") {
     return Reaction.showActionView(value);
   } else if (value.route || value.name) {
     const route = value.name || value.route;
