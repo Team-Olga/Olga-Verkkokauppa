@@ -1,0 +1,124 @@
+[
+  {
+    "createdAt": {
+      "date": 1510060740917
+    },
+    "profile": {
+      "addressBook": [
+        {
+        "fullName": "Kaarlo\u00a0H\u00a0Viinikainen",
+        "country": "FI",
+        "isCommercial": false,
+        "address1": "R\u00f6rgrunsv\u00e4gen 48",
+        "postal": "65170",
+        "isBillingDefault": true,
+        "phone": "046 025 0205",
+        "region": "Pohjanmaa",
+        "_id": "9FjmEMWnMYJjDhiAS",
+        "isShippingDefault": true,
+        "city": "VAASA"
+        }
+      ]
+    },
+    "roles": {
+      "J8Bhq3uTtdgwZx3rz": [
+        "guest",
+        "account/profile",
+        "product",
+        "tag",
+        "index",
+        "cart/checkout",
+        "cart/completed",
+        "notifications",
+        "reaction-paypal/paypalDone",
+        "reaction-paypal/paypalCancel",
+        "stripe/connect/authorize"
+      ]
+    },
+    "services": {
+      "password": {
+        "bcrypt": "$2a$10$aRiSDatX/X46K7RpEEU38ub9Hf7x5x8nd8hWHtOV7LXuxXTmXJPAu"
+      },
+      "resume": {
+        "loginTokens": [
+          {
+            "when": {
+              "date": 1510060741093
+            },
+            "hashedToken": "MCC98yDac7nhC+ltbT70DqylBRgvINLXLm/YlrdGyww="
+          }
+        ]
+      }
+    },
+    "_id": "vYHCHPCQLmEN8zbKA",
+    "emails": [
+      {
+        "verified": false,
+        "provides": "default",
+        "address": "supplier1@localhost"
+      }
+    ],
+    "name": "Kaarlo\u00a0H\u00a0Viinikainen"
+  },
+  {
+    "profile": {
+      "addressBook": [
+        {
+        "country": "FI",
+        "isBillingDefault": true,
+        "phone": "041 875 2215",
+        "region": "Uusimaa",
+        "address1": "Puutarhakatu 42",
+        "postal": "01740",
+        "city": "VANTAA",
+        "fullName": "Nea\u00a0O\u00a0Isokoski",
+        "isShippingDefault": true,
+        "isCommercial": false,
+        "_id": "YQ9ayyWpeNYsfJ998"
+        }
+      ]
+    },
+    "emails": [
+      {
+        "address": "supplier2@localhost",
+        "provides": "default",
+        "verified": false
+      }
+    ],
+    "name": "Nea\u00a0O\u00a0Isokoski",
+    "services": {
+      "resume": {
+        "loginTokens": [
+          {
+            "when": {
+              "date": 1510061147287
+            },
+            "hashedToken": "JBxhrQSgCTilaVMAgegp7e7wIfWX13HH/gM0kg5FZeQ="
+          }
+        ]
+      },
+      "password": {
+        "bcrypt": "$2a$10$zChN4xNQiQA2zptInqbPAexFSJuKH4.mnnUqjqnSh11KlOVSe5k2S"
+      }
+    },
+    "createdAt": {
+      "date": 1510061147144
+    },
+    "roles": {
+      "J8Bhq3uTtdgwZx3rz": [
+        "guest",
+        "account/profile",
+        "product",
+        "tag",
+        "index",
+        "cart/checkout",
+        "cart/completed",
+        "notifications",
+        "reaction-paypal/paypalDone",
+        "reaction-paypal/paypalCancel",
+        "stripe/connect/authorize"
+      ]
+    },
+    "_id": "PNt4PqnRYgmG55gzo"
+  }
+]

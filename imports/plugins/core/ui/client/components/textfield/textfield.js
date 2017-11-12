@@ -30,6 +30,16 @@ class TextField extends Component {
     return undefined;
   }
 
+  get isHelpMode() {
+    // TODO: add functionality to toggle helpMode on / off.
+    // When on, helpText will always show.
+    // When off, only validation messages will show.
+    // For now, all helpText will show, meaning this doesn't affect how the app currently works.
+    // This is here just to lay the foundation for when we add the toggle.
+
+    return true;
+  }
+
   get validationMessage() {
     const { name, validation } = this.props;
 
@@ -65,6 +75,18 @@ class TextField extends Component {
   }
 
   /**
+   * onFocus
+   * @summary set the state when the input is focused
+   * @param  {Event} event Event object
+   * @return {void}
+   */
+  onFocus = (event) => {
+    if (this.props.onFocus) {
+      this.props.onFocus(event, event.target.value, this.props.name);
+    }
+  }
+
+  /**
    * onKeyDown
    * @summary set the state when the value of the input is changed
    * @param  {Event} event Event object
@@ -94,6 +116,7 @@ class TextField extends Component {
         className={`${this.props.name}-edit-input`}
         onBlur={this.onBlur}
         onChange={this.onChange}
+        onFocus={this.onFocus}
         placeholder={placeholder}
         ref="input"
         value={this.value}
@@ -123,6 +146,7 @@ class TextField extends Component {
         name={this.props.name}
         onBlur={this.onBlur}
         onChange={this.onChange}
+        onFocus={this.onFocus}
         onKeyDown={this.onKeyDown}
         placeholder={placeholder}
         ref="input"
@@ -168,6 +192,7 @@ class TextField extends Component {
    * @return {ReactNode|null} react node or null
    */
   renderHelpText() {
+    const helpMode = this.isHelpMode;
     const message = this.validationMessage;
     let helpText = this.props.helpText;
     let i18nKey = this.props.i18nKeyHelpText;
@@ -177,7 +202,17 @@ class TextField extends Component {
       i18nKey = message.i18nKeyMessage;
     }
 
-    if (helpText) {
+    // If this is a validation message, show even if helpMode is false
+    if (this.isValid === false && message) {
+      return (
+        <span className="help-block">
+          <Components.Translation defaultValue={helpText} i18nKey={i18nKey} />
+        </span>
+      );
+    }
+
+    // If this is a non-validation message, only show if helpMode is true
+    if (helpText && helpMode) {
       return (
         <span className="help-block">
           <Components.Translation defaultValue={helpText} i18nKey={i18nKey} />
@@ -233,6 +268,7 @@ TextField.propTypes = {
   name: PropTypes.string,
   onBlur: PropTypes.func,
   onChange: PropTypes.func,
+  onFocus: PropTypes.func,
   onKeyDown: PropTypes.func,
   onReturnKeyDown: PropTypes.func,
   placeholder: PropTypes.string,

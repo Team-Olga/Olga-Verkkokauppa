@@ -1,4 +1,6 @@
 import { Reaction } from "/server/api";
+import "./server/methods";
+import "./server/hooks";
 
 // Register package as ReactionCommerce package
 Reaction.registerPackage({
@@ -15,7 +17,7 @@ Reaction.registerPackage({
     structure: {
       // template: "productsLanding",
       template: "products",
-      //layoutHeader: "layoutHeader",
+      layoutHeader: "layoutHeader",
       layoutFooter: "layoutFooterOlga",
       notFound: "productNotFound",
       dashboardHeader: "",
@@ -35,6 +37,9 @@ Reaction.registerPackage({
     {
       route: "/supplierproductsreact",
       name: "supplierproductsreact",
+      label: "Supplier products",
+      provides: ["supplierAccountDropdown"],
+      icon: "fa fa-telegram",
       layout: "coreLayoutOlga",
       template: "supplierProductsReact",
       workflow: "coreProductGridWorkflow"
@@ -45,6 +50,14 @@ Reaction.registerPackage({
       layout: "coreLayoutOlga",
       template: "aboutUs",
       workflow: "coreProductGridWorkflow"
+    },
+    {
+      route: "/",
+      name: "index",
+      layout: "coreLayoutOlga",
+      template: "homepageReact",
+      workflow: "coreProductGridWorkflow"
     }
+
   ]
 });
