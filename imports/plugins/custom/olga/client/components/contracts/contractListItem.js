@@ -22,10 +22,10 @@ class ContractListItem extends Component {
     render() {
         return (           
             <div className="row supplier-product-row">
-                <a href="#"><span className="olga-listing-title">{this.props.contract.productName} </span></a>
-                <a href="#"><span className="olga-listing-title">{this.props.contract.supplierName}</span></a>
-                <span className="olga-listing-details"> Sovittu: {this.props.contract.quantity} kpl</span>
-                <span className="olga-listing-details"> {this.props.contract.createdAt.toLocaleDateString('fi-FI')}</span>
+                <a href="#"><span className="olga-listing-title olga-product">{this.props.contract.productName} </span></a>
+                <a href="#"><span className="olga-listing-title olga-supplier">{this.props.contract.supplierName}</span></a>
+                <span className="olga-listing-details olga-quantity"> Sovittu: {this.props.contract.quantity} kpl</span>
+                <span className="olga-listing-details olga-date"> {this.props.contract.createdAt.toLocaleDateString('fi-FI')}</span>                 
                 {this.props.userStatus == "admin" &&
                     <Button status="danger" bezelStyle="flat" className="olga-listing-btn-danger pull-right"
                         onClick={this.handleCancelContractClick}>

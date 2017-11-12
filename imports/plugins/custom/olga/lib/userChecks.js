@@ -8,6 +8,8 @@ export function isInRole(role) {
     if(role === "supplier") {
         role = "supplierproducts";
     }
+    console.log("usercheckissä: rooli " + role + " user " + loggedInUser);
+    console.log("roolissa: " + Roles.userIsInRole(loggedInUser, role));
     if(loggedInUser) {
         if(Roles.userIsInRole(loggedInUser, role) || roleIsInArray(loggedInUser, role)) {
             result = true;

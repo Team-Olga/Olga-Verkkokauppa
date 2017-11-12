@@ -32,10 +32,10 @@ class SupplierProductsListReact extends Component {
         transition: 'scale'
     }
 
-    showAlert = (message) => {
+    showAlert = (message, type) => {
         this.msg.show(message, {
-            time: 2000,
-            type: 'success'
+            time: 5000,
+            type: type
         })
     }
 
@@ -54,13 +54,21 @@ class SupplierProductsListReact extends Component {
         this.setState({modalIsOpen: false});
       } else {
         this.setState({modalIsOpen: false});
-        Meteor.call("supplyContracts/create", this.state.productId, parseInt(this.state.supplyQuantity));
-        this.showAlert('Toimitussopimus tehty (' + this.state.productName + ' ' + this.state.supplyQuantity + ' kpl)');
+        let contractId = Meteor.call("supplyContracts/create", this.state.productId, parseInt(this.state.supplyQuantity));
+        this.showAlert('Toimitussopimus tehty (' + this.state.productName + ' ' + this.state.supplyQuantity + ' kpl)', 'success');
       }
     }
 
     updateSupplyQuantity(e) {
-        this.setState({ supplyQuantity: e.target.value });
+        if(Number.isNaN(e.target.value) || !Number.isInteger(Number(e.target.value))) {
+            console.log("Invalid input");
+            this.showAlert("Toimitusmäärän on oltava kokonaisluku", "error");
+        } else if(Number(e.target.value) > this.state.openQuantity) {
+            console.log("Too large quantity");
+            this.showAlert("Voit toimittaa enintään avoinna olevan määrän", "error");
+        } else {
+            this.setState({ supplyQuantity: e.target.value });
+        }
     }
 
     render() {

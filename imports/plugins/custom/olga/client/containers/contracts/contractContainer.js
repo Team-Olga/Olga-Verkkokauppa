@@ -57,6 +57,12 @@ const loadData = (props, onData) => {
         const accounts = Accounts.find({}).fetch();
         const contracts = enrichContracts(baseContracts, products, accounts);
 
+        _.forEach(contracts, function(contract) {
+            console.log("Contract "+ contract._id);
+            console.log("userId: " + contract.userId + " productName: " + contract.productName);
+            console.log("quantity: " + contract.quantity + " date: " + contract.createdAt);
+        });
+
         onData(null, {
             contracts: contracts
         });
