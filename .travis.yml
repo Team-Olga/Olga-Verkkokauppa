@@ -22,8 +22,7 @@ before_script:
   - sudo chown travis -Rh /home/travis/.config /home/travis/build
   - sudo meteor npm install
   - sudo chown travis -Rh .meteor/local
-  - meteor update --release 1.5.1
-  - sudo meteor npm install --save babel-core@latest babel-loader@latest
+  - meteor update
 
 
 
