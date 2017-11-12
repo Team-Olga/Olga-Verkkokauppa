@@ -5,7 +5,7 @@ import { Meteor } from 'meteor/meteor';
 import { Reaction } from "/client/api";
 import { createContainer } from 'meteor/react-meteor-data';
 import { Components, registerComponent, composeWithTracker } from "@reactioncommerce/reaction-components";
-import { Products, Accounts } from "lib/collections";
+import { Products, Accounts } from "/lib/collections";
 import ProductItem from "./productItem";
 import Columns from 'react-columns';
 
