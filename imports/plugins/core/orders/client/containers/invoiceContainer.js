@@ -223,7 +223,8 @@ class InvoiceContainer extends Component {
     const paymentMethodId = orderBillingInfo.paymentMethod && orderBillingInfo.paymentMethod.paymentPackageId;
     const paymentMethodName = orderBillingInfo.paymentMethod && orderBillingInfo.paymentMethod.paymentSettingsKey;
     const paymentMethod = Packages.findOne({ _id: paymentMethodId });
-    const isRefundable = paymentMethod && paymentMethod.settings[paymentMethodName].support.includes("Refund");
+    const isRefundable = paymentMethod && paymentMethod.settings && paymentMethod.settings[paymentMethodName]
+      && paymentMethod.settings[paymentMethodName].support.includes("Refund");
 
     return isRefundable;
   }
@@ -285,7 +286,7 @@ class InvoiceContainer extends Component {
       cancelButtonColor: "#98afbc",
       confirmButtonText: i18next.t("order.cancelOrderNoRestock"),
       cancelButtonText: i18next.t("order.cancelOrderThenRestock")
-    }, (isConfirm, cancel)=> {
+    }, (isConfirm, cancel) => {
       let returnToStock;
       if (isConfirm) {
         returnToStock = false;
@@ -308,7 +309,7 @@ class InvoiceContainer extends Component {
     const discounts = paymentMethod && paymentMethod.discounts;
     const refund = value;
     const refunds = this.state.refunds;
-    const refundTotal = refunds && refunds.reduce((acc, item) => acc + parseFloat(item.amount), 0);
+    const refundTotal = refunds && Array.isArray(refunds) && refunds.reduce((acc, item) => acc + parseFloat(item.amount), 0);
 
     let adjustedTotal;
 
@@ -626,7 +627,7 @@ const composer = (props, onData) => {
 
   // get adjusted Total
   let adjustedTotal;
-  const refundTotal = refunds && refunds.reduce((acc, item) => acc + parseFloat(item.amount), 0);
+  const refundTotal = refunds && Array.isArray(refunds) && refunds.reduce((acc, item) => acc + parseFloat(item.amount), 0);
 
   if (paymentMethod && paymentMethod.processor === "Stripe") {
     adjustedTotal = Math.abs(paymentMethod.amount + orderDiscounts - refundTotal);

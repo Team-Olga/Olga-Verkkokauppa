@@ -1,9 +1,11 @@
 import { Meteor } from "meteor/meteor";
 import React, { Component } from "react";
+import { findDOMNode } from "react-dom";
 import { Tracker } from "meteor/tracker";
 import { DDP } from "meteor/ddp-client";
 import { Promise } from "meteor/promise";
 import { chai } from "meteor/practicalmeteor:chai";
+import { mount, ReactWrapper } from "enzyme";
 import faker from "faker";
 import { Factory } from "meteor/dburles:factory";
 import { Random } from "meteor/random";
@@ -11,18 +13,21 @@ import StubCollections from "meteor/hwillson:stub-collections";
 import { sinon } from "meteor/practicalmeteor:sinon";
 import { $ } from 'meteor/jquery';
 import { Template } from "meteor/templating";
+import Modal from 'react-modal';
 import { Products, Orders } from "/lib/collections";
+import { SupplyContracts } from "../../../lib/collections";
 import ReactTestUtils from "react-addons-test-utils";
 
 import SupplierProductsContainer from "../../containers/products/supplierProductsContainer";
 
 var testProducts;
 var testOrders;
+var testContracts;
 
 describe("SupplierProductsReact", function (done) {
 
     beforeEach(function () {
-        StubCollections.stub([Products, Orders]);
+        StubCollections.stub([Products, Orders, SupplyContracts]);
         Template.registerHelper('_', key => key);
         sinon.stub(Meteor, 'subscribe', () => ({
             subscriptionId: 0,
@@ -34,21 +39,35 @@ describe("SupplierProductsReact", function (done) {
             title: "TestProduct",
             ancestors: [],
             createdAt: Date.now(),
-
         });
 
         Factory.define('order', Orders, {
             _id: Random.id(),
             items: [
-                {variants: 
-                    {_id:  Random.id()}
+                { 
+                    variants: 
+                        { _id:  Random.id() },
+                    quantity: 0
                 }
             ],
+            productSupplies: [],
+            createdAt: Date.now()
+        });
+
+        Factory.define('contract', SupplyContracts, {
+            _id: Random.id(),
+            userId: Random.id(),
+            orders: [],
+            productId: Random.id(),
+            quantity: 0,
+            sentQuantity: 0,
+            receivedQuantity: 0,
             createdAt: Date.now()
         });
 
         testProducts = [];
         testOrders = [];
+        testContracts = [];
 
         _.times(3, function (index) {
             let product = Factory.create('product', {
@@ -74,17 +93,77 @@ describe("SupplierProductsReact", function (done) {
             },
         ];
 
+        let productSupplies0 = [
+            {
+                productId: testProducts[0]._id,
+                supplyContracts: [],
+                openQuantity: 1
+            }
+        ];
+
+        let productSupplies1 = [
+            {
+                productId: testProducts[1]._id,
+                supplyContracts: [],
+                openQuantity: 6
+            },
+            {
+                productId: testProducts[0]._id,
+                supplyContracts: [],
+                openQuantity: 4
+            }
+        ];
+
         let order0 = Factory.create('order', {
                 _id: Random.id(),
-                items: items0
+                items: items0,
+                productSupplies: productSupplies0
             });
         testOrders.push(order0);
 
         let order1 = Factory.create('order', {
                 _id: Random.id(),
-                items: items1
+                items: items1,
+                productSupplies: productSupplies1
             });
         testOrders.push(order1);
+
+        let contract0 = Factory.create('contract', {
+                _id: Random.id(),
+                userId: Random.id(),
+                orders: [],
+                productId: testProducts[0]._id,
+                quantity: 1,
+                sentQuantity: 0,
+                receivedQuantity: 0,
+                createdAt: Date.now()
+        });
+        testContracts.push(contract0);
+
+        let contract1 = Factory.create('contract', {
+                _id: Random.id(),
+                userId: Random.id(),
+                orders: [],
+                productId: testProducts[1]._id,
+                quantity: 1,
+                sentQuantity: 0,
+                receivedQuantity: 0,
+                createdAt: Date.now()
+        });
+        testContracts.push(contract1);
+
+        let contract2 = Factory.create('contract', {
+                _id: Random.id(),
+                userId: Random.id(),
+                orders: [],
+                productId: testProducts[0]._id,
+                quantity: 1,
+                sentQuantity: 1,
+                receivedQuantity: 0,
+                createdAt: Date.now()
+        });
+        testContracts.push(contract2);
+
     });
 
     afterEach(function () {
@@ -114,24 +193,15 @@ describe("SupplierProductsReact", function (done) {
     });
 
     it("shows correct statistics for each product", function(done) {
-        // withRenderedTemplate("supplierProductsReact", {products: testProducts}, el => {
-        //     $(el).find(".productlisting").each(function() {
-        //         let title = $(this).find(".listingtitle").text();
-        //         $(this).find(".btn-listing").each(function() {
-        //             let btnText = $(this).text().split(" ");   
-        //             chai.assert.equal(btnText[1], getProductStats(title, btnText[0]), "Stat " + btnText[0] + " wrong for product " + title);
-        //         });
-        //     });            
-        // });
         var component = ReactTestUtils.renderIntoDocument(
             <SupplierProductsContainer />
         );
         var productRows = ReactTestUtils.scryRenderedDOMComponentsWithClass(component, "supplier-product-row");
 
         _.forEach(productRows, function(row) {
-            let title = $(row).find(".listingtitle").text();
+            let title = $(row).find(".olga-listing-title").text();
             console.log("Prodcut: " + title);
-            $(row).find(".listing-button").each(function() {
+            $(row).find(".olga-listing-btn-success").each(function() {
                 console.log("Button: " + $(this).text());
                 let btnText = $(this).text().split(" ");   
                 console.log("")
@@ -139,7 +209,97 @@ describe("SupplierProductsReact", function (done) {
             })
         });
 
-        chai.assert.equal(1, 1);
+        done();
+    });
+
+    it("should open SupplyContractModal", function(done) {
+        var component = ReactTestUtils.renderIntoDocument(
+            <SupplierProductsContainer />
+        );
+        var  buttons = ReactTestUtils.scryRenderedDOMComponentsWithClass(component, "olga-listing-btn-success");
+        chai.assert.equal(buttons.length, 3, "Wrong number of buttons found.");
+        ReactTestUtils.Simulate.click(buttons[0]);
+        var modal = ReactTestUtils.scryRenderedDOMComponentsWithClass(component, "contractModalOverlay");
+        chai.assert.isNotNull(modal, "Modal is not open");
+        done();
+    });
+
+    it("should open SupplyContractModal with correct info", function(done) {
+        const wrapper = mount(<SupplierProductsContainer />);
+        let productRow = wrapper.find(".supplier-product-row").at(1);
+        let button = productRow.find(".olga-listing-btn-success");
+        let productTitle = productRow.find(".olga-listing-title").first().text();
+
+        button.simulate('click');
+        chai.assert.equal(wrapper.find(Modal).prop('isOpen'), true, "Modal not found");
+        let modalWrapper = new ReactWrapper(wrapper.find(Modal).node.portal, true);
+        chai.assert.equal(modalWrapper.find("#contractModalTitle").first().text(), productTitle, 
+            "Modal title doesn'tmatch product title");
+        chai.assert.equal(modalWrapper.find('#openQuantity').first().text(), "6", 
+            "Modal open quantity is incorrect");
+
+        done();
+    });
+
+    it("should close cancelled SupplyContractModal without calling server method", function(done) {
+        const wrapper = mount(<SupplierProductsContainer />);
+        let button = wrapper.find(".supplier-product-row").at(1).find(".olga-listing-btn-success");
+        let spy = sinon.spy(Meteor, "call");
+
+        button.simulate('click');
+        chai.assert.equal(wrapper.find(Modal).prop('isOpen'), true, "Modal is not open");
+        let modalWrapper = new ReactWrapper(wrapper.find(Modal).node.portal, true);
+        let cancelButton = modalWrapper.find("#cancelModal");
+        cancelButton.simulate('click');
+        chai.assert.equal(wrapper.find(Modal).prop('isOpen'), false, "Modal is not closed");
+        chai.assert.isFalse(spy.called, "Server method was called");
+
+        Meteor.call.restore();
+        done();
+    });
+
+    it("should close confirmed SupplyContractModal and call server method", function(done) {
+        const wrapper = mount(<SupplierProductsContainer />);
+        let button = wrapper.find(".supplier-product-row").at(1).find(".olga-listing-btn-success");
+        let spy = sinon.spy(Meteor, "call");
+
+        button.simulate('click');
+        chai.assert.equal(wrapper.find(Modal).prop('isOpen'), true, "Modal is not open");
+        let modalWrapper = new ReactWrapper(wrapper.find(Modal).node.portal, true);
+        let quantityInput = modalWrapper.find("#quantity").first();
+        quantityInput.simulate("change", { target: { value: 1 } });
+
+        let confirmButton = modalWrapper.find("#confirmContract");
+        confirmButton.simulate('click');
+        chai.assert.equal(wrapper.find(Modal).prop('isOpen'), false, "Modal is not closed");
+        chai.assert.isTrue(spy.calledOnce, "Server method was not called");
+        var args = spy.getCalls()[0].args;
+        _.forEach(args, function(arg) {
+            console.log("Argumentti: " + arg);
+        });
+        chai.assert.isTrue(spy.calledWith("supplyContracts/create", testProducts[1]._id, 1), "Wrong server method called");
+
+        Meteor.call.restore();
+        done();
+    });
+
+    it("should close confirmed SupplyContractModal with 0 quantity without calling server method", function(done) {
+        const wrapper = mount(<SupplierProductsContainer />);
+        let button = wrapper.find(".supplier-product-row").at(1).find(".olga-listing-btn-success");
+        let spy = sinon.spy(Meteor, "call");
+
+        button.simulate('click');
+        chai.assert.equal(wrapper.find(Modal).prop('isOpen'), true, "Modal is not open");
+        let modalWrapper = new ReactWrapper(wrapper.find(Modal).node.portal, true);
+        let quantityInput = modalWrapper.find("#quantity").first();
+        quantityInput.simulate("change", { target: { value: 0 } });
+
+        let confirmButton = modalWrapper.find("#confirmContract");
+        confirmButton.simulate('click');
+        chai.assert.equal(wrapper.find(Modal).prop('isOpen'), false, "Modal is not closed");
+        chai.assert.isFalse(spy.called, "Server method was called");
+
+        Meteor.call.restore();
         done();
     });
 });
@@ -152,6 +312,8 @@ function getProductStats(title, stat) {
     let orderCount = 0;
     let orderedQuantity = 0;    
     let openOrderCount = 0;
+    let contractedQuantity = 0;
+    let sentQuantity = 0;
 
     _.forEach(testOrders, function(o) {
         _.forEach(o.items, function(item) {
@@ -160,6 +322,18 @@ function getProductStats(title, stat) {
                 orderedQuantity += item.quantity;
             }
         });
+        _.forEach(o.productSupplies, function(productSupply) {
+            if(productSupply.productId === productId) {
+                openOrderCount += productSupply.openQuantity;
+            }
+        });
+    });
+
+    _.forEach(testContracts, function(c) {
+        if(c.productId === productId) {
+            contractedQuantity += c.contractedQuantity;
+            sentQuantity += c.sentQuantity;
+        }
     });
 
     switch (stat) {
@@ -169,5 +343,9 @@ function getProductStats(title, stat) {
             return orderCount;
         case "Tilattu":
             return orderedQuantity;
+        case "Sovittu":
+            return contractedQuantity;
+        case "Toimitettu":
+            return sentQuantity;
     }
 }

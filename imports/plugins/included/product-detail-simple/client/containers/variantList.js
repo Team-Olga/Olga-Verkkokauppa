@@ -103,18 +103,7 @@ class VariantListContainer extends Component {
   }
 
   handleVariantClick = (event, variant, ancestors = -1) => {
-    if (Reaction.isActionViewOpen()) {
-      this.handleEditVariant(event, variant, ancestors);
-    } else {
-      ReactionProduct.setCurrentVariant(variant._id);
-      Session.set("variant-form-" + variant._id, true);
-      Reaction.Router.go("product", {
-        handle: this.productHandle,
-        variantId: variant._id
-      }, {
-        as: Reaction.Router.getQueryParam("as")
-      });
-    }
+    this.handleEditVariant(event, variant, ancestors);
   }
 
   handleEditVariant = (event, variant, ancestors = -1) => {
@@ -123,16 +112,13 @@ class VariantListContainer extends Component {
       editVariant = Products.findOne(variant.ancestors[ancestors]);
     }
 
+    const cardName = `variant-${variant._id}`;
+    Reaction.state.set("edit/focus", cardName);
+
     ReactionProduct.setCurrentVariant(variant._id);
     Session.set("variant-form-" + editVariant._id, true);
-    Reaction.Router.go("product", {
-      handle: this.productHandle,
-      variantId: variant._id
-    }, {
-      as: Reaction.Router.getQueryParam("as")
-    });
 
-    if (Reaction.hasPermission("createProduct")) {
+    if (Reaction.hasPermission("createProduct") && !Reaction.isPreview()) {
       Reaction.showActionView({
         label: "Edit Variant",
         i18nKeyLabel: "productDetailEdit.editVariant",

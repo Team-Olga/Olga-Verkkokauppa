@@ -4,7 +4,7 @@ Reaction.registerPackage({
   label: "Marketplace",
   name: "reaction-marketplace",
   icon: "fa fa-globe",
-  autoEnable: true,
+  autoEnable: false,
   settings: {
     name: "Marketplace",
     enabled: true,
@@ -49,7 +49,6 @@ Reaction.registerPackage({
       }]
     },
     public: {
-      allowGuestSellers: true, // TODO: Eliminate in favor of marketplace.enabled and allowMerchantSignup
       allowMerchantSignup: false, // Merchants can sign up without an invite
       marketplaceNakedRoutes: true, // Routes to the primary marketplace shop should not use shop prefix
       merchantCart: false, // Unique cart for each merchant
@@ -68,6 +67,23 @@ Reaction.registerPackage({
     container: "dashboard",
     template: "marketplaceShopSettings",
     showForShopTypes: ["primary"]
+  }, {
+    route: "shop/settings/shops",
+    template: "MarketplaceShops",
+    name: "marketplaceShops",
+    label: "Marketplace Shops",
+    icon: "fa fa-globe",
+    provides: ["settings"],
+    container: "dashboard",
+    meta: {
+      actionView: {
+        dashboardSize: "lg"
+      }
+    },
+    permissions: [{
+      label: "Marketplace Shops",
+      permission: "marketplaceShops"
+    }]
   }, {
     // does this work?
     // override default shop settings

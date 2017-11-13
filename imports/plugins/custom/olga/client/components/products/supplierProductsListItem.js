@@ -6,72 +6,78 @@ class SupplierProductsListItem extends Component {
 
     constructor(props) {
         super(props);
+
+        this.handleOpenOrdersClick = this.handleOpenOrdersClick.bind(this);
+        this.handleOrdersClick = this.handleOrdersClick.bind(this);
+        this.handleOrderCountClick = this.handleOrderCountClick.bind(this);
+        this.handleContractedCountClick = this.handleContractedCountClick.bind(this);
+        this.handleSuppliedCountClick = this.handleSuppliedCountClick.bind(this);
     }
 
-    orderCount(orders, product) {
-        let orderArray = _.filter(
-            orders,
-            function(o) {
-                let match = false;
-                _.forEach(o.items, function(item) {
-                    if(item.variants._id == product._id) {
-                        match = true;
-                    }
-                });
-               return match;
-            }
-        )
-        return orderArray.length;
+    handleOpenOrdersClick(e) {
+        e.preventDefault();
+        this.props.showContractModal(
+            this.props.productStat.productId, 
+            this.props.productStat.title,
+            this.props.productStat.openQuantity
+        );
     }
 
-    orderQuantity(orders, product) {
-        let count = 0;
-        _.forEach(
-            orders,
-            function(o) {
-                _.forEach(o.items, function(item) {
-                    if(item.variants._id == product._id) {
-                        count += item.quantity;
-                    }
-                });
-            }
-        )
-        return count;
+    handleOrdersClick(e) {
+        e.preventDefault();
     }
 
-    openOrderQuantity(orders, product) {
-        return 0;
+    handleOrderCountClick(e) {
+        e.preventDefault();
     }
 
-    productLink(product) {
-        if(_.isEmpty(product.ancestors)) {
-            return "/product/" + product.handle;
-        // } else {
-        //     let ancestor = 
-        //     return "/product/" + product.handle + "/" + product.ancestors[0]._id;
-        }
+    handleContractedCountClick(e) {
+        e.preventDefault();
     }
 
+    handleSuppliedCountClick(e) {
+        e.preventDefault();
+    }
+   
+    // two order-related buttons shown to admins only
     render() {
         return(
             <div className="row supplier-product-row">
-                <a href={this.productLink(this.props.product)}><span className="olga-listing-title">{this.props.product.title}</span></a>
-                <Button status="primary" bezelStyle="flat" className="olga-listing-btn-success pull-right">
-                    Avoinna {this.openOrderQuantity(this.props.orders, this.props.product)}
+                <a href={this.props.productStat.detailsHref}><span className="olga-listing-title">{this.props.productStat.title}</span></a>
+                <Button status="primary" bezelStyle="flat" className="olga-listing-btn-primary pull-right"
+                    onClick={this.handleSuppliedCountClick}>
+                    Toimitettu {this.props.productStat.sentQuantity}
                 </Button>
-                <Button status="primary" bezelStyle="flat" className="olga-listing-btn-primary pull-right">
-                    Tilattu {this.orderQuantity(this.props.orders, this.props.product)}
+                <Button status="primary" bezelStyle="flat" className="olga-listing-btn-primary pull-right"
+                    onClick={this.handleContractedCountClick}>
+                    Sovittu {this.props.productStat.contractedQuantity}
                 </Button>
-                <Button status="primary" bezelStyle="flat" className="olga-listing-btn-primary pull-right">
-                    Tilauksia {this.orderCount(this.props.orders, this.props.product)}
+                <Button status="primary" bezelStyle="flat" className="olga-listing-btn-success pull-right"
+                    onClick={this.handleOpenOrdersClick} data-productId={this.props.productStat.productId} >
+
+                    Avoinna {this.props.productStat.openQuantity}
                 </Button>
+                {this.props.userStatus == "admin" && 
+                    <Button status="primary" bezelStyle="flat" className="olga-listing-btn-primary pull-right"
+                        onClick={this.handleOrderCountClick}>
+                        Tilattu {this.props.productStat.orderQuantity}
+                    </Button>
+                }
+                {this.props.userStatus == "admin" && 
+                    <Button status="primary" bezelStyle="flat" className="olga-listing-btn-primary pull-right"
+                        onClick={this.handleOrdersClick}>
+                        Tilauksia {this.props.productStat.orderCount}
+                    </Button>
+                }
             </div>
         );
     }
 }
 
 SupplierProductsListItem.propTypes = {
-    product: PropTypes.object
+    productStat: PropTypes.object,
+    userStatus: PropTypes.string,
+    showContractModal: PropTypes.func,
 };
 
 export default SupplierProductsListItem;

@@ -6,9 +6,7 @@ import Future from "fibers/future";
 import { Meteor } from "meteor/meteor";
 import { check, Match } from "meteor/check";
 import { SSR } from "meteor/meteorhacks:ssr";
-import { getSlug } from "/lib/api";
 import { Media, Orders, Products, Shops, Packages } from "/lib/collections";
-import * as Schemas from "/lib/collections/schemas";
 import { Logger, Hooks, Reaction } from "/server/api";
 
 
@@ -63,6 +61,43 @@ export function ordersInventoryAdjust(orderId) {
     });
   });
 }
+
+// TODO: Marketplace: Is there a reason to do this any other way? Can admins reduce for more
+// than one shop
+/**
+ * ordersInventoryAdjustByShop
+ * adjust inventory for a particular shop when an order is approved
+ * @param {String} orderId - orderId
+ * @param {String} shopId - the id of the shop approving the order
+ * @return {null} no return value
+ */
+export function ordersInventoryAdjustByShop(orderId, shopId) {
+  check(orderId, String);
+  check(shopId, String);
+
+  if (!Reaction.hasPermission("orders")) {
+    throw new Meteor.Error("access-denied", "Access Denied");
+  }
+
+  const order = Orders.findOne(orderId);
+  order.items.forEach(item => {
+    if (item.shopId === shopId) {
+      Products.update({
+        _id: item.variants._id
+      }, {
+        $inc: {
+          inventoryQuantity: -item.quantity
+        }
+      }, {
+        publish: true,
+        selector: {
+          type: "variant"
+        }
+      });
+    }
+  });
+}
+
 
 export function orderQuantityAdjust(orderId, refundedItem) {
   check(orderId, String);
@@ -253,6 +288,7 @@ export const methods = {
 
     // this is server side check to verify
     // that the math all still adds up.
+    const shopId = Reaction.getShopId();
     const subTotal = invoice.subtotal;
     const shipping = invoice.shipping;
     const taxes = invoice.taxes;
@@ -261,11 +297,11 @@ export const methods = {
     const total = accounting.toFixed(Number(discountTotal) + Number(shipping) + Number(taxes), 2);
 
     // Updates flattened inventory count on variants in Products collection
-    ordersInventoryAdjust(order._id);
+    ordersInventoryAdjustByShop(order._id, shopId);
 
     return Orders.update({
       "_id": order._id,
-      "billing.shopId": Reaction.getShopId,
+      "billing.shopId": shopId,
       "billing.paymentMethod.method": "credit"
     }, {
       $set: {
@@ -318,7 +354,7 @@ export const methods = {
     const prefix = Reaction.getShopPrefix();
     const url = `${prefix}/notifications`;
     const sms = true;
-    Meteor.call("notification/send", order.userId, "orderCancelled", url, sms, (err) => {
+    Meteor.call("notification/send", order.userId, "orderCanceled", url, sms, (err) => {
       if (err) Logger.error(err);
     });
 
@@ -527,7 +563,7 @@ export const methods = {
 
     // Get Shop information
     const shop = Shops.findOne(order.shopId);
-
+    // TODO need to make this fully support multi-shop. Now it's just collapsing into one
     // Get shop logo, if available
     let emailLogo;
     if (Array.isArray(shop.brandAssets)) {
@@ -538,17 +574,45 @@ export const methods = {
       emailLogo = Meteor.absoluteUrl() + "resources/email-templates/shop-logo.png";
     }
 
-    const billing = orderCreditMethod(order);
-    const shippingRecord = order.shipping.find(shipping => shipping.shopId === Reaction.getShopId());
-    // TODO: Update */refunds/list for marketplace
+    let subtotal = 0;
+    let shippingCost = 0;
+    let taxes = 0;
+    let discounts = 0;
+    let amount = 0;
+    let address = {};
+    let paymentMethod = {};
+    let shippingAddress = {};
+    let tracking;
+    let carrier = "";
+    for (const billingRecord of order.billing) {
+      subtotal += billingRecord.invoice.subtotal;
+      taxes += billingRecord.invoice.taxes;
+      discounts += billingRecord.invoice.discounts;
+      amount += billingRecord.paymentMethod.amount;
+      address = billingRecord.address;
+      paymentMethod = billingRecord.paymentMethod;
+    }
+
+    for (const shippingRecord of order.shipping) {
+      shippingAddress = shippingRecord.address;
+      carrier = shippingRecord.shipmentMethod.carrier;
+      tracking = shippingRecord.tracking;
+      shippingCost += shippingRecord.shipmentMethod.rate;
+    }
+
     const refundResult = Meteor.call("orders/refunds/list", order);
-    const refundTotal = refundResult.reduce((acc, refund) => acc + refund.amount, 0);
+    const refundTotal = Array.isArray(refundResult) && refundResult.reduce((acc, refund) => acc + refund.amount, 0);
 
     // Get user currency formatting from shops collection, remove saved rate
-    const userCurrencyFormatting = _.omit(shop.currencies[billing.currency.userCurrency], ["enabled", "rate"]);
+    // using billing[0] here to get the currency and exchange rate used because
+    // in multishop mode, the currency object is different across shops
+    // and it's inconsistent, i.e. sometimes there's no exchangeRate field in the secondary
+    // shop's currency array.
+    // TODO: Remove billing[0] and properly aquire userCurrency and exchange rate
+    const userCurrencyFormatting = _.omit(shop.currencies[order.billing[0].currency.userCurrency], ["enabled", "rate"]);
 
     // Get user currency exchange rate at time of transaction
-    const userCurrencyExchangeRate = billing.currency.exchangeRate;
+    const userCurrencyExchangeRate = order.billing[0].currency.exchangeRate;
 
     // Combine same products into single "product" for display purposes
     const combinedItems = [];
@@ -635,45 +699,45 @@ export const methods = {
         order: order,
         billing: {
           address: {
-            address: billing.address.address1,
-            city: billing.address.city,
-            region: billing.address.region,
-            postal: billing.address.postal
+            address: address.address1,
+            city: address.city,
+            region: address.region,
+            postal: address.postal
           },
-          paymentMethod: billing.paymentMethod.storedCard || billing.paymentMethod.processor,
+          paymentMethod: paymentMethod.storedCard || paymentMethod.processor,
           subtotal: accounting.formatMoney(
-            billing.invoice.subtotal * userCurrencyExchangeRate, userCurrencyFormatting
+            subtotal * userCurrencyExchangeRate, userCurrencyFormatting
           ),
           shipping: accounting.formatMoney(
-            billing.invoice.shipping * userCurrencyExchangeRate, userCurrencyFormatting
+            shippingCost * userCurrencyExchangeRate, userCurrencyFormatting
           ),
           taxes: accounting.formatMoney(
-            billing.invoice.taxes * userCurrencyExchangeRate, userCurrencyFormatting
+            taxes * userCurrencyExchangeRate, userCurrencyFormatting
           ),
           discounts: accounting.formatMoney(
-            billing.invoice.discounts * userCurrencyExchangeRate, userCurrencyFormatting
+            discounts * userCurrencyExchangeRate, userCurrencyFormatting
           ),
           refunds: accounting.formatMoney(
             refundTotal * userCurrencyExchangeRate, userCurrencyFormatting
           ),
           total: accounting.formatMoney(
-            billing.invoice.total * userCurrencyExchangeRate, userCurrencyFormatting
+            (subtotal + shippingCost) * userCurrencyExchangeRate, userCurrencyFormatting
           ),
           adjustedTotal: accounting.formatMoney(
-            (billing.paymentMethod.amount - refundTotal) * userCurrencyExchangeRate, userCurrencyFormatting
+            (amount - refundTotal) * userCurrencyExchangeRate, userCurrencyFormatting
           )
         },
         combinedItems: combinedItems,
         orderDate: moment(order.createdAt).format("MM/DD/YYYY"),
-        orderUrl: getSlug(shop.name) + "/cart/completed?_id=" + order.cartId,
+        orderUrl: `cart/completed?_id=${order.cartId}`,
         shipping: {
-          tracking: shippingRecord.tracking,
-          carrier: shippingRecord.shipmentMethod.carrier,
+          tracking: tracking,
+          carrier: carrier,
           address: {
-            address: shippingRecord.address.address1,
-            city: shippingRecord.address.city,
-            region: shippingRecord.address.region,
-            postal: shippingRecord.address.postal
+            address: shippingAddress.address1,
+            city: shippingAddress.city,
+            region: shippingAddress.region,
+            postal: shippingAddress.postal
           }
         }
       };
@@ -821,22 +885,20 @@ export const methods = {
    * orders/capturePayments
    * @summary Finalize any payment where mode is "authorize"
    * and status is "approved", reprocess as "capture"
-   * @todo: add tests working with new payment methods
-   * @todo: refactor to use non Meteor.namespace
    * @param {String} orderId - add tracking to orderId
    * @return {null} no return value
    */
   "orders/capturePayments": (orderId) => {
     check(orderId, String);
-
     // REVIEW: For marketplace implmentations who should be able to capture payments?
-    // Probably just the marketplace and not shops/vendors?
     if (!Reaction.hasPermission("orders")) {
       throw new Meteor.Error("access-denied", "Access Denied");
     }
-
+    const shopId = Reaction.getShopId(); // the shopId of the current user, i.e. merchant
     const order = Orders.findOne(orderId);
-    const itemIds = order.shipping[0].items.map((item) => {
+    // find the appropriate shipping record by shop
+    const shippingRecord = order.shipping.find((sRecord) => sRecord.shopId === shopId);
+    const itemIds = shippingRecord.items.map((item) => {
       return item._id;
     });
 
@@ -847,61 +909,62 @@ export const methods = {
     }
 
     // process order..payment.paymentMethod
-    order.billing.forEach((billing) => {
-      const paymentMethod = billing.paymentMethod;
-      const transactionId = paymentMethod.transactionId;
+    // find the billing record based on shopId
+    const bilingRecord = order.billing.find((bRecord) => bRecord.shopId === shopId);
 
-      if (paymentMethod.mode === "capture" && paymentMethod.status === "approved" && paymentMethod.processor) {
-        // Grab the amount from the shipment, otherwise use the original amount
-        const processor = paymentMethod.processor.toLowerCase();
+    const paymentMethod = bilingRecord.paymentMethod;
+    const transactionId = paymentMethod.transactionId;
 
-        Meteor.call(`${processor}/payment/capture`, paymentMethod, (error, result) => {
-          if (result && result.saved === true) {
-            const metadata = Object.assign(billing.paymentMethod.metadata || {}, result.metadata || {});
+    if (paymentMethod.mode === "capture" && paymentMethod.status === "approved" && paymentMethod.processor) {
+      // Grab the amount from the shipment, otherwise use the original amount
+      const processor = paymentMethod.processor.toLowerCase();
 
-            Orders.update({
-              "_id": orderId,
-              "billing.paymentMethod.transactionId": transactionId
-            }, {
-              $set: {
-                "billing.$.paymentMethod.mode": "capture",
-                "billing.$.paymentMethod.status": "completed",
-                "billing.$.paymentMethod.metadata": metadata
-              },
-              $push: {
-                "billing.$.paymentMethod.transactions": result
-              }
-            });
+      Meteor.call(`${processor}/payment/capture`, paymentMethod, (error, result) => {
+        if (result && result.saved === true) {
+          const metadata = Object.assign(bilingRecord.paymentMethod.metadata || {}, result.metadata || {});
 
-            // event onOrderPaymentCaptured used for confirmation hooks
-            // ie: confirmShippingMethodForOrder is triggered here
-            Hooks.Events.run("onOrderPaymentCaptured", orderId);
-          } else {
-            if (result && result.error) {
-              Logger.fatal("Failed to capture transaction.", order, paymentMethod.transactionId, result.error);
-            } else {
-              Logger.fatal("Failed to capture transaction.", order, paymentMethod.transactionId, error);
+          Orders.update({
+            "_id": orderId,
+            "billing.paymentMethod.transactionId": transactionId
+          }, {
+            $set: {
+              "billing.$.paymentMethod.mode": "capture",
+              "billing.$.paymentMethod.status": "completed",
+              "billing.$.paymentMethod.metadata": metadata
+            },
+            $push: {
+              "billing.$.paymentMethod.transactions": result
             }
+          });
 
-            Orders.update({
-              "_id": orderId,
-              "billing.paymentMethod.transactionId": transactionId
-            }, {
-              $set: {
-                "billing.$.paymentMethod.mode": "capture",
-                "billing.$.paymentMethod.status": "error"
-              },
-              $push: {
-                "billing.$.paymentMethod.transactions": result
-              }
-            });
-
-            return { error: "orders/capturePayments: Failed to capture transaction" };
+          // event onOrderPaymentCaptured used for confirmation hooks
+          // ie: confirmShippingMethodForOrder is triggered here
+          Hooks.Events.run("onOrderPaymentCaptured", orderId);
+        } else {
+          if (result && result.error) {
+            Logger.fatal("Failed to capture transaction.", order, paymentMethod.transactionId, result.error);
+          } else {
+            Logger.fatal("Failed to capture transaction.", order, paymentMethod.transactionId, error);
           }
-          return { error, result };
-        });
-      }
-    });
+
+          Orders.update({
+            "_id": orderId,
+            "billing.paymentMethod.transactionId": transactionId
+          }, {
+            $set: {
+              "billing.$.paymentMethod.mode": "capture",
+              "billing.$.paymentMethod.status": "error"
+            },
+            $push: {
+              "billing.$.paymentMethod.transactions": result
+            }
+          });
+
+          return { error: "orders/capturePayments: Failed to capture transaction" };
+        }
+        return { error, result };
+      });
+    }
   },
 
   /**
@@ -909,31 +972,23 @@ export const methods = {
    * loop through order's payments and find existing refunds.
    * @summary Get a list of refunds for a particular payment method.
    * @param {Object} order - order object
-   * @return {null} no return value
+   * @return {Array} Array contains refund records
    */
   "orders/refunds/list": function (order) {
     check(order, Object);
-    const paymentMethod = orderCreditMethod(order).paymentMethod;
 
     if (!this.userId === order.userId && !Reaction.hasPermission("orders")) {
       throw new Meteor.Error("access-denied", "Access Denied");
     }
 
-    this.unblock();
-
-    const future = new Future();
-    const processor = paymentMethod.processor.toLowerCase();
-
-    Meteor.call(`${processor}/refund/list`, paymentMethod, (error, result) => {
-      if (error) {
-        future.return(error);
-      } else {
-        check(result, [Schemas.Refund]);
-        future.return(result);
-      }
-    });
-
-    return future.wait();
+    const refunds = [];
+    for (const billingRecord of order.billing) {
+      const paymentMethod = billingRecord.paymentMethod;
+      const processor = paymentMethod.processor.toLowerCase();
+      const shopRefunds = Meteor.call(`${processor}/refund/list`, paymentMethod);
+      refunds.push(...shopRefunds);
+    }
+    return refunds;
   },
 
   /**
@@ -979,8 +1034,7 @@ export const methods = {
           "billing.$.paymentMethod.transactions": result
         }
       };
-      // Send email to notify cuustomer of a refund
-      Meteor.call("orders/sendNotification", order);
+
       if (result.saved === false) {
         Logger.fatal("Attempt for de-authorize transaction failed", order._id, paymentMethod.transactionId, result.error);
         throw new Meteor.Error("Attempt to de-authorize transaction failed", result.error);
@@ -992,11 +1046,6 @@ export const methods = {
           "billing.$.paymentMethod.transactions": result
         }
       };
-
-      // Send email to notify cuustomer of a refund
-      if (sendEmail) {
-        Meteor.call("orders/sendNotification", order, "refunded");
-      }
 
       if (result.saved === false) {
         Logger.fatal("Attempt for refund transaction failed", order._id, paymentMethod.transactionId, result.error);
@@ -1012,10 +1061,17 @@ export const methods = {
       $set: {
         "billing.$.paymentMethod.status": "refunded"
       },
-      query
+      ...query
     });
 
     Hooks.Events.run("onOrderRefundCreated", orderId);
+
+    // Send email to notify customer of a refund
+    if (checkSupportedMethods.includes("De-authorize")) {
+      Meteor.call("orders/sendNotification", order);
+    } else if (orderMode === "capture" && sendEmail) {
+      Meteor.call("orders/sendNotification", order, "refunded");
+    }
   },
 
   /**

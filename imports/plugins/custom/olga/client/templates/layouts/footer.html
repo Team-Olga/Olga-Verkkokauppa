@@ -2,6 +2,9 @@
   <nav class="navbar-bottom" role="navigation">
     <div class="row">
       <a href={{pathFor "about"}}>Tietoa meistä</a>
+      {{#if hasPermission "Olga"}}
+        <h3>This has Olga permission</h3>
+      {{/if}}
     </div>
   </nav>
 </template>
