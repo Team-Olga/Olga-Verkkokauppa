@@ -8,6 +8,7 @@ import { resetDatabase } from 'meteor/xolvio:cleaner';
 import { $ } from 'meteor/jquery';
 import { Reaction } from "/server/api";
 import { Roles } from "meteor/alanning:roles";
+import * as UserChecks from "../../lib/userChecks";
 import { addProduct } from "/server/imports/fixtures/products";
 import Fixtures from "/server/imports/fixtures";
 import { Products, Orders } from "/lib/collections";
@@ -141,7 +142,7 @@ describe("SupplyContracts methods test", function() {
     it("should throw error if non-admin/non-supplier tries to create a supplyContract", function(done) {
         sandbox.stub(Reaction, "hasAdminAccess", () => false); 
         sandbox.stub(Roles, "userIsInRole", () => false);
-
+        
         const insertContractSpy = sandbox.spy(SupplyContracts, "insert");
         chai.expect(() => Meteor.call("supplyContracts/create", testProducts[0]._id, 3)).to.throw(Meteor.Error, /Access Denied/);
         chai.expect(insertContractSpy).to.not.have.been.called;

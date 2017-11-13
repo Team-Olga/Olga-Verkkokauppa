@@ -99,7 +99,10 @@ function handleChange(event, value) {
     });
   } else if (value.name === "supplierproductsreact") {
     return Reaction.Router.go(value.route);
-  } else if (value.name !== "account/profile") {
+  } else if (value.name === "contracts") {
+    return Reaction.Router.go(value.route);
+  } else if (value.name !== "account/profile") {
+    console.log("Haloo profiili");
     return Reaction.showActionView(value);
   } else if (value.route || value.name) {
     const route = value.name || value.route;
@@ -127,6 +130,10 @@ const handlers = {
   },
   supplierShortcuts: {
     provides: "supplierAccountDropdown",
+    enabled: true
+  },
+  contractShortcuts: {
+    provides: "contractDropdown",
     enabled: true
   }
 };

@@ -3,6 +3,7 @@ import { Shops, Groups }  from "/lib/collections";
 import { Reaction } from "/lib/api";
 
 
+
 const supplierRoles = [ "supplier",  "customer",  "supplierproducts", "supplierproductsreact" ];
 const defaultCustomerRoles = [ "guest", "account/profile", "product", "tag", "index", "cart/checkout", "cart/completed", "about"];
 const defaultVisitorRoles = ["anonymous", "guest", "product", "tag", "index", "cart/checkout", "cart/completed", "about"];

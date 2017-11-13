@@ -27,7 +27,7 @@ class SupplierProductsContainer extends Component {
         );
       }
 
-      let userStatus;p
+      let userStatus;
       if (isInRole("admin")) {
         userStatus = "admin";
       } else if (isInRole("supplierproductsreact")) {
@@ -43,17 +43,7 @@ class SupplierProductsContainer extends Component {
           />
         </div>
       );
-
-      // UNREACHABLE!!!!!!
-      /*const userRoles = getAllRoles();
-      return (
-        <div>
-          <h1>Ei admin-oikeuksia!</h1>
-          <h3>Käyttäjän roolit:</h3>
-          <p>{userRoles}</p>
-        </div>
-      );
-    */}
+    }
 }
 
 const loadData = (props, onData) => {
