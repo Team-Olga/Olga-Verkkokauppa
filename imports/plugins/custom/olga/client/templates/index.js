@@ -12,3 +12,6 @@ import "./products/supplierProductsList";
 
 import "./products/supplierProductsReact.html";
 import "./products/supplierProductsReact";
+
+import "./contracts/contractList.html";
+import "./contracts/contractList";

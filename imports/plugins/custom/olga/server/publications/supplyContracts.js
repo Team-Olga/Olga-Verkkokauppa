@@ -1,6 +1,7 @@
 import { Meteor } from "meteor/meteor";
 import { Roles } from "meteor/alanning:roles";
 import { SupplyContracts } from "../../lib/collections";
+import { isInRole } from "../../lib/userChecks";
 import { Reaction } from "/server/api";
 
 // kts. server/publications/collections/orders.js
@@ -12,13 +13,12 @@ Meteor.publish("SupplyContracts", function() {
     if(!shopId) {
         return this.ready;
     }
-    if(Roles.userIsInRole(this.userId, ["admin", "owner"], shopId)){
+    
+    if(isInRole("admin")) {
+        return SupplyContracts.find({});
+    } else {
         return SupplyContracts.find({
-            shopId: shopId
+            userId: this.userId
         });
     }
-    return SupplyContracts.find({
-        shopId: shopId,
-        userId: this.userId
-    });
 });

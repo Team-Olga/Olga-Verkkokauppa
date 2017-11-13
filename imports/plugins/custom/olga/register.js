@@ -45,6 +45,16 @@ Reaction.registerPackage({
       workflow: "coreProductGridWorkflow"
     },
     {
+      route: "/contracts",
+      name: "contracts",
+      label: "Supply contracts",
+      provides: ["contractDropdown"],
+      icon: "fa fa-telegram",
+      layout: "coreLayoutOlga",
+      template: "contractList",
+      workflow: "coreProductGridWorkflow"
+    },
+    {
       route: "/about",
       name: "about",
       layout: "coreLayoutOlga",
