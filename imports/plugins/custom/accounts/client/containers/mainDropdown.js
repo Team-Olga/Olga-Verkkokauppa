@@ -98,7 +98,6 @@ function handleChange(event, value) {
       }
     });
   } else if (value.name === "supplierproductsreact") {
-    console.log("Haloo?");
     return Reaction.Router.go(value.route);
   } else if (value.name === "contracts") {
     return Reaction.Router.go(value.route);
