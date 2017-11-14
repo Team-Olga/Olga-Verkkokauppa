@@ -17,7 +17,7 @@ Reaction.registerPackage({
     structure: {
       // template: "productsLanding",
       template: "products",
-      //layoutHeader: "layoutHeader",
+      layoutHeader: "layoutHeader",
       layoutFooter: "layoutFooterOlga",
       notFound: "productNotFound",
       dashboardHeader: "",
@@ -45,6 +45,16 @@ Reaction.registerPackage({
       workflow: "coreProductGridWorkflow"
     },
     {
+      route: "/contracts",
+      name: "contracts",
+      label: "Supply contracts",
+      provides: ["contractDropdown"],
+      icon: "fa fa-telegram",
+      layout: "coreLayoutOlga",
+      template: "contractList",
+      workflow: "coreProductGridWorkflow"
+    },
+    {
       route: "/about",
       name: "about",
       layout: "coreLayoutOlga",
@@ -53,7 +63,7 @@ Reaction.registerPackage({
     },
     {
       route: "/",
-      name: "home",
+      name: "index",
       layout: "coreLayoutOlga",
       template: "homepageReact",
       workflow: "coreProductGridWorkflow"

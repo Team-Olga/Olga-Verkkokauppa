@@ -3,16 +3,22 @@ import { Shops, Groups }  from "/lib/collections";
 import { Reaction } from "/lib/api";
 
 
-export const defaultSupplierRoles = [ "guest", "account/profile", "product", "tag", "index", "cart/checkout", "cart/completed"];
+
+const supplierRoles = [ "supplier",  "customer",  "supplierproducts", "supplierproductsreact" ];
+const defaultCustomerRoles = [ "guest", "account/profile", "product", "tag", "index", "cart/checkout", "cart/completed", "about"];
+const defaultVisitorRoles = ["anonymous", "guest", "product", "tag", "index", "cart/checkout", "cart/completed", "about"];
+export const defaultSupplierRoles = supplierRoles.concat(defaultCustomerRoles);
 
 export function createCustomGroups() {
   const shopId = "J8Bhq3uTtdgwZx3rz";
-  console.log('PRIMARY SHOPID: ' + shopId)
+
 
   const allGroups = Groups.find({}).fetch();
 
   const roles = {
     "supplier": defaultSupplierRoles,
+    "customer": Reaction.defaultCustomerRoles,
+    "guest": Reaction.defaultVisitorRoles
   };
 
   Object.keys(roles).forEach(groupKeys => {

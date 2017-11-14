@@ -32,10 +32,10 @@ class SupplierProductsListReact extends Component {
         transition: 'scale'
     }
 
-    showAlert = (message) => {
+    showAlert = (message, type) => {
         this.msg.show(message, {
-            time: 2000,
-            type: 'success'
+            time: 5000,
+            type: type
         })
     }
 
@@ -50,17 +50,25 @@ class SupplierProductsListReact extends Component {
     }
 
     closeModal() {
-      if (this.state.supplyQuantity == 0 ) {
+      if (this.state.supplyQuantity == 0 || this.state.openQuantity <= 0) {
         this.setState({modalIsOpen: false});
       } else {
         this.setState({modalIsOpen: false});
-        Meteor.call("supplyContracts/create", this.state.productId, parseInt(this.state.supplyQuantity));
-        this.showAlert('Toimitussopimus tehty (' + this.state.productName + ' ' + this.state.supplyQuantity + ' kpl)');
+        let contractId = Meteor.call("supplyContracts/create", this.state.productId, parseInt(this.state.supplyQuantity));
+        this.showAlert('Toimitussopimus tehty (' + this.state.productName + ' ' + this.state.supplyQuantity + ' kpl)', 'success');
       }
     }
 
     updateSupplyQuantity(e) {
-        this.setState({ supplyQuantity: e.target.value });
+        if(Number.isNaN(e.target.value) || !Number.isInteger(Number(e.target.value))) {
+            console.log("Invalid input");
+            this.showAlert("Toimitusmäärän on oltava kokonaisluku", "error");
+        } else if(Number(e.target.value) > this.state.openQuantity) {
+            console.log("Too large quantity");
+            this.showAlert("Voit toimittaa enintään avoinna olevan määrän", "error");
+        } else {
+            this.setState({ supplyQuantity: e.target.value });
+        }
     }
 
     render() {
@@ -101,10 +109,10 @@ class SupplierProductsListReact extends Component {
                 <input type="number" id="quantity" name="quantity" className="right-justified" min="0" max={this.state.openQuantity}
                     onChange={this.updateSupplyQuantity} value={this.state.supplyQuantity}/></h3>
                 <div>
-                    <button id="cancelModal" className="rui btn btn-primary flat olga-listing-btn-default pull-right" 
+                    <button id="cancelModal" className="rui btn btn-primary flat olga-listing-btn-default pull-right"
                         onClick={() => this.closeModal()} >Peruuta</button>
-                    <button id="confirmContract" className="rui btn btn-primary flat olga-listing-btn-success pull-right" 
-                        onClick={() => this.closeModal($('#quantity').val())} >Vahvista</button>                    
+                    <button id="confirmContract" className="rui btn btn-primary flat olga-listing-btn-success pull-right"
+                        onClick={() => this.closeModal($('#quantity').val())} >Vahvista</button>
                 </div>
                 </Modal>
 

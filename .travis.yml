@@ -16,6 +16,7 @@ node_js:
   - "7"
 
 before_script:
+  - npm cache clean
   - npm install
   - npm install -g reaction-cli
   - curl https://install.meteor.com/ | sh
@@ -23,6 +24,8 @@ before_script:
   - sudo meteor npm install
   - sudo chown travis -Rh .meteor/local
   - meteor update --release 1.5.1
+  - sudo meteor npm install --save babel-core@latest babel-loader@latest
+
 
 
 script:
