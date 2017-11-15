@@ -72,10 +72,15 @@ class SupplierProductsListReact extends Component {
     }
 
     render() {
+
         const supplierColumns = [
             {
                 Header: "",
                 accessor: "title",
+
+                filterMethod: (filter, row) =>
+                row[filter.id].match(filter.value), 
+
                 Cell: cellInfo => (
                     <SupplierProductsListItem
                         productStat={cellInfo.original}
@@ -123,6 +128,9 @@ class SupplierProductsListReact extends Component {
                     columns={supplierColumns}
                     defaultPageSize={10}
                     className="olga-list-table"
+                    filterable
+                    defaultFilterMethod={(filter, row) =>
+                    String(row[filter.id]) === filter.value}    
                 />
             </div>
         );
