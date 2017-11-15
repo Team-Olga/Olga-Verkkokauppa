@@ -4,10 +4,11 @@ import { Meteor } from "meteor/meteor";
 import PropTypes from "prop-types";
 import _ from "lodash";
 import { isInRole, getAllRoles } from "../../../lib/userChecks";
-import { Products, Orders } from "lib/collections";
+import { Products, Orders, Accounts } from "lib/collections";
 import { SupplyContracts } from "../../../lib/collections";
 import { Loading } from "/imports/plugins/core/ui/client/components";
 import SupplierProductsListReact from "../../components/products/supplierProductsListReact";
+//import { Accounts } from "meteor/accounts-base";
 
 class SupplierProductsContainer extends Component {
     static propTypes = {
@@ -50,12 +51,17 @@ const loadData = (props, onData) => {
   const productsSubscription = Meteor.subscribe("Products");
   const contractSubscription = Meteor.subscribe("SupplyContracts");
   const ordersSubscription = Meteor.subscribe("SupplierOrders");
+  const accountsSubscription = Meteor.subscribe("Accounts", Meteor.userId());
 
-  if (productsSubscription.ready() && contractSubscription.ready() && ordersSubscription.ready()) {
+  if (productsSubscription.ready() 
+      && contractSubscription.ready() 
+      && ordersSubscription.ready()
+      && accountsSubscription.ready()) {
     const allProducts = Products.find({ type: "variant" }, { sort: { createdAt: 1 } }).fetch();
     const allOrders = Orders.find({}, { sort: { createdAt: 1 } }).fetch();
     const allContracts = SupplyContracts.find({}, { sort: { createdAt: 1 } }).fetch();
-    const productStats = getProductStats(allOrders, allContracts, allProducts);
+    const allAccounts = Accounts.find({}).fetch();
+    const productStats = getProductStats(allOrders, allContracts, allProducts, allAccounts);
 
     onData(null, {
       productStats: productStats
@@ -63,17 +69,43 @@ const loadData = (props, onData) => {
   }
 };
 
-function getProductStats(orders, contracts, products) {
+/**
+ * Create an array of product stat objects that can be used directly as an input
+ * for listing products and their related stats to admins/suppliers.
+ * NB! Filters out some Products alltogether:
+ * - all Products where type <> "variant" as only variants can be ordered by customers
+ * - for suppliers, those Products where open quantity == 0 and contracted quantity == 0
+ * - for suppliers, only Products attached to the supplier will be included
+ * @param {Array} orders Array of Order objects
+ * @param {Array} contracts Array of SupplyContract objects
+ * @param {Array} products Array of Product objects
+ * @param {Array} accounts Array of Account objects
+ * @returns {Array} Array of objects that can be used directly to list product stats. 
+ */
+function getProductStats(orders, contracts, products, accounts) {
   const productStats = [];
 
   _.forEach(products, function (product) {
-    const productStat = calculateProductFigures(orders, contracts, product._id);
-    if(isInRole("admin") || (productStat.openQuantity > 0 || productStat.contractedQuantity > 0)) {
-      productStat.title = product.title;
-      productStat.detailsHref = "#";
-      productStat.productId = product._id;
+    let isAttachedProduct = false;
+    if(isInRole("admin")) {
+      isAttachedProduct = true;
+    } else {
+      let productMatch = _.find(accounts[0].products, function(attachedProduct) {
+        return _.indexOf(product.ancestors, attachedProduct._id) > -1;
+      });
+      if(productMatch) {
+        isAttachedProduct = true;
+      }
+    }
 
-      productStats.push(productStat);
+    if(isAttachedProduct) {
+      const productStat = calculateProductFigures(orders, contracts, product._id);
+      if(isInRole("admin") || (productStat.openQuantity > 0 || productStat.contractedQuantity > 0)) {
+        productStat.title = product.title;
+        productStat.detailsHref = "#";
+        productStat.productId = product._id;
+        productStats.push(productStat);
+      }
     }
   });
 
