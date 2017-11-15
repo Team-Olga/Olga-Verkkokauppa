@@ -47,6 +47,7 @@ deploy:
   provider: heroku
   api_key:
     secure: "$HEROKU"
+  on: master
 
 notifications:
   slack: olgaverkkokauppa:VyuKQR5JBQpHmyOWE6bPRBZp
