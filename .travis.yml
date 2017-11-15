@@ -46,7 +46,7 @@ branches:
 deploy:
   provider: heroku
   api_key:
-    secure: "76fb99cf-c834-4df6-9784-76b3213be89e"
+    secure: "$HEROKU"
 
 notifications:
   slack: olgaverkkokauppa:VyuKQR5JBQpHmyOWE6bPRBZp
