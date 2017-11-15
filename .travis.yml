@@ -1,4 +1,7 @@
 sudo: required
+services:
+  - docker
+
 language: node_js
 
 env:
@@ -19,13 +22,13 @@ before_script:
   - npm cache clean
   - npm install
   - npm install -g reaction-cli
+  - sudo apt-get install docker.io
   - curl https://install.meteor.com/ | sh
   - sudo chown travis -Rh /home/travis/.config /home/travis/build
   - sudo meteor npm install
   - sudo chown travis -Rh .meteor/local
   - meteor update --release 1.5.1
   - sudo meteor npm install --save babel-core@latest babel-loader@latest
-
 
 
 script:
@@ -38,6 +41,12 @@ branches:
   - master
 
   - dev
+
+
+deploy:
+  provider: heroku
+  api_key:
+    secure: "76fb99cf-c834-4df6-9784-76b3213be89e"
 
 notifications:
   slack: olgaverkkokauppa:VyuKQR5JBQpHmyOWE6bPRBZp
