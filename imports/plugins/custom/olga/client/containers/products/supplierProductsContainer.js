@@ -52,7 +52,7 @@ const loadData = (props, onData) => {
   const ordersSubscription = Meteor.subscribe("SupplierOrders");
 
   if (productsSubscription.ready() && contractSubscription.ready() && ordersSubscription.ready()) {
-    const allProducts = Products.find({}, { sort: { createdAt: 1 } }).fetch();
+    const allProducts = Products.find({ type: "variant" }, { sort: { createdAt: 1 } }).fetch();
     const allOrders = Orders.find({}, { sort: { createdAt: 1 } }).fetch();
     const allContracts = SupplyContracts.find({}, { sort: { createdAt: 1 } }).fetch();
     const productStats = getProductStats(allOrders, allContracts, allProducts);
@@ -68,11 +68,13 @@ function getProductStats(orders, contracts, products) {
 
   _.forEach(products, function (product) {
     const productStat = calculateProductFigures(orders, contracts, product._id);
-    productStat.title = product.title;
-    productStat.detailsHref = "#";
-    productStat.productId = product._id;
+    if(isInRole("admin") || (productStat.openQuantity > 0 || productStat.contractedQuantity > 0)) {
+      productStat.title = product.title;
+      productStat.detailsHref = "#";
+      productStat.productId = product._id;
 
-    productStats.push(productStat);
+      productStats.push(productStat);
+    }
   });
 
   return productStats;
