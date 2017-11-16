@@ -139,6 +139,7 @@ class SupplierProductsListReact extends Component {
 
           <ReactTable
             data={this.props.productStats}
+            noDataText="Avoimia tilauksia ei löytynyt"
             columns={supplierColumns}
             defaultPageSize={10}
             className="olga-list-table"
