@@ -4,39 +4,39 @@ import ReactTable from "react-table";
 import SupplierProductsListItem from "./supplierProductsListItem";
 import { SortableTable } from "/imports/plugins/core/ui/client/components";
 import { Products } from "/lib/collections";
-import Modal from 'react-modal';
-import AlertContainer from 'react-alert';
+import Modal from "react-modal";
+import AlertContainer from "react-alert";
 
 
 class SupplierProductsListReact extends Component {
-    constructor(props) {
-        super(props);
+  constructor(props) {
+    super(props);
 
-        this.state = {
-          modalIsOpen: false,
-          productId: "id",
-          openQuantity: 2,
-          productName: "name",
-          supplyQuantity: 0
-        };
-        this.openModal = this.openModal.bind(this);
-        this.closeModal = this.closeModal.bind(this);
-        this.updateSupplyQuantity = this.updateSupplyQuantity.bind(this);
-    }
+    this.state = {
+      modalIsOpen: false,
+      productId: "id",
+      openQuantity: 2,
+      productName: "name",
+      supplyQuantity: 0
+    };
+    this.openModal = this.openModal.bind(this);
+    this.closeModal = this.closeModal.bind(this);
+    this.updateSupplyQuantity = this.updateSupplyQuantity.bind(this);
+  }
 
     alertOptions = {
-        offset: 14,
-        position: 'top left',
-        theme: 'light',
-        time: 5000,
-        transition: 'scale'
+      offset: 14,
+      position: "top left",
+      theme: "light",
+      time: 5000,
+      transition: "scale"
     }
 
     showAlert = (message, type) => {
-        this.msg.show(message, {
-            time: 5000,
-            type: type
-        })
+      this.msg.show(message, {
+        time: 5000,
+        type: type
+      });
     }
 
     openModal(productId, productTitle, openQuantity) {
@@ -51,95 +51,98 @@ class SupplierProductsListReact extends Component {
 
     closeModal() {
       if (this.state.supplyQuantity == 0 || this.state.openQuantity <= 0) {
-        this.setState({modalIsOpen: false});
+        this.setState({ modalIsOpen: false });
       } else {
-        this.setState({modalIsOpen: false});
-        let contractId = Meteor.call("supplyContracts/create", this.state.productId, parseInt(this.state.supplyQuantity));
-        this.showAlert('Toimitussopimus tehty (' + this.state.productName + ' ' + this.state.supplyQuantity + ' kpl)', 'success');
+        this.setState({ modalIsOpen: false });
+        const contractId = Meteor.call("supplyContracts/create", this.state.productId, parseInt(this.state.supplyQuantity));
+        this.showAlert("Toimitussopimus tehty (" + this.state.productName + " " + this.state.supplyQuantity + " kpl)", "success");
       }
     }
 
     updateSupplyQuantity(e) {
-        if(Number.isNaN(e.target.value) || !Number.isInteger(Number(e.target.value))) {
-            console.log("Invalid input");
-            this.showAlert("Toimitusmäärän on oltava kokonaisluku", "error");
-        } else if(Number(e.target.value) > this.state.openQuantity) {
-            console.log("Too large quantity");
-            this.showAlert("Voit toimittaa enintään avoinna olevan määrän", "error");
-        } else {
-            this.setState({ supplyQuantity: e.target.value });
-        }
+      if (Number.isNaN(e.target.value) || !Number.isInteger(Number(e.target.value))) {
+        console.log("Invalid input");
+        this.showAlert("Toimitusmäärän on oltava kokonaisluku", "error");
+      } else if (Number(e.target.value) > this.state.openQuantity) {
+        console.log("Too large quantity");
+        this.showAlert("Voit toimittaa enintään avoinna olevan määrän", "error");
+      } else {
+        this.setState({ supplyQuantity: e.target.value });
+      }
     }
 
     render() {
+      const supplierColumns = [
+        {
+          Header: "",
+          accessor: "title",
 
-        const supplierColumns = [
-            {
-                Header: "",
-                accessor: "title",
+          filterMethod: (filter, row) =>
+            row[filter.id].includes(filter.value),
 
-                filterMethod: (filter, row) =>
-                row[filter.id].match(filter.value), 
+          Cell: cellInfo => (
+            <SupplierProductsListItem
+              productStat={cellInfo.original}
+              userStatus={this.props.userStatus}
+              showContractModal={this.openModal}
+            />
+          )
+        }
+      ];
 
-                Cell: cellInfo => (
-                    <SupplierProductsListItem
-                        productStat={cellInfo.original}
-                        userStatus={this.props.userStatus}
-                        showContractModal={this.openModal}
-                    />
-                )
-            }
-        ];
-
-        return (
+      return (
+        <div>
+          <Modal
+            isOpen={this.state.modalIsOpen}
+            onRequestClose={this.state.closeModal}
+            contentLabel="Create supplyContract"
+            className={{
+              base: "contractModal",
+              afterOpen: "contractModal_after-open",
+              beforeClose: "contractModal_before-close"
+            }}
+            overlayClassName={{
+              base: "contractModalOverlay",
+              afterOpen: "contractModalOverlay_after-open",
+              beforeClose: "contractModalOverlay_before-close"
+            }}
+          >
+            <h2 id="contractModalTitle">{this.state.productName}</h2>
+            <h3>Avoin määrä: <span id="openQuantity">{this.state.openQuantity}</span> </h3>
+            <h3><label htmlFor="quantity">Toimitettava määrä: </label>
+              <input type="number" id="quantity" name="quantity" className="right-justified"
+                min="0" max={this.state.openQuantity}
+                onChange={this.updateSupplyQuantity} value={this.state.supplyQuantity}
+              /></h3>
             <div>
-              <Modal
-                isOpen={this.state.modalIsOpen}
-                onRequestClose={this.state.closeModal}
-                contentLabel="Create supplyContract"
-                className={{
-                    base: "contractModal",
-                    afterOpen: "contractModal_after-open",
-                    beforeClose: "contractModal_before-close"
-                }}
-                overlayClassName={{
-                    base: "contractModalOverlay",
-                    afterOpen: "contractModalOverlay_after-open",
-                    beforeClose: "contractModalOverlay_before-close"
-                }}
-                >
-                <h2 id="contractModalTitle">{this.state.productName}</h2>
-                <h3>Avoin määrä: <span id="openQuantity">{this.state.openQuantity}</span> </h3>
-                <h3><label htmlFor="quantity">Toimitettava määrä: </label>
-                <input type="number" id="quantity" name="quantity" className="right-justified" min="0" max={this.state.openQuantity}
-                    onChange={this.updateSupplyQuantity} value={this.state.supplyQuantity}/></h3>
-                <div>
-                    <button id="cancelModal" className="rui btn btn-primary flat olga-listing-btn-default pull-right"
-                        onClick={() => this.closeModal()} >Peruuta</button>
-                    <button id="confirmContract" className="rui btn btn-primary flat olga-listing-btn-success pull-right"
-                        onClick={() => this.closeModal($('#quantity').val())} >Vahvista</button>
-                </div>
-                </Modal>
-
-                <AlertContainer ref={a => this.msg = a} {...this.alertOptions} />
-
-                <ReactTable
-                    data={this.props.productStats}
-                    columns={supplierColumns}
-                    defaultPageSize={10}
-                    className="olga-list-table"
-                    filterable
-                    defaultFilterMethod={(filter, row) =>
-                    String(row[filter.id]) === filter.value}    
-                />
+              <button id="cancelModal" className="rui btn btn-primary flat olga-listing-btn-default pull-right"
+                onClick={() => this.closeModal()}
+              >Peruuta</button>
+              <button id="confirmContract" className="rui btn btn-primary flat olga-listing-btn-success pull-right"
+                onClick={() => this.closeModal($("#quantity").val())}
+              >Vahvista</button>
             </div>
-        );
+          </Modal>
+
+          <AlertContainer ref={a => this.msg = a} {...this.alertOptions} />
+
+          <ReactTable
+            data={this.props.productStats}
+            columns={supplierColumns}
+            defaultPageSize={10}
+            className="olga-list-table"
+            filterable
+            defaultFilterMethod={(filter, row) =>
+              String(row[filter.id]) === filter.value}
+          />
+        </div>
+      );
     }
 }
 
 SupplierProductsListReact.propTypes = {
-    productStats: PropTypes.arrayOf(PropTypes.object),
-    userStatus: PropTypes.string
-}
+  productStats: PropTypes.arrayOf(PropTypes.object),
+  userStatus: PropTypes.string
+};
 
 export default SupplierProductsListReact;
