@@ -2,8 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import ReactTable from "react-table";
 import SupplierProductsListItem from "./supplierProductsListItem";
-import { SortableTable } from "/imports/plugins/core/ui/client/components";
-import { Products } from "/lib/collections";
+import SupplierProductsListOpenOrderBtn from "./supplierProductsListOpenOrderBtn";
 import Modal from "react-modal";
 import AlertContainer from "react-alert";
 
@@ -82,6 +81,18 @@ class SupplierProductsListReact extends Component {
 
           Cell: cellInfo => (
             <SupplierProductsListItem
+              productStat={cellInfo.original}
+              userStatus={this.props.userStatus}
+              showContractModal={this.openModal}
+            />
+          )
+        },
+        {
+          Header: "",
+          accessor: "openQuantity",
+
+          Cell: cellInfo => (
+            <SupplierProductsListOpenOrderBtn
               productStat={cellInfo.original}
               userStatus={this.props.userStatus}
               showContractModal={this.openModal}
