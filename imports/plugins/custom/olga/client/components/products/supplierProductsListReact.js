@@ -144,6 +144,7 @@ class SupplierProductsListReact extends Component {
             noDataText="Avoimia tilauksia ei löytynyt"
             columns={supplierColumns}
             defaultPageSize={10}
+            minRows={0}
             className="olga-list-table"
             filterable
             defaultFilterMethod={(filter, row) =>
