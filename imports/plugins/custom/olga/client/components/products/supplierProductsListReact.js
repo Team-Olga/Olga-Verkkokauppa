@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import ReactTable from "react-table";
 import SupplierProductsListItem from "./supplierProductsListItem";
-import SupplierProductsListOpenOrderBtn from "./supplierProductsListOpenOrderBtn";
+import SupplierProductsListBtns from "./supplierProductsListBtns";
 import Modal from "react-modal";
 import AlertContainer from "react-alert";
 
@@ -73,11 +73,11 @@ class SupplierProductsListReact extends Component {
     render() {
       const supplierColumns = [
         {
-          Header: "",
+          Header: "Järjestä nimen mukaan",
           accessor: "title",
 
           filterMethod: (filter, row) =>
-            row[filter.id].includes(filter.value),
+            row[filter.id].toLowerCase().includes(filter.value.toLowerCase()),
 
           Cell: cellInfo => (
             <SupplierProductsListItem
@@ -88,11 +88,13 @@ class SupplierProductsListReact extends Component {
           )
         },
         {
-          Header: "",
+          Header: "Järjestä avoimien tilausten määrän mukaan",
           accessor: "openQuantity",
+          defaultSortDesc: true,
+          filterable: false,
 
           Cell: cellInfo => (
-            <SupplierProductsListOpenOrderBtn
+            <SupplierProductsListBtns
               productStat={cellInfo.original}
               userStatus={this.props.userStatus}
               showContractModal={this.openModal}

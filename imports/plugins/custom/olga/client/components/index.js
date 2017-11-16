@@ -1,4 +1,4 @@
 import "./products/supplierProductsListItem";
 import "./products/supplierProductsListReact";
-import "./products/supplierProductsListOpenOrderBtn";
+import "./products/supplierProductsListBtns";
 
