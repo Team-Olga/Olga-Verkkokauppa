@@ -121,6 +121,7 @@ class SupplierProductsListReact extends Component {
                 <ReactTable
                     data={this.props.productStats}
                     columns={supplierColumns}
+                    minRows={0}
                     defaultPageSize={10}
                     className="olga-list-table"
                 />
