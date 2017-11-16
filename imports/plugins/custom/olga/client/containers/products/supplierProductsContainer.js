@@ -52,7 +52,7 @@ const loadData = (props, onData) => {
   const ordersSubscription = Meteor.subscribe("SupplierOrders");
 
   if (productsSubscription.ready() && contractSubscription.ready() && ordersSubscription.ready()) {
-    const allProducts = Products.find({}, { sort: { createdAt: 1 } }).fetch();
+    const allProducts = Products.find({isDeleted: false, isVisible: true}, { sort: { createdAt: 1 } }).fetch();
     const allOrders = Orders.find({}, { sort: { createdAt: 1 } }).fetch();
     const allContracts = SupplyContracts.find({}, { sort: { createdAt: 1 } }).fetch();
     const productStats = getProductStats(allOrders, allContracts, allProducts);
