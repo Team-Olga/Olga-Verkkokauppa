@@ -3,12 +3,13 @@ import { composeWithTracker } from "@reactioncommerce/reaction-components";
 import { Meteor } from "meteor/meteor";
 import PropTypes from "prop-types";
 import _ from "lodash";
-import { isInRole, getAllRoles } from "../../../lib/userChecks";
+import UserChecks from "../../../lib/userChecks";
 import { Products, Orders, Accounts } from "lib/collections";
 import { SupplyContracts } from "../../../lib/collections";
 import { Loading } from "/imports/plugins/core/ui/client/components";
 import SupplierProductsListReact from "../../components/products/supplierProductsListReact";
-//import { Accounts } from "meteor/accounts-base";
+
+let userChecks = new UserChecks();
 
 class SupplierProductsContainer extends Component {
     static propTypes = {
@@ -29,9 +30,9 @@ class SupplierProductsContainer extends Component {
       }
 
       let userStatus;
-      if (isInRole("admin")) {
+      if (userChecks.isInRole("admin")) {
         userStatus = "admin";
-      } else if (isInRole("supplierproductsreact")) {
+      } else if (userChecks.isInRole("supplierproductsreact")) {
         userStatus = "supplier";
       }
 
@@ -57,10 +58,14 @@ const loadData = (props, onData) => {
       && contractSubscription.ready() 
       && ordersSubscription.ready()
       && accountsSubscription.ready()) {
-    const allProducts = Products.find({ type: "variant" }, { sort: { createdAt: 1 } }).fetch();
+    const allProducts = Products.find(
+      { type: "variant", isDeleted: false, isVisible: true }, 
+      { sort: { createdAt: 1 } }
+    ).fetch();
     const allOrders = Orders.find({}, { sort: { createdAt: 1 } }).fetch();
     const allContracts = SupplyContracts.find({}, { sort: { createdAt: 1 } }).fetch();
     const allAccounts = Accounts.find({}).fetch();
+
     const productStats = getProductStats(allOrders, allContracts, allProducts, allAccounts);
 
     onData(null, {
@@ -87,7 +92,7 @@ function getProductStats(orders, contracts, products, accounts) {
 
   _.forEach(products, function (product) {
     let isAttachedProduct = false;
-    if(isInRole("admin")) {
+    if(userChecks.isInRole("admin")) {
       isAttachedProduct = true;
     } else {
       let productMatch = _.find(accounts[0].products, function(attachedProduct) {
@@ -100,7 +105,7 @@ function getProductStats(orders, contracts, products, accounts) {
 
     if(isAttachedProduct) {
       const productStat = calculateProductFigures(orders, contracts, product._id);
-      if(isInRole("admin") || (productStat.openQuantity > 0 || productStat.contractedQuantity > 0)) {
+      if(userChecks.isInRole("admin") || (productStat.openQuantity > 0 || productStat.contractedQuantity > 0)) {
         productStat.title = product.title;
         productStat.detailsHref = "#";
         productStat.productId = product._id;

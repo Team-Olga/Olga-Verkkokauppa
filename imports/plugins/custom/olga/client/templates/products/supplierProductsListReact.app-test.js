@@ -14,8 +14,10 @@ import { sinon } from "meteor/practicalmeteor:sinon";
 import { $ } from 'meteor/jquery';
 import { Template } from "meteor/templating";
 import Modal from 'react-modal';
-import { Products, Orders } from "/lib/collections";
+import { Products, Orders, Accounts } from "/lib/collections";
 import { SupplyContracts } from "../../../lib/collections";
+import UserChecks from "../../../lib/userChecks";
+import { Roles } from "meteor/alanning:roles";
 import ReactTestUtils from "react-addons-test-utils";
 
 import SupplierProductsContainer from "../../containers/products/supplierProductsContainer";
@@ -23,21 +25,31 @@ import SupplierProductsContainer from "../../containers/products/supplierProduct
 var testProducts;
 var testOrders;
 var testContracts;
+var testAccounts;
+var sandbox;
 
 describe("SupplierProductsReact", function (done) {
 
     beforeEach(function () {
-        StubCollections.stub([Products, Orders, SupplyContracts]);
+        StubCollections.stub([Products, Orders, Accounts, SupplyContracts]);
+        sandbox = sinon.sandbox.create();
         Template.registerHelper('_', key => key);
-        sinon.stub(Meteor, 'subscribe', () => ({
+        sandbox.stub(Meteor, 'subscribe', () => ({
             subscriptionId: 0,
             ready: () => true,
         }));
+        sandbox.stub(Roles, "userIsInRole", () => true);
+        sandbox.stub(UserChecks.prototype, "isInRole", () => true);
+        sandbox.stub(Meteor, "userId", () => Random.id());
+        sandbox.stub(Meteor, "user", () => { roles: { J8Bhq3uTtdgwZx3rz: [ "supplierproducts", "admin" ]}});
 
         Factory.define('product', Products, {
             _id: Random.id(),
             title: "TestProduct",
             ancestors: [],
+            type: "simple",
+            isVisible: false,
+            isDeleted: true,
             createdAt: Date.now(),
         });
 
@@ -65,37 +77,101 @@ describe("SupplierProductsReact", function (done) {
             createdAt: Date.now()
         });
 
+        Factory.define('account', Accounts, {
+            _id: Random.id(),
+            products: []
+        });
+
         testProducts = [];
         testOrders = [];
         testContracts = [];
+        testAccounts = [];
 
-        _.times(3, function (index) {
-            let product = Factory.create('product', {
-                _id: Random.id(),
-                title: "Test " + index,
-            });
-            testProducts.push(product);
+        let product = Factory.create('product', {
+            _id: Random.id(),
+            title: "Parent",
+            ancestors: [],
+            type: "simple",
+            isVisible: true,
+            isDeleted: false,
+            createdAt: Date.now(),
         });
+        testProducts.push(product);
+
+        product = Factory.create('product', {
+            _id: Random.id(),
+            title: "ParentHidden",
+            ancestors: [ testProducts[0]._id ],
+            type: "variant",
+            isVisible: false,
+            isDeleted: false,
+            createdAt: Date.now(),
+        });
+        testProducts.push(product);
+
+        product = Factory.create('product', {
+            _id: Random.id(),
+            title: "TestDeleted",
+            ancestors: [ testProducts[0]._id ],
+            type: "variant",
+            isVisible: true,
+            isDeleted: true,
+            createdAt: Date.now(),
+        });
+        testProducts.push(product);
+
+        product = Factory.create('product', {
+            _id: Random.id(),
+            title: "Test0",
+            ancestors: [ testProducts[0]._id, testProducts[1]._id ],
+            type: "variant",
+            isVisible: true,
+            isDeleted: false,
+            createdAt: Date.now(),
+        });
+        testProducts.push(product);
+
+        product = Factory.create('product', {
+            _id: Random.id(),
+            title: "Test1",
+            ancestors: [ testProducts[0]._id, testProducts[1]._id ],
+            type: "variant",
+            isVisible: true,
+            isDeleted: false,
+            createdAt: Date.now(),
+        });
+        testProducts.push(product);
+
+        product = Factory.create('product', {
+            _id: Random.id(),
+            title: "Test2",
+            ancestors: [ testProducts[0]._id, testProducts[1]._id ],
+            type: "variant",
+            isVisible: true,
+            isDeleted: false,
+            createdAt: Date.now(),
+        });
+        testProducts.push(product);
 
         let items0 = [{
             quantity: 3,
-            variants: {_id: testProducts[0]._id}
+            variants: {_id: testProducts[3]._id}
         }];
 
         let items1 = [
             {
                 quantity: 7,
-                variants: {_id: testProducts[1]._id}
+                variants: {_id: testProducts[4]._id}
             },
             {
                 quantity: 4,
-                variants: {_id: testProducts[0]._id}
+                variants: {_id: testProducts[3]._id}
             },
         ];
 
         let productSupplies0 = [
             {
-                productId: testProducts[0]._id,
+                productId: testProducts[3]._id,
                 supplyContracts: [],
                 openQuantity: 1
             }
@@ -103,12 +179,12 @@ describe("SupplierProductsReact", function (done) {
 
         let productSupplies1 = [
             {
-                productId: testProducts[1]._id,
+                productId: testProducts[4]._id,
                 supplyContracts: [],
                 openQuantity: 6
             },
             {
-                productId: testProducts[0]._id,
+                productId: testProducts[3]._id,
                 supplyContracts: [],
                 openQuantity: 4
             }
@@ -132,7 +208,7 @@ describe("SupplierProductsReact", function (done) {
                 _id: Random.id(),
                 userId: Random.id(),
                 orders: [],
-                productId: testProducts[0]._id,
+                productId: testProducts[3]._id,
                 quantity: 1,
                 sentQuantity: 0,
                 receivedQuantity: 0,
@@ -144,7 +220,7 @@ describe("SupplierProductsReact", function (done) {
                 _id: Random.id(),
                 userId: Random.id(),
                 orders: [],
-                productId: testProducts[1]._id,
+                productId: testProducts[4]._id,
                 quantity: 1,
                 sentQuantity: 0,
                 receivedQuantity: 0,
@@ -156,7 +232,7 @@ describe("SupplierProductsReact", function (done) {
                 _id: Random.id(),
                 userId: Random.id(),
                 orders: [],
-                productId: testProducts[0]._id,
+                productId: testProducts[3]._id,
                 quantity: 1,
                 sentQuantity: 1,
                 receivedQuantity: 0,
@@ -164,12 +240,17 @@ describe("SupplierProductsReact", function (done) {
         });
         testContracts.push(contract2);
 
+        let account0 = Factory.create('account', {
+            _id: Random.id(),
+            products: [ testProducts[0]._id ]
+        })
+
     });
 
     afterEach(function () {
         StubCollections.restore();
         Template.deregisterHelper('_');
-        Meteor.subscribe.restore();
+        sandbox.restore();
     });
 
     it("renders all products", function (done) {
@@ -178,15 +259,17 @@ describe("SupplierProductsReact", function (done) {
         );
         var productRows = ReactTestUtils.scryRenderedDOMComponentsWithClass(component, "supplier-product-row");
         
-        chai.assert.equal(productRows.length, testProducts.length, "wrong number of product listings");
+        chai.assert.equal(productRows.length, 3, "wrong number of product listings");
         _.forEach(testProducts, function(product) {
             let found = false;
-            _.forEach(productRows, function(row) {                
-                if($(row).find(".olga-listing-title").text() === product.title) {
-                    found = true;
-                }                
-            });
-            chai.assert.isTrue(found, "couldn't find " + product.title);
+            if(product.type === "variant" && product.isVisible === true && product.isDeleted === false) {
+                _.forEach(productRows, function(row) {                
+                    if($(row).find(".olga-listing-title").text() === product.title) {
+                        found = true;
+                    }                
+                });
+                chai.assert.isTrue(found, "couldn't find " + product.title);
+            }
         });
 
         done();
@@ -200,11 +283,8 @@ describe("SupplierProductsReact", function (done) {
 
         _.forEach(productRows, function(row) {
             let title = $(row).find(".olga-listing-title").text();
-            console.log("Prodcut: " + title);
             $(row).find(".olga-listing-btn-success").each(function() {
-                console.log("Button: " + $(this).text());
                 let btnText = $(this).text().split(" ");   
-                console.log("")
                 chai.assert.equal(btnText[1], getProductStats(title, btnText[0]), "Stat " + btnText[0] + " wrong for product " + title);
             })
         });
@@ -274,10 +354,7 @@ describe("SupplierProductsReact", function (done) {
         chai.assert.equal(wrapper.find(Modal).prop('isOpen'), false, "Modal is not closed");
         chai.assert.isTrue(spy.calledOnce, "Server method was not called");
         var args = spy.getCalls()[0].args;
-        _.forEach(args, function(arg) {
-            console.log("Argumentti: " + arg);
-        });
-        chai.assert.isTrue(spy.calledWith("supplyContracts/create", testProducts[1]._id, 1), "Wrong server method called");
+        chai.assert.isTrue(spy.calledWith("supplyContracts/create", testProducts[4]._id, 1), "Wrong server method called");
 
         Meteor.call.restore();
         done();
@@ -304,6 +381,11 @@ describe("SupplierProductsReact", function (done) {
     });
 });
 
+/**
+ * Helper function to calculate a Product stat from test data.
+ * @param {String} title Product Title
+ * @param {String} stat Which stat should be calculated
+ */
 function getProductStats(title, stat) {
     let productId = _.find(testProducts, function(p) {
         if(p.title === title)
