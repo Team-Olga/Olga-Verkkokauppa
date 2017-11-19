@@ -3,11 +3,13 @@ import { composeWithTracker } from "@reactioncommerce/reaction-components";
 import { Meteor } from "meteor/meteor";
 import PropTypes from "prop-types";
 import _ from "lodash";
-import { isInRole, getAllRoles } from "../../../lib/userChecks";
+import UserChecks from "../../../lib/userChecks";
 import { SupplyContracts } from "../../../lib/collections";
 import { Products, Accounts } from "lib/collections";
 import { Loading } from "/imports/plugins/core/ui/client/components";
 import ContractList from "../../components/contracts/contractList";
+
+let userChecks = new UserChecks();
 
 class ContractContainer extends Component {
     static propTypes = {
@@ -15,7 +17,7 @@ class ContractContainer extends Component {
     }
 
     constructor(props) {
-        super(props);
+        super(props);        
     }
 
     render() {
@@ -28,9 +30,9 @@ class ContractContainer extends Component {
         }
 
         let userStatus;
-        if (isInRole("admin")) {
+        if (userChecks.isInRole("admin")) {
           userStatus = "admin";
-        } else if (isInRole("supplierproductsreact")) {
+        } else if (userChecks.isInRole("supplierproductsreact")) {
           userStatus = "supplier";
         }
 
@@ -56,12 +58,6 @@ const loadData = (props, onData) => {
         const products = Products.find({}).fetch();
         const accounts = Accounts.find({}).fetch();
         const contracts = enrichContracts(baseContracts, products, accounts);
-
-        _.forEach(contracts, function(contract) {
-            console.log("Contract "+ contract._id);
-            console.log("userId: " + contract.userId + " productName: " + contract.productName);
-            console.log("quantity: " + contract.quantity + " date: " + contract.createdAt);
-        });
 
         onData(null, {
             contracts: contracts

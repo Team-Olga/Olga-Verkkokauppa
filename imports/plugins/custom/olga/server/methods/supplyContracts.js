@@ -6,7 +6,7 @@ import { ValidatedMethod } from "meteor/mdg:validated-method";
 import { SimpleSchema } from "meteor/aldeed:simple-schema";
 import { Reaction } from "/server/api";
 import { Roles } from "meteor/alanning:roles";
-import { isInRole } from "../../lib/userChecks";
+import UserChecks from "../../lib/userChecks";
 import _ from "lodash";
 
 function initializeContract(userId, productId, quantity) {
@@ -57,8 +57,6 @@ function coverOrders(productId, quantity, supplyContractId) {
     while(contractQuantity > 0 && i < openOrders.length) {
         let openQuantity = getOpenQuantity(openOrders[i], productId);
         let supplyQuantity = openQuantity < contractQuantity ? openQuantity : contractQuantity;
-        // console.log("Verrataan tarjottua määrää " + contractQuantity + " avoimeen " + openQuantity);
-        // console.log("Toimitettavaa " + supplyQuantity + " tilaukselle " + openOrders[i]._id);
         if(supplyQuantity > 0) {
             updateOpenQuantity(openOrders[i], productId, supplyQuantity, supplyContractId);
             coveredOrders.push(openOrders[i]._id);
@@ -66,8 +64,6 @@ function coverOrders(productId, quantity, supplyContractId) {
         }
         i++;
     }
-    // console.log(coveredOrders);
-    // console.log("Tilauksia: " + coveredOrders.length);
     return coveredOrders;
 }
 
@@ -113,8 +109,9 @@ export const methods = {
         check(quantity, Number);
 
         let userId = Meteor.userId();
+        let userChecks = new UserChecks();
         
-        if(!Reaction.hasAdminAccess() && !isInRole("supplier")) {
+        if(!Reaction.hasAdminAccess() && !userChecks.isInRole("supplier")) {
             throw new Meteor.Error(403, "Access Denied");
         }
 

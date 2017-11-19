@@ -105,51 +105,47 @@ class SupplierProductsListReact extends Component {
 
       return (
         <div>
-          <Modal
-            isOpen={this.state.modalIsOpen}
-            onRequestClose={this.state.closeModal}
-            contentLabel="Create supplyContract"
-            className={{
-              base: "contractModal",
-              afterOpen: "contractModal_after-open",
-              beforeClose: "contractModal_before-close"
-            }}
-            overlayClassName={{
-              base: "contractModalOverlay",
-              afterOpen: "contractModalOverlay_after-open",
-              beforeClose: "contractModalOverlay_before-close"
-            }}
-          >
-            <h2 id="contractModalTitle">{this.state.productName}</h2>
-            <h3>Avoin määrä: <span id="openQuantity">{this.state.openQuantity}</span> </h3>
-            <h3><label htmlFor="quantity">Toimitettava määrä: </label>
-              <input type="number" id="quantity" name="quantity" className="right-justified"
-                min="0" max={this.state.openQuantity}
-                onChange={this.updateSupplyQuantity} value={this.state.supplyQuantity}
-              /></h3>
-            <div>
-              <button id="cancelModal" className="rui btn btn-primary flat olga-listing-btn-default pull-right"
-                onClick={() => this.closeModal()}
-              >Peruuta</button>
-              <button id="confirmContract" className="rui btn btn-primary flat olga-listing-btn-success pull-right"
-                onClick={() => this.closeModal($("#quantity").val())}
-              >Vahvista</button>
-            </div>
-          </Modal>
+              <Modal
+                isOpen={this.state.modalIsOpen}
+                onRequestClose={this.state.closeModal}
+                contentLabel="Create supplyContract"
+                className={{
+                    base: "contractModal",
+                    afterOpen: "contractModal_after-open",
+                    beforeClose: "contractModal_before-close"
+                }}
+                overlayClassName={{
+                    base: "contractModalOverlay",
+                    afterOpen: "contractModalOverlay_after-open",
+                    beforeClose: "contractModalOverlay_before-close"
+                }}
+                >
+                <h2 id="contractModalTitle">{this.state.productName}</h2>
+                <h3>Avoin määrä: <span id="openQuantity">{this.state.openQuantity}</span> </h3>
+                <h3><label htmlFor="quantity">Toimitettava määrä: </label>
+                <input type="number" id="quantity" name="quantity" className="right-justified" min="0" max={this.state.openQuantity}
+                    onChange={this.updateSupplyQuantity} value={this.state.supplyQuantity}/></h3>
+                <div>
+                    <button id="cancelModal" className="rui btn btn-primary flat olga-listing-btn-default pull-right"
+                        onClick={() => this.closeModal()} >Peruuta</button>
+                    <button id="confirmContract" className="rui btn btn-primary flat olga-listing-btn-success pull-right"
+                        onClick={() => this.closeModal($('#quantity').val())} >Vahvista</button>
+                </div>
+              </Modal>
 
-          <AlertContainer ref={a => this.msg = a} {...this.alertOptions} />
+              <AlertContainer ref={a => this.msg = a} {...this.alertOptions} />
 
-          <ReactTable
-            data={this.props.productStats}
-            noDataText="Avoimia tilauksia ei löytynyt"
-            columns={supplierColumns}
-            defaultPageSize={10}
-            minRows={0}
-            className="olga-list-table"
-            filterable
-            defaultFilterMethod={(filter, row) =>
-              String(row[filter.id]) === filter.value}
-          />
+              <ReactTable
+                data={this.props.productStats}
+                noDataText="Avoimia tilauksia ei löytynyt"
+                columns={supplierColumns}
+                defaultPageSize={10}
+                minRows={0}
+                className="olga-list-table"
+                filterable
+                defaultFilterMethod={(filter, row) =>
+                  String(row[filter.id]) === filter.value}
+              />
         </div>
       );
     }
