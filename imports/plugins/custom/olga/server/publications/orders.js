@@ -65,7 +65,7 @@ function createAggregate(shopId, sort = { createdAt: -1 }, limit = 0) {
 }
 
 Meteor.publish("SupplierOrders", function () {
-let userChecks = new UserChecks();
+  let userChecks = new UserChecks();
 
   if (this.userId === null) {
     return this.ready();
@@ -84,7 +84,7 @@ let userChecks = new UserChecks();
   const aggregate = createAggregate(shopId);
 
   //if (Roles.userIsInRole(this.userId, ["admin", "owner", "orders", "supplier"], shopId)) {
-  if(userChecks.isInRole("admin") || isInRole("supplier")) {
+  if(userChecks.isInRole("admin") || userChecks.isInRole("supplier")) {
     ReactiveAggregate(this, Orders, aggregate, aggregateOptions);
   } else {
     return Orders.find({
