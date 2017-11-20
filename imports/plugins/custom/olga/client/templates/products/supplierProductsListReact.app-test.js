@@ -258,6 +258,9 @@ describe("SupplierProductsReact", function (done) {
             <SupplierProductsContainer />
         );
         var productRows = ReactTestUtils.scryRenderedDOMComponentsWithClass(component, "supplier-product-row");
+        _.forEach(productRows, function(row) {
+            console.log($(row).find(".olga-listing-title").text());
+        });
         
         chai.assert.equal(productRows.length, 3, "wrong number of product listings");
         _.forEach(testProducts, function(product) {
