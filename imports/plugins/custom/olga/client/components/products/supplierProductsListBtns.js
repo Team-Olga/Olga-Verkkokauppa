@@ -51,7 +51,7 @@ export default class SupplierProductsListBtns extends Component {
         >
           Toimitettu {this.props.productStat.sentQuantity}
         </Button>
-        <Button status="primary" bezelStyle="flat" className="olga-listing-btn-primary pull-right"
+        <Button status="primary" bezelStyle="flat" className="olga-listing-btn-primary pull-right contracted-btn"
           onClick={this.handleContractedCountClick}
         >
           Sovittu {this.props.productStat.contractedQuantity}

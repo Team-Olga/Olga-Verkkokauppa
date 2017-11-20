@@ -192,7 +192,7 @@ class SupplierProductsListReact extends Component {
                     beforeClose: "deliveryModalOverlay_before-close"
                 }}
                 >
-                <h2 id="deliveryModalTitle">{this.state.productName}</h2>
+                <h2 id="contractModalTitle">{this.state.productName}</h2>
                 <h3>Sovittu toimitusmäärä: <span id="contractedQuantity">{this.state.contractedQuantity}</span> </h3>
                 <h3><label htmlFor="deliveryQuantity">Toimitettava määrä: </label>
                 <input type="number" id="deliveryQuantity" name="deliveryQuantity" className="right-justified" min="0" max={this.state.contractedQuantity}

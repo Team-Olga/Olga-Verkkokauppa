@@ -381,6 +381,34 @@ describe("SupplierProductsReact", function (done) {
         Meteor.call.restore();
         done();
     });
+
+    it("should open DeliveryModal", function(done) {
+        const wrapper = mount(<SupplierProductsContainer />);
+        let productRow = wrapper.find(".rt-tr-group").at(1);
+        let button = productRow.find(".contracted-btn");
+
+        button.simulate('click');
+        chai.assert.equal(wrapper.find(Modal).at(1).prop('isOpen'), true, "Modal not found");
+
+        done();
+    });
+
+    it("should open DeliveryModal with correct info", function(done) {
+        const wrapper = mount(<SupplierProductsContainer />);
+        let productRow = wrapper.find(".rt-tr-group").at(1);
+        let button = productRow.find(".contracted-btn");
+        let productTitle = productRow.find(".olga-listing-title").first().text();
+
+        button.simulate('click');
+        chai.assert.equal(wrapper.find(Modal).at(1).prop('isOpen'), true, "Modal not found");
+        let modalWrapper = new ReactWrapper(wrapper.find(Modal).at(1).node.portal, true);
+        chai.assert.equal(modalWrapper.find("#contractModalTitle").first().text(), productTitle, 
+            "Modal title doesn'tmatch product title");
+        chai.assert.equal(modalWrapper.find('#contractedQuantity').first().text(), "1", 
+            "Modal open quantity is incorrect");
+
+        done();
+    });
 });
 
 /**
