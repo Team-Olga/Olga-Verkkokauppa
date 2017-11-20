@@ -15,7 +15,7 @@ export default class UserChecks {
         // console.log("LoggedInUser: " + loggedInUser);
         // console.log("IsInRole: " + role + " " + Roles.userIsInRole(loggedInUser, role));
         if(loggedInUser) {
-            if(Roles.userIsInRole(loggedInUser, role) || roleIsInArray(loggedInUser, role)) {
+            if(Roles.userIsInRole(loggedInUser, role) || this.roleIsInArray(loggedInUser, role)) {
                 result = true;
             }
         }

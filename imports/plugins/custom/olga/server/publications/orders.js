@@ -1,7 +1,7 @@
 import { Meteor } from "meteor/meteor";
 import { check, Match } from "meteor/check";
 import { Roles } from "meteor/alanning:roles";
-import { isInRole } from "../../lib/userChecks";
+import UserChecks from "../../lib/userChecks";
 import { ReactiveAggregate } from "./reactiveAggregate";
 import { Orders } from "/lib/collections";
 import { Reaction } from "/server/api";
@@ -65,6 +65,8 @@ function createAggregate(shopId, sort = { createdAt: -1 }, limit = 0) {
 }
 
 Meteor.publish("SupplierOrders", function () {
+  let userChecks = new UserChecks();
+
   if (this.userId === null) {
     return this.ready();
   }
@@ -82,7 +84,7 @@ Meteor.publish("SupplierOrders", function () {
   const aggregate = createAggregate(shopId);
 
   //if (Roles.userIsInRole(this.userId, ["admin", "owner", "orders", "supplier"], shopId)) {
-  if(isInRole("admin") || isInRole("supplier")) {
+  if(userChecks.isInRole("admin") || userChecks.isInRole("supplier")) {
     ReactiveAggregate(this, Orders, aggregate, aggregateOptions);
   } else {
     return Orders.find({
