@@ -86,7 +86,7 @@ function composer(props, onData) {
 
   if (contractTotalSub.ready() && productSub.ready()) {
     onData(null, { 
-      contractTotals: ContractTotals.find({}).fetch(), 
+      contractTotals: ContractTotals.find({userId: Meteor.userId()}).fetch(), 
       ...props });
   }
 }
