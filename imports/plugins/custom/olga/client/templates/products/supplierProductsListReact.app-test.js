@@ -257,7 +257,7 @@ describe("SupplierProductsReact", function (done) {
         var component = ReactTestUtils.renderIntoDocument(
             <SupplierProductsContainer />
         );
-        var productRows = ReactTestUtils.scryRenderedDOMComponentsWithClass(component, "supplier-product-row");
+        var productRows = ReactTestUtils.scryRenderedDOMComponentsWithClass(component, "rt-tr-group");
         
         chai.assert.equal(productRows.length, 3, "wrong number of product listings");
         _.forEach(testProducts, function(product) {
@@ -279,7 +279,7 @@ describe("SupplierProductsReact", function (done) {
         var component = ReactTestUtils.renderIntoDocument(
             <SupplierProductsContainer />
         );
-        var productRows = ReactTestUtils.scryRenderedDOMComponentsWithClass(component, "supplier-product-row");
+        var productRows = ReactTestUtils.scryRenderedDOMComponentsWithClass(component, "rt-tr-group");
 
         _.forEach(productRows, function(row) {
             let title = $(row).find(".olga-listing-title").text();
@@ -293,26 +293,25 @@ describe("SupplierProductsReact", function (done) {
     });
 
     it("should open SupplyContractModal", function(done) {
-        var component = ReactTestUtils.renderIntoDocument(
-            <SupplierProductsContainer />
-        );
-        var  buttons = ReactTestUtils.scryRenderedDOMComponentsWithClass(component, "olga-listing-btn-success");
-        chai.assert.equal(buttons.length, 3, "Wrong number of buttons found.");
-        ReactTestUtils.Simulate.click(buttons[0]);
-        var modal = ReactTestUtils.scryRenderedDOMComponentsWithClass(component, "contractModalOverlay");
-        chai.assert.isNotNull(modal, "Modal is not open");
+        const wrapper = mount(<SupplierProductsContainer />);
+        let productRow = wrapper.find(".rt-tr-group").at(1);
+        let button = productRow.find(".olga-listing-btn-success");
+
+        button.simulate('click');
+        chai.assert.equal(wrapper.find(Modal).at(0).prop('isOpen'), true, "Modal not found");
+
         done();
     });
 
     it("should open SupplyContractModal with correct info", function(done) {
         const wrapper = mount(<SupplierProductsContainer />);
-        let productRow = wrapper.find(".supplier-product-row").at(1);
+        let productRow = wrapper.find(".rt-tr-group").at(1);
         let button = productRow.find(".olga-listing-btn-success");
         let productTitle = productRow.find(".olga-listing-title").first().text();
 
         button.simulate('click');
-        chai.assert.equal(wrapper.find(Modal).prop('isOpen'), true, "Modal not found");
-        let modalWrapper = new ReactWrapper(wrapper.find(Modal).node.portal, true);
+        chai.assert.equal(wrapper.find(Modal).at(0).prop('isOpen'), true, "Modal not found");
+        let modalWrapper = new ReactWrapper(wrapper.find(Modal).at(0).node.portal, true);
         chai.assert.equal(modalWrapper.find("#contractModalTitle").first().text(), productTitle, 
             "Modal title doesn'tmatch product title");
         chai.assert.equal(modalWrapper.find('#openQuantity').first().text(), "6", 
@@ -323,15 +322,16 @@ describe("SupplierProductsReact", function (done) {
 
     it("should close cancelled SupplyContractModal without calling server method", function(done) {
         const wrapper = mount(<SupplierProductsContainer />);
-        let button = wrapper.find(".supplier-product-row").at(1).find(".olga-listing-btn-success");
+        let productRow = wrapper.find(".rt-tr-group").at(1);
+        let button = productRow.find(".olga-listing-btn-success");
         let spy = sinon.spy(Meteor, "call");
 
         button.simulate('click');
-        chai.assert.equal(wrapper.find(Modal).prop('isOpen'), true, "Modal is not open");
-        let modalWrapper = new ReactWrapper(wrapper.find(Modal).node.portal, true);
-        let cancelButton = modalWrapper.find("#cancelModal");
+        chai.assert.equal(wrapper.find(Modal).at(0).prop('isOpen'), true, "Modal is not open");
+        let modalWrapper = new ReactWrapper(wrapper.find(Modal).at(0).node.portal, true);
+        let cancelButton = modalWrapper.find("#cancelContractModal");
         cancelButton.simulate('click');
-        chai.assert.equal(wrapper.find(Modal).prop('isOpen'), false, "Modal is not closed");
+        chai.assert.equal(wrapper.find(Modal).at(0).prop('isOpen'), false, "Modal is not closed");
         chai.assert.isFalse(spy.called, "Server method was called");
 
         Meteor.call.restore();
@@ -340,18 +340,19 @@ describe("SupplierProductsReact", function (done) {
 
     it("should close confirmed SupplyContractModal and call server method", function(done) {
         const wrapper = mount(<SupplierProductsContainer />);
-        let button = wrapper.find(".supplier-product-row").at(1).find(".olga-listing-btn-success");
+        let productRow = wrapper.find(".rt-tr-group").at(1);
+        let button = productRow.find(".olga-listing-btn-success");
         let spy = sinon.spy(Meteor, "call");
 
         button.simulate('click');
-        chai.assert.equal(wrapper.find(Modal).prop('isOpen'), true, "Modal is not open");
-        let modalWrapper = new ReactWrapper(wrapper.find(Modal).node.portal, true);
+        chai.assert.equal(wrapper.find(Modal).at(0).prop('isOpen'), true, "Modal is not open");
+        let modalWrapper = new ReactWrapper(wrapper.find(Modal).at(0).node.portal, true);
         let quantityInput = modalWrapper.find("#quantity").first();
         quantityInput.simulate("change", { target: { value: 1 } });
 
         let confirmButton = modalWrapper.find("#confirmContract");
         confirmButton.simulate('click');
-        chai.assert.equal(wrapper.find(Modal).prop('isOpen'), false, "Modal is not closed");
+        chai.assert.equal(wrapper.find(Modal).at(0).prop('isOpen'), false, "Modal is not closed");
         chai.assert.isTrue(spy.calledOnce, "Server method was not called");
         var args = spy.getCalls()[0].args;
         chai.assert.isTrue(spy.calledWith("supplyContracts/create", testProducts[4]._id, 1), "Wrong server method called");
@@ -362,21 +363,50 @@ describe("SupplierProductsReact", function (done) {
 
     it("should close confirmed SupplyContractModal with 0 quantity without calling server method", function(done) {
         const wrapper = mount(<SupplierProductsContainer />);
-        let button = wrapper.find(".supplier-product-row").at(1).find(".olga-listing-btn-success");
+        let productRow = wrapper.find(".rt-tr-group").at(1);
+        let button = productRow.find(".olga-listing-btn-success");
         let spy = sinon.spy(Meteor, "call");
 
         button.simulate('click');
-        chai.assert.equal(wrapper.find(Modal).prop('isOpen'), true, "Modal is not open");
-        let modalWrapper = new ReactWrapper(wrapper.find(Modal).node.portal, true);
+        chai.assert.equal(wrapper.find(Modal).at(0).prop('isOpen'), true, "Modal is not open");
+        let modalWrapper = new ReactWrapper(wrapper.find(Modal).at(0).node.portal, true);
         let quantityInput = modalWrapper.find("#quantity").first();
         quantityInput.simulate("change", { target: { value: 0 } });
 
         let confirmButton = modalWrapper.find("#confirmContract");
         confirmButton.simulate('click');
-        chai.assert.equal(wrapper.find(Modal).prop('isOpen'), false, "Modal is not closed");
+        chai.assert.equal(wrapper.find(Modal).at(0).prop('isOpen'), false, "Modal is not closed");
         chai.assert.isFalse(spy.called, "Server method was called");
 
         Meteor.call.restore();
+        done();
+    });
+
+    it("should open DeliveryModal", function(done) {
+        const wrapper = mount(<SupplierProductsContainer />);
+        let productRow = wrapper.find(".rt-tr-group").at(1);
+        let button = productRow.find(".contracted-btn");
+
+        button.simulate('click');
+        chai.assert.equal(wrapper.find(Modal).at(1).prop('isOpen'), true, "Modal not found");
+
+        done();
+    });
+
+    it("should open DeliveryModal with correct info", function(done) {
+        const wrapper = mount(<SupplierProductsContainer />);
+        let productRow = wrapper.find(".rt-tr-group").at(1);
+        let button = productRow.find(".contracted-btn");
+        let productTitle = productRow.find(".olga-listing-title").first().text();
+
+        button.simulate('click');
+        chai.assert.equal(wrapper.find(Modal).at(1).prop('isOpen'), true, "Modal not found");
+        let modalWrapper = new ReactWrapper(wrapper.find(Modal).at(1).node.portal, true);
+        chai.assert.equal(modalWrapper.find("#contractModalTitle").first().text(), productTitle, 
+            "Modal title doesn'tmatch product title");
+        chai.assert.equal(modalWrapper.find('#contractedQuantity').first().text(), "1", 
+            "Modal open quantity is incorrect");
+
         done();
     });
 });

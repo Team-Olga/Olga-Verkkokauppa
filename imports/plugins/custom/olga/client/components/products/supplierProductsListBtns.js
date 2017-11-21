@@ -32,6 +32,11 @@ export default class SupplierProductsListBtns extends Component {
 
   handleContractedCountClick(e) {
     e.preventDefault();
+    this.props.showDeliveryModal(
+      this.props.productStat.productId,
+      this.props.productStat.title,
+      this.props.productStat.contractedQuantity
+    );
   }
 
   handleSuppliedCountClick(e) {
@@ -46,17 +51,17 @@ export default class SupplierProductsListBtns extends Component {
         >
           Toimitettu {this.props.productStat.sentQuantity}
         </Button>
-        <Button status="primary" bezelStyle="flat" className="olga-listing-btn-primary pull-right"
+        <Button status="primary" bezelStyle="flat" className="olga-listing-btn-primary pull-right contracted-btn"
           onClick={this.handleContractedCountClick}
         >
           Sovittu {this.props.productStat.contractedQuantity}
         </Button>
-      <Button status="primary" bezelStyle="flat" className="olga-listing-btn-success pull-right"
-        onClick={this.handleOpenOrdersClick} data-productId={this.props.productStat.productId}
-      >
-        Avoinna {this.props.productStat.openQuantity}
-      </Button>
-       {this.props.userStatus == "admin" &&
+        <Button status="primary" bezelStyle="flat" className="olga-listing-btn-success pull-right"
+          onClick={this.handleOpenOrdersClick} data-productId={this.props.productStat.productId}
+        >
+          Avoinna {this.props.productStat.openQuantity}
+        </Button>
+        {this.props.userStatus == "admin" &&
         <Button status="primary" bezelStyle="flat" className="olga-listing-btn-primary pull-right"
           onClick={this.handleOrderCountClick}
         >
@@ -78,6 +83,7 @@ export default class SupplierProductsListBtns extends Component {
 SupplierProductsListBtns.propTypes = {
   productStat: PropTypes.object,
   userStatus: PropTypes.string,
-  showContractModal: PropTypes.func
+  showContractModal: PropTypes.func,
+  showDeliveryModal: PropTypes.func
 };
 

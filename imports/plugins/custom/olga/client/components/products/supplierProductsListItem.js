@@ -19,7 +19,8 @@ class SupplierProductsListItem extends Component {
 SupplierProductsListItem.propTypes = {
   productStat: PropTypes.object,
   userStatus: PropTypes.string,
-  showContractModal: PropTypes.func
+  showContractModal: PropTypes.func,
+  showDeliveryModal: PropTypes.func
 };
 
 export default SupplierProductsListItem;
