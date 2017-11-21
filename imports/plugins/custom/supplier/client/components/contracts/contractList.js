@@ -7,7 +7,7 @@ import { registerComponent, composeWithTracker } from "@reactioncommerce/reactio
 import ReactTable from "react-table";
 import './styles.less';
 
-import { ContractTotals } from 'imports/plugins/custom/olga-core/lib/collections';
+import { ContractTotals } from 'imports/plugins/custom/olga-core/lib/collections/collections';
 
 class ContractList extends Component {
   constructor(props) {
