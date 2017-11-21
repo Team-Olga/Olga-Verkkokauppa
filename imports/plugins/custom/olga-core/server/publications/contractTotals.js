@@ -7,6 +7,7 @@ Meteor.publish("ContractTotals", function() {
     {"$group" : {
       _id: {$concat: ["$productId", "-", "$userId"]},
       userId: {$min: "$userId"},
+      productId: {$min: "$productId"},
       received:{$sum:"$receivedQuantity"},
       delivery:{$sum:"$sentQuantity"},
       production: {
@@ -18,5 +19,25 @@ Meteor.publish("ContractTotals", function() {
         }
       }
     }], { clientCollection: "ContractTotals" }
+  );
+});
+
+Meteor.publish("ProductTotals", function() {
+  ReactiveAggregate(this, SupplyContracts, [
+    {"$group" : {
+      _id: {productId: "$productId"},
+      userId: {$addToSet: "$userId"},
+      productId: {$min: "$productId"},
+      received:{$sum:"$receivedQuantity"},
+      delivery:{$sum:"$sentQuantity"},
+      production: {
+        $sum:{
+          $subtract: ["$quantity", 
+            {$add: [ "$receivedQuantity", "$sentQuantity" ]}
+            ]
+          }
+        }
+      }
+    }], { clientCollection: "ProductTotals" }
   );
 });
