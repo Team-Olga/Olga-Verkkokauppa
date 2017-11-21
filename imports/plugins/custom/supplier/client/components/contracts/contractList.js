@@ -5,10 +5,9 @@ import PropTypes from "prop-types";
 import { registerComponent, composeWithTracker } from "@reactioncommerce/reaction-components";
 
 import ReactTable from "react-table";
-import ContractListItem from "./contractItem";
 import './styles.less';
 
-import { ContractTotals } from 'imports/plugins/custom/olga-core/lib/collections/collections';
+import { ContractTotals } from 'imports/plugins/custom/olga-core/lib/collections';
 
 class ContractList extends Component {
   constructor(props) {
@@ -16,15 +15,6 @@ class ContractList extends Component {
   }
 
   render() {
-/*    const contractColumns = [{
-      Header: "",
-      accessor: "productName",
-      Cell: contractTotals => (
-        <ContractListItem className="olga-row"
-          contractTotals={contractTotals.original}
-        />
-      )
-    }];*/
     const contractColumns = [
       {
         Header: "Tuote",
@@ -32,11 +22,9 @@ class ContractList extends Component {
           row[filter.id].toLowerCase().includes(filter.value.toLowerCase())
         ),
         id: "productTitle",
-        accessor: d => d.product.title,
         Cell: info => (
           <span className="product-name"> {info.original.product.title} </span>
         ),
-        //maxWidth: 600
       },
       {
         Header: "Tuotannossa",
@@ -53,7 +41,7 @@ class ContractList extends Component {
         Cell: info => (
           <div className="contract-total"> {info.original.delivery} </div>
         ),
-        Filter: ({ filter, onChange }) => <span></span>,
+        Filter: () => <span></span>,
         maxWidth: 190
       },
       {
@@ -62,7 +50,7 @@ class ContractList extends Component {
         Cell: info => (
           <div className="contract-total"> {info.original.received} </div>
         ),
-        Filter: ({ filter, onChange }) => <span></span>,
+        Filter: () => <span></span>,
         maxWidth: 190
       }
     ];
@@ -93,19 +81,12 @@ ContractList.propTypes = {
 }
 
 function composer(props, onData) {
-  const util = require('util');
-
   const contractTotalSub = Meteor.subscribe("ContractTotals");
   const productSub = Meteor.subscribe("Products");
 
-
   if (contractTotalSub.ready() && productSub.ready()) {
-    const totals = ContractTotals.find({}).fetch();
-
-    console.log('hello: ' + util.inspect(totals, false, null));
-
     onData(null, { 
-      contractTotals: totals, 
+      contractTotals: ContractTotals.find({}).fetch(), 
       ...props });
   }
 }
