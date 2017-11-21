@@ -16,8 +16,7 @@ class ContractList extends Component {
   }
 
   render() {
-    console.log('props: ' + JSON.stringify(this.props));
-    const contractColumns = [{
+/*    const contractColumns = [{
       Header: "",
       accessor: "productName",
       Cell: contractTotals => (
@@ -25,7 +24,48 @@ class ContractList extends Component {
           contractTotals={contractTotals.original}
         />
       )
-    }];
+    }];*/
+    const contractColumns = [
+      {
+        Header: "Tuote",
+        filterMethod: (filter, row) => (
+          row[filter.id].toLowerCase().includes(filter.value.toLowerCase())
+        ),
+        id: "productTitle",
+        accessor: d => d.product.title,
+        Cell: info => (
+          <span className="product-name"> {info.original.product.title} </span>
+        ),
+        //maxWidth: 600
+      },
+      {
+        Header: "Tuotannossa",
+        id: "production",
+        Cell: info => (
+          <div className="contract-total"> {info.original.production} </div>
+        ),
+        Filter: () => <span></span>,
+        maxWidth: 190
+      },
+      {
+        Header: "Lähetetty",
+        id: "delivery",
+        Cell: info => (
+          <div className="contract-total"> {info.original.delivery} </div>
+        ),
+        Filter: ({ filter, onChange }) => <span></span>,
+        maxWidth: 190
+      },
+      {
+        Header: "Vastaanotettu",
+        id: "received",
+        Cell: info => (
+          <div className="contract-total"> {info.original.received} </div>
+        ),
+        Filter: ({ filter, onChange }) => <span></span>,
+        maxWidth: 190
+      }
+    ];
 
     return (
       <div >
@@ -40,6 +80,7 @@ class ContractList extends Component {
           defaultPageSize={10}
           className="OlgaTable -highlight -striped"
           minRows={1}
+          filterable
         />
         }
       </div>
