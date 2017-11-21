@@ -29,10 +29,20 @@ Reaction.registerPackage({
       route: "/supplier/products",
       name: "supplier/products",
       layout: "coreLayoutOlga",
-      provides: ["supplierAccountDropdown", "settings"],
+      provides: ["supplierAccountDropdown"],
       icon: "fa fa-vine",
       label: "My Products",
       template: "supplierProducts",
+      workflow: "coreProductGridWorkflow"
+    },
+    {
+      route: "/supplier/contracts",
+      name: "supplier/contracts",
+      layout: "coreLayoutOlga",
+      provides: ["supplierAccountDropdown"],
+      icon: "fa fa-vine",
+      label: "My Contracts",
+      template: "supplierContracts",
       workflow: "coreProductGridWorkflow"
     }
   ]
