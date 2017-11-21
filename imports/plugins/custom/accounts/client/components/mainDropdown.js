@@ -75,36 +75,19 @@ class MainDropdown extends Component {
 
   renderSupplierIcons() {
     return (
-      Reaction.Apps(this.props.supplierShortcuts).map((products) => (
+      Reaction.Apps(this.props.supplierShortcuts).map((option) => (
         <Components.MenuItem
-          key={products.packageId}
+          key={option.packageId + option.name}
           className="accounts-a-tag"
-          label={products.label}
-          i18nKeyLabel={products.i18nKeyLabel}
-          icon={products.icon && products.icon}
+          label={option.label}
+          i18nKeyLabel={option.i18nKeyLabel}
+          icon={option.icon && option.icon}
           iconStyle={iconStyle}
-          value={products}
+          value={option}
         />
       ))
     );
   }
-
-  renderContractIcons() {
-    return (
-      Reaction.Apps(this.props.contractShortcuts).map((contracts) => (
-        <Components.MenuItem
-          key={contracts.packageId}
-          className="accounts-a-tag"
-          label={contracts.label}
-          i18nKeyLabel={contracts.i18nKeyLabel}
-          icon={contracts.icon && contracts.icon}
-          iconStyle={iconStyle}
-          value={contracts}
-        />
-      ))
-    );
-  }
-
 
   renderSignOutButton() {
     return (
@@ -146,9 +129,8 @@ class MainDropdown extends Component {
               onChange={this.props.handleChange}
             >
               {this.renderUserIcons()}
-              {this.renderAdminIcons()}
               {this.renderSupplierIcons()}
-              {this.renderContractIcons()}
+              {this.renderAdminIcons()}
               {this.renderSignOutButton()}
             </Components.DropDownMenu>
           </div>
