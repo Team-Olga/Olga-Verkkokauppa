@@ -86,7 +86,7 @@ class SupplierProductsListReact extends Component {
         console.log("Ei toimitusilmoitusta");
       } else {
         this.setState({ deliveryModalIsOpen: false });
-        //const deliveryId = Meteor.call("supplyContracts/fulfill", this.state.productId, parseInt(this.state.deliveryQuantity));
+        const deliveryId = Meteor.call("deliveries/create", this.state.productId, parseInt(this.state.deliveryQuantity));
         console.log("Toimitetaan " + this.state.productName + ", " + this.state.deliveryQuantity + " kpl");
         this.showAlert("Toimitusilmoitus tehty (" + this.state.productName + " " + this.state.deliveryQuantity + " kpl", "success");
       }

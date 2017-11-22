@@ -53,7 +53,7 @@ function enrichDelivery(deliveryId, coveredContracts) {
     Deliveries.update(
         { _id: deliveryId },
         {
-            $set: { supplyContracts: coverContracts }
+            $set: { supplyContracts: coveredContracts }
         }
     )
 }

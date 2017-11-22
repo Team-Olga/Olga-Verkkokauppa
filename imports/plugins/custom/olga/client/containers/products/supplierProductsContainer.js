@@ -124,6 +124,7 @@ function calculateProductFigures(orders, contracts, productId) {
   let openQuantity = 0;
   let contractedQuantity = 0;
   let sentQuantity = 0;
+  let receivedQuantity = 0;
 
   _.forEach(orders, function (o) {
     _.forEach(o.items, function (item) {
@@ -143,14 +144,15 @@ function calculateProductFigures(orders, contracts, productId) {
     if (contract.productId == productId) {
       contractedQuantity += contract.quantity;
       sentQuantity += contract.sentQuantity;
+      receivedQuantity += contract.receivedQuantity;
     }
   });
 
   productFigures.orderCount = orderCount;
   productFigures.orderQuantity = orderQuantity;
   productFigures.openQuantity = openQuantity;
-  productFigures.contractedQuantity = contractedQuantity;
-  productFigures.sentQuantity = sentQuantity;
+  productFigures.contractedQuantity = contractedQuantity - sentQuantity;
+  productFigures.sentQuantity = sentQuantity - receivedQuantity;
 
   return productFigures;
 }
