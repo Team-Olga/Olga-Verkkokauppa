@@ -9,6 +9,7 @@ import { Roles } from "meteor/alanning:roles";
 import UserChecks from "../../lib/userChecks";
 import _ from "lodash";
 
+// TODO: siivoa pois turhat date-jutut
 function initializeContract(userId, productId, quantity) {
     if(!hasOpenOrders(productId)) {
         return null;
@@ -26,11 +27,14 @@ function initializeContract(userId, productId, quantity) {
     return supplyContractId;
 }
 
+// TODO: tää ei nyt palauta pelkästään ordereita joissa on avointa saldoa vaan tuotteen kaikki tilaukset...
+// refaktoroinnin jälkeen voi hyödyntää tätä avointen haussa
 function hasOpenOrders(productId) {
     let openOrders = Orders.find({ "productSupplies.productId": productId }).fetch();
     return openOrders.length > 0;
 }
 
+// TODO: refaktoroi
 function coverOrders(productId, quantity, supplyContractId) {
     let openOrders = Orders.find({}, { sort: { createdAt: 1 }}).fetch();
     // filters those orders where product matches and at least part of the
