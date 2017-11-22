@@ -97,7 +97,7 @@ const composer = (props, onData) => {
 
     const adminQuery = {
       [`roles.${shopId}`]: {
-        $in: ["dashboard, supplier"]
+        $in: ["dashboard", "supplier"]
       }
     };
 
