@@ -102,7 +102,6 @@ function handleChange(event, value) {
   } else if (value.name === "supplier/contracts") {
     return Reaction.Router.go(value.route);
   } else if (value.name !== "account/profile") {
-    console.log("Haloo profiili");
     return Reaction.showActionView(value);
   } else if (value.route || value.name) {
     const route = value.name || value.route;

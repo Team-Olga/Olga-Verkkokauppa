@@ -4,7 +4,7 @@ import { registerComponent, composeWithTracker } from "@reactioncommerce/reactio
 import { Meteor } from "meteor/meteor";
 import { Accounts, Groups } from "/lib/collections";
 import { Reaction, i18next } from "/client/api";
-import AccountsDashboard from "imports/plugins/core/accounts/client/components/accountsDashboard";
+import AccountsDashboard from "../components/accountsDashboard";
 
 const handlers = {
   handleUserGroupChange({ account, ownerGrpId, onMethodLoad, onMethodDone }) {
@@ -52,6 +52,8 @@ const handlers = {
     }
   },
 
+  handleManageItems() { return null; },
+
   handleRemoveUserFromGroup(account, groupId) {
     return () => {
       alertConfirm()
@@ -79,10 +81,6 @@ const handlers = {
         cancelButtonText: i18next.t("admin.settings.cancel"),
         confirmButtonText: i18next.t("admin.settings.continue")
       });
-    }
-
-    function handleManageItems() {
-
     }
   }
 };

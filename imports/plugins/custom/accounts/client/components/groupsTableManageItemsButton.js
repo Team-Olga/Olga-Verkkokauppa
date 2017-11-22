@@ -27,7 +27,7 @@ const GroupsTableManageItemsButton = ({ account, group, handleManageItems, hasPe
         onClick={handleManageItems()}
         bezelStyle="solid"
         i18nKeyLabel="admin.groups.manageItems"
-        label="Manage supllier items"
+        label="Manage supplier items"
       />
     </div>
   );
