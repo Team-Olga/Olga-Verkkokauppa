@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { Components } from "@reactioncommerce/reaction-components";
 import Modal from "react-modal";
+import Select from "react-select";
 import { default as sortUsersIntoGroups, sortGroups } from "imports/plugins/core/accounts/client/helpers/accountsHelper";
 
 class AccountsDashboard extends Component {
@@ -18,11 +19,17 @@ class AccountsDashboard extends Component {
     const sortedGroups = sortUsersIntoGroups({ groups: sortGroups(adminGroups), accounts }) || [];
     const defaultSelectedGroup = sortedGroups[0];
 
+    let p = null;
+    for (p in products) {
+      console.log(p);
+    }
+
     this.state = {
       accounts: accounts,
       groups: sortGroups(groups),
       adminGroups: sortedGroups,
       selectedGroup: defaultSelectedGroup,
+      selectedOption: "",
       products: products,
       itemModalIsOpen: false
     };
@@ -80,6 +87,11 @@ class AccountsDashboard extends Component {
     );
   };
 
+  handleChange = (selectedOption) => {
+    this.setState({ selectedOption });
+    console.log(`Selected: ${selectedOption.label}`);
+  }
+
   renderGroupsTable(groups) {
     if (Array.isArray(groups)) {
       return (
@@ -120,29 +132,29 @@ class AccountsDashboard extends Component {
           onRequestClose={this.state.closeItemModal}
           contentLabel={"Osoita tuotteita toimittajalle"}
           style={{
-            overlay : {
-              zIndex            : 9999,
-              position          : 'absolute',
-              top               : 0,
-              left              : 0,
-              right             : 0,
-              bottom            : 0,
-              backgroundColor   : 'rgba(255, 255, 255, 0.75)',
+            overlay: {
+              zIndex: 9999,
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: "rgba(255, 255, 255, 0.75)"
             },
-            content : {
-              zIndex                     : 9999,
-              position                   : 'absolute',
-              top                        : '40px',
-              left                       : '40px',
-              right                      : '40px',
-              bottom                     : '40px',
-              border                     : '1px solid #ccc',
-              background                 : '#fff',
-              overflow                   : 'auto',
-              WebkitOverflowScrolling    : 'touch',
-              borderRadius               : '4px',
-              outline                    : 'none',
-              padding                    : '20px'
+            content: {
+              zIndex: 9999,
+              position: "absolute",
+              top: "40px",
+              left: "40px",
+              right: "40px",
+              bottom: "40px",
+              border: "1px solid #ccc",
+              background: "#fff",
+              overflow: "auto",
+              WebkitOverflowScrolling: "touch",
+              borderRadius: "4px",
+              outline: "none",
+              padding: "20px"
             }
           }}
           className={{
@@ -158,6 +170,15 @@ class AccountsDashboard extends Component {
         >
           <h2> Tutturuu </h2>
           <div>
+            <Select
+              name="itemModal-select"
+              value={this.state.value}
+              onChange={this.handleChange}
+              options={[
+                { value: "one", label: "One" },
+                { value: "two", label: "Two" }
+              ]}
+            />
             <button id="cancelItemModal" className="rui btn btn-primary flat olga-listing-btn-default pull-right"
               onClick={() => this.closeItemModal()}
             >Peruuta</button>
