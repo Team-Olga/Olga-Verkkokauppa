@@ -5,7 +5,7 @@ import { Random } from "meteor/random";
 import StubCollections from "meteor/hwillson:stub-collections";
 import { sinon } from "meteor/practicalmeteor:sinon";
 import { Reaction } from "/server/api";
-import { UserChecks } from "../../lib/userChecks";
+import UserChecks from "../../lib/userChecks";
 import { addProduct } from "/server/imports/fixtures/products";
 import Fixtures from "/server/imports/fixtures";
 import { Products, Orders } from "/lib/collections";
@@ -43,6 +43,7 @@ describe("Deliveries methods test", function() {
 
         let order = Factory.create("order");
         sandbox.stub(Reaction, "getShopId", () => order.shopId);
+        sandbox.stub(Meteor, "userId", () => Random.id());
 
         testProducts = [];
         testSupplyContracts = [];
@@ -62,6 +63,7 @@ describe("Deliveries methods test", function() {
                 quantity: 5,
                 sentQuantity: 3,
                 receivedQuantity: 2,
+                orders: []
             }
         );
 
@@ -72,6 +74,7 @@ describe("Deliveries methods test", function() {
                 quantity: 2,
                 sentQuantity: 0,
                 receivedQuantity: 0,
+                orders: []
             }
         );
 
@@ -82,6 +85,7 @@ describe("Deliveries methods test", function() {
                 quantity: 7,
                 sentQuantity: 0,
                 receivedQuantity: 0,
+                orders: []
             }
         );
 
@@ -99,6 +103,7 @@ describe("Deliveries methods test", function() {
         SupplyContracts.direct.remove({});
         Deliveries.direct.remove({});
         sandbox.restore();
+        return done();
     });
 
     it("should throw error if non-admin/non-supplier tries to create a delivery", function(done) {
@@ -106,7 +111,7 @@ describe("Deliveries methods test", function() {
         sandbox.stub(UserChecks.prototype, "isInRole", () => false);
 
         const insertDeliverySpy = sandbox.spy(Deliveries, "insert");
-        chai.expect(() => Meteor.call("deliveries/create", testProducts[0]._id), 2)).to.throw(Meteor.Error, /Access Denied/);
+        chai.expect(() => Meteor.call("deliveries/create", testProducts[0]._id, 2)).to.throw(Meteor.Error, /Access Denied/);
         chai.expect(insertDeliverySpy).to.not.have.been.called;
 
         return done();
@@ -118,7 +123,7 @@ describe("Deliveries methods test", function() {
 
         const insertDeliverySpy = sandbox.spy(Deliveries, "insert");
         Meteor.call("deliveries/create", testProducts[1]._id, 2);
-        chai.expect(insertDeliverySpy).to not have been called;
+        chai.expect(insertDeliverySpy).to.not.have.been.called;
 
         return done();
     });
@@ -149,14 +154,64 @@ describe("Deliveries methods test", function() {
         return done();
     });
 
-    // it("should create a delivery when one supplycontract more than covers the quantity", function(done) {
+    it("should create a delivery when one supplycontract more than covers the quantity", function(done) {
+        sandbox.stub(Reaction, "hasAdminAccess", () => true); 
+        sandbox.stub(UserChecks.prototype, "isInRole", () => true);
 
-    //     return done();
-    // });
+        const insertDeliverySpy = sandbox.spy(Deliveries, "insert");
+        const updateDeliverySpy = sandbox.spy(Deliveries, "update");
+        const updateContractSpy = sandbox.spy(SupplyContracts, "update");
 
-    // it("should create a delivery when multiple supplycontracts cover the quantity", function(done) {
+        let deliveries = Deliveries.find({}).fetch();
+        chai.expect(deliveries.length).to.equal(0);
 
-    //     return done();
-    // });
+        Meteor.call("deliveries/create", testProducts[0]._id, 1);
+        chai.expect(insertDeliverySpy).to.have.been.called.once;
+        chai.expect(updateDeliverySpy).to.have.been.called.once;
+        chai.expect(updateContractSpy).to.have.been.called.once;
+
+        deliveries = Deliveries.find({}).fetch();
+        let supplyContracts = SupplyContracts.find({}).fetch();
+        chai.expect(deliveries.length).to.equal(1);
+        chai.expect(deliveries[0].productId).to.equal(testProducts[0]._id);
+        chai.expect(deliveries[0].deliveryQuantity).to.equal(1);
+        chai.expect(deliveries[0].supplyContracts.length).to.equal(1);
+        chai.expect(deliveries[0].supplyContracts[0]).to.equal(testSupplyContracts[0]._id);
+        chai.expect(supplyContracts[0].sentQuantity).to.equal(4);
+
+        return done();
+    });
+
+    it("should create a delivery when multiple supplycontracts cover the quantity", function(done) {
+        sandbox.stub(Reaction, "hasAdminAccess", () => true); 
+        sandbox.stub(UserChecks.prototype, "isInRole", () => true);
+
+        const insertDeliverySpy = sandbox.spy(Deliveries, "insert");
+        const updateDeliverySpy = sandbox.spy(Deliveries, "update");
+        const updateContractSpy = sandbox.spy(SupplyContracts, "update");
+
+        let deliveries = Deliveries.find({}).fetch();
+        chai.expect(deliveries.length).to.equal(0);
+
+        Meteor.call("deliveries/create", testProducts[0]._id, 6);
+        chai.expect(insertDeliverySpy).to.have.been.called.once;
+        chai.expect(updateDeliverySpy).to.have.been.called.once;
+        chai.expect(updateDeliverySpy).to.have.been.called.thrice;
+
+        deliveries = Deliveries.find({}).fetch();
+        let supplyContracts = SupplyContracts.find({}).fetch();
+        chai.expect(deliveries.length).to.equal(1);
+        chai.expect(deliveries[0].productId).to.equal(testProducts[0]._id);
+        chai.expect(deliveries[0].deliveryQuantity).to.equal(6);
+        chai.expect(deliveries[0].supplyContracts.length).to.equal(3);
+        chai.expect(deliveries[0].supplyContracts[0]).to.equal(testSupplyContracts[0]._id);
+        chai.expect(deliveries[0].supplyContracts[1]).to.equal(testSupplyContracts[1]._id);
+        chai.expect(deliveries[0].supplyContracts[2]).to.equal(testSupplyContracts[2]._id);
+        chai.expect(supplyContracts[0].sentQuantity).to.equal(5);
+        chai.expect(supplyContracts[1].sentQuantity).to.equal(2);
+        chai.expect(supplyContracts[2].sentQuantity).to.equal(2);
+
+        return done();
+    });
 
 });
