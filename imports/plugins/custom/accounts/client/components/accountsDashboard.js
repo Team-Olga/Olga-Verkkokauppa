@@ -43,14 +43,16 @@ class AccountsDashboard extends Component {
     });
 
     let p = null;
+    let i = 0;
     const setOptions = [];
     for (p in this.props.products) {
-      setOptions[p] = { value: this.props.products[p], label: this.props.products[p].title };
+      if (this.props.products[p].type === "simple") {
+        setOptions[i] = { value: this.props.products[p]._id, label: this.props.products[p].title };
+        i++;
+      }
     }
 
     this.setState({ options: setOptions });
-
-    console.log(setOptions);
   }
 
   closeItemModal() {
