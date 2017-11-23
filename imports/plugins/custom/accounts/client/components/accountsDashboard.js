@@ -19,17 +19,15 @@ class AccountsDashboard extends Component {
     const sortedGroups = sortUsersIntoGroups({ groups: sortGroups(adminGroups), accounts }) || [];
     const defaultSelectedGroup = sortedGroups[0];
 
-    let p = null;
-    for (p in products) {
-      console.log(p);
-    }
 
     this.state = {
       accounts: accounts,
       groups: sortGroups(groups),
       adminGroups: sortedGroups,
       selectedGroup: defaultSelectedGroup,
+      options: [],
       selectedOption: "",
+      supplierProducts: [],
       products: products,
       itemModalIsOpen: false
     };
@@ -41,8 +39,20 @@ class AccountsDashboard extends Component {
   openItemModal(products) {
     this.setState({
       itemModalIsOpen: true,
-      products: products
+      supplierProducts: products
     });
+
+    let p = null;
+    let i = 0;
+    const setOptions = [];
+    for (p in this.props.products) {
+      setOptions[i] = { value: this.props.products[p], label: this.props.products[p].title };
+      i++;
+    }
+
+    this.setState({ options: setOptions });
+
+    console.log(setOptions);
   }
 
   closeItemModal() {
@@ -174,10 +184,7 @@ class AccountsDashboard extends Component {
               name="itemModal-select"
               value={this.state.value}
               onChange={this.handleChange}
-              options={[
-                { value: "one", label: "One" },
-                { value: "two", label: "Two" }
-              ]}
+              options={this.state.options}
             />
             <button id="cancelItemModal" className="rui btn btn-primary flat olga-listing-btn-default pull-right"
               onClick={() => this.closeItemModal()}
