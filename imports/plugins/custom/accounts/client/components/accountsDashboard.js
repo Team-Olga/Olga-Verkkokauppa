@@ -43,11 +43,9 @@ class AccountsDashboard extends Component {
     });
 
     let p = null;
-    let i = 0;
     const setOptions = [];
     for (p in this.props.products) {
-      setOptions[i] = { value: this.props.products[p], label: this.props.products[p].title };
-      i++;
+      setOptions[p] = { value: this.props.products[p], label: this.props.products[p].title };
     }
 
     this.setState({ options: setOptions });
