@@ -1,19 +1,20 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { Components } from "@reactioncommerce/reaction-components";
+import Modal from "react-modal";
 import { default as sortUsersIntoGroups, sortGroups } from "imports/plugins/core/accounts/client/helpers/accountsHelper";
-import GroupsTable from "./groupsTable";
 
 class AccountsDashboard extends Component {
   static propTypes = {
     accounts: PropTypes.array,
     adminGroups: PropTypes.array, // only admin groups
-    groups: PropTypes.array // all groups including non-admin default groups
+    groups: PropTypes.array, // all groups including non-admin default groups
+    products: PropTypes.array
   };
 
   constructor(props) {
     super(props);
-    const { accounts, adminGroups, groups } = this.props;
+    const { accounts, adminGroups, groups, products } = this.props;
     const sortedGroups = sortUsersIntoGroups({ groups: sortGroups(adminGroups), accounts }) || [];
     const defaultSelectedGroup = sortedGroups[0];
 
@@ -21,8 +22,24 @@ class AccountsDashboard extends Component {
       accounts: accounts,
       groups: sortGroups(groups),
       adminGroups: sortedGroups,
-      selectedGroup: defaultSelectedGroup
+      selectedGroup: defaultSelectedGroup,
+      products: products,
+      itemModalIsOpen: false
     };
+
+    this.openItemModal = this.openItemModal.bind(this);
+    this.closeItemModal = this.closeItemModal.bind(this);
+  }
+
+  openItemModal(products) {
+    this.setState({
+      itemModalIsOpen: true,
+      products: products
+    });
+  }
+
+  closeItemModal() {
+    this.setState({ itemModalIsOpen: false });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -70,13 +87,14 @@ class AccountsDashboard extends Component {
           {this.state.loading && <Components.Loading />}
           {groups.map((group, index) => {
             return (
-              <GroupsTable
+              <Components.GroupsTable
                 {...this.props}
                 key={index}
                 group={group}
                 onMethodLoad={this.handleMethodLoad}
                 onMethodDone={this.handleMethodDone}
                 onGroupSelect={this.handleGroupSelect}
+                openItemModal={this.openItemModal}
               />
             );
           })}
@@ -96,6 +114,30 @@ class AccountsDashboard extends Component {
         <div className="col-md-3">
           {this.renderGroupDetail()}
         </div>
+
+        <Modal
+          isOpen={this.state.itemModalIsOpen}
+          onRequestClose={this.state.closeItemModal}
+          contentLabel={"Osoita tuotteita toimittajalle"}
+          className={{
+            base: "itemModal",
+            afterOpen: "itemModal_after-open",
+            beforeClose: "itemModal_before-close"
+          }}
+          overlayClassName={{
+            base: "itemModalOverlay",
+            afterOpen: "itemModalOverlay_after-open",
+            beforeClose: "itemModalOverlay_before-close"
+          }}
+        >
+          <h2> Tutturuu </h2>
+          <div>
+            <button id="cancelItemModal" className="rui btn btn-primary flat olga-listing-btn-default pull-right"
+              onClick={() => this.closeItemModal()}
+            >Peruuta</button>
+          </div>
+        </Modal>
+
       </div>
     );
   }

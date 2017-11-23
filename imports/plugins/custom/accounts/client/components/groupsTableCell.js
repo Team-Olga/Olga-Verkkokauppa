@@ -7,7 +7,7 @@ import { Components, registerComponent } from "@reactioncommerce/reaction-compon
 import { Reaction } from "/client/api";
 import { getUserAvatar } from "/imports/plugins/core/accounts/client/helpers/helpers";
 
-const GroupsTableCell = ({ account, columnName, group, adminGroups, handleRemoveUserFromGroup, handleUserGroupChange, handleManageItems, ...props }) => {
+const GroupsTableCell = ({ account, columnName, group, adminGroups, handleRemoveUserFromGroup, handleUserGroupChange, openItemModal, ...props }) => {
   const email = _.get(account, "emails[0].address");
   const groups = adminGroups;
   const userAvatar = getUserAvatar(account);
@@ -101,7 +101,7 @@ const GroupsTableCell = ({ account, columnName, group, adminGroups, handleRemove
   }
 
   if (columnName === "manageItems") {
-    return <Components.GroupsTableManageItemsButton {...{ account, group, handleManageItems }} />;
+    return <Components.GroupsTableManageItemsButton {...{ account, group, openItemModal }} />;
   }
 
   return null;

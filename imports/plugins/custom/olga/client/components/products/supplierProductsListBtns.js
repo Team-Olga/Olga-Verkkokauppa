@@ -70,12 +70,12 @@ export default class SupplierProductsListBtns extends Component {
         }
         {this.props.userStatus == "admin" &&
            <Button status="primary" bezelStyle="flat" className="olga-listing-btn-primary pull-right"
-              onClick={this.handleOrdersClick}
-            >
+             onClick={this.handleOrdersClick}
+           >
               Tilauksia {this.props.productStat.orderCount}
-            </Button>
-         }
-      </div>      
+           </Button>
+        }
+      </div>
     );
   }
 }

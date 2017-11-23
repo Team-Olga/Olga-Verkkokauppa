@@ -11,7 +11,7 @@ import { Components, registerComponent, withPermissions } from "@reactioncommerc
  * @property {Boolean} hasPermissions - true or false depending on if user is granted access
  * @return {Node} React node containing wrapped button
  */
-const GroupsTableManageItemsButton = ({ account, group, handleManageItems, hasPermissions }) => {
+const GroupsTableManageItemsButton = ({ account, group, openItemModal, hasPermissions }) => {
   if (group.slug === "owner") {
     return null;
   }
@@ -20,14 +20,16 @@ const GroupsTableManageItemsButton = ({ account, group, handleManageItems, hasPe
     return null;
   }
 
+
+
   return (
     <div className="group-table-button">
       <Components.Button
         status="default"
-        onClick={handleManageItems()}
+        onClick={openItemModal}
         bezelStyle="solid"
         i18nKeyLabel="admin.groups.manageItems"
-        label="Manage supplier items"
+        label="Items"
       />
     </div>
   );

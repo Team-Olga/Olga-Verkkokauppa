@@ -81,12 +81,12 @@ class SupplierProductsListReact extends Component {
     }
 
     closeDeliveryModal() {
-      if(this.state.deliveryQuantity == 0 || this.state.contractedQuantity <= 0) {
+      if (this.state.deliveryQuantity == 0 || this.state.contractedQuantity <= 0) {
         this.setState({ deliveryModalIsOpen: false });
         console.log("Ei toimitusilmoitusta");
       } else {
         this.setState({ deliveryModalIsOpen: false });
-        //const deliveryId = Meteor.call("supplyContracts/fulfill", this.state.productId, parseInt(this.state.deliveryQuantity));
+        // const deliveryId = Meteor.call("supplyContracts/fulfill", this.state.productId, parseInt(this.state.deliveryQuantity));
         console.log("Toimitetaan " + this.state.productName + ", " + this.state.deliveryQuantity + " kpl");
         this.showAlert("Toimitusilmoitus tehty (" + this.state.productName + " " + this.state.deliveryQuantity + " kpl", "success");
       }
@@ -149,75 +149,83 @@ class SupplierProductsListReact extends Component {
 
       return (
         <div>
-              <Modal
-                isOpen={this.state.contractModalIsOpen}
-                onRequestClose={this.state.closeContractModal}
-                contentLabel="Create supplyContract"
-                className={{
-                    base: "contractModal",
-                    afterOpen: "contractModal_after-open",
-                    beforeClose: "contractModal_before-close"
-                }}
-                overlayClassName={{
-                    base: "contractModalOverlay",
-                    afterOpen: "contractModalOverlay_after-open",
-                    beforeClose: "contractModalOverlay_before-close"
-                }}
-                >
-                <h2 id="contractModalTitle">{this.state.productName}</h2>
-                <h3>Avoin määrä: <span id="openQuantity">{this.state.openQuantity}</span> </h3>
-                <h3><label htmlFor="quantity">Toimitettava määrä: </label>
-                <input type="number" id="quantity" name="quantity" className="right-justified" min="0" max={this.state.openQuantity}
-                    onChange={this.updateSupplyQuantity} value={this.state.supplyQuantity}/></h3>
-                <div>
-                    <button id="cancelContractModal" className="rui btn btn-primary flat olga-listing-btn-default pull-right"
-                        onClick={() => this.closeContractModal()} >Peruuta</button>
-                    <button id="confirmContract" className="rui btn btn-primary flat olga-listing-btn-success pull-right"
-                        onClick={() => this.closeContractModal($('#quantity').val())} >Vahvista</button>
-                </div>
-              </Modal>
+          <Modal
+            isOpen={this.state.contractModalIsOpen}
+            onRequestClose={this.state.closeContractModal}
+            contentLabel="Create supplyContract"
+            className={{
+              base: "contractModal",
+              afterOpen: "contractModal_after-open",
+              beforeClose: "contractModal_before-close"
+            }}
+            overlayClassName={{
+              base: "contractModalOverlay",
+              afterOpen: "contractModalOverlay_after-open",
+              beforeClose: "contractModalOverlay_before-close"
+            }}
+          >
+            <h2 id="contractModalTitle">{this.state.productName}</h2>
+            <h3>Avoin määrä: <span id="openQuantity">{this.state.openQuantity}</span> </h3>
+            <h3><label htmlFor="quantity">Toimitettava määrä: </label>
+              <input type="number" id="quantity" name="quantity" className="right-justified"
+                min="0" max={this.state.openQuantity}
+                onChange={this.updateSupplyQuantity} value={this.state.supplyQuantity}
+              /></h3>
+            <div>
+              <button id="cancelContractModal" className="rui btn btn-primary flat olga-listing-btn-default pull-right"
+                onClick={() => this.closeContractModal()}
+              >Peruuta</button>
+              <button id="confirmContract" className="rui btn btn-primary flat olga-listing-btn-success pull-right"
+                onClick={() => this.closeContractModal($("#quantity").val())}
+              >Vahvista</button>
+            </div>
+          </Modal>
 
-              <Modal
-                isOpen={this.state.deliveryModalIsOpen}
-                onRequestClose={this.state.closeDeliveryModal}
-                contentLabel="Create delivery"
-                className={{
-                    base: "deliveryModal",
-                    afterOpen: "deliveryModal_after-open",
-                    beforeClose: "deliveryModal_before-close"
-                }}
-                overlayClassName={{
-                    base: "deliveryModalOverlay",
-                    afterOpen: "deliveryModalOverlay_after-open",
-                    beforeClose: "deliveryModalOverlay_before-close"
-                }}
-                >
-                <h2 id="contractModalTitle">{this.state.productName}</h2>
-                <h3>Sovittu toimitusmäärä: <span id="contractedQuantity">{this.state.contractedQuantity}</span> </h3>
-                <h3><label htmlFor="deliveryQuantity">Toimitettava määrä: </label>
-                <input type="number" id="deliveryQuantity" name="deliveryQuantity" className="right-justified" min="0" max={this.state.contractedQuantity}
-                    onChange={this.updateDeliveryQuantity} value={this.state.deliveryQuantity}/></h3>
-                <div>
-                    <button id="cancelDeliveryModal" className="rui btn btn-primary flat olga-listing-btn-default pull-right"
-                        onClick={() => this.closeDeliveryModal()} >Peruuta</button>
-                    <button id="confirmDelivery" className="rui btn btn-primary flat olga-listing-btn-success pull-right"
-                        onClick={() => this.closeDeliveryModal($('#quantity').val())} >Vahvista</button>
-                </div>
-              </Modal>
+          <Modal
+            isOpen={this.state.deliveryModalIsOpen}
+            onRequestClose={this.state.closeDeliveryModal}
+            contentLabel="Create delivery"
+            className={{
+              base: "deliveryModal",
+              afterOpen: "deliveryModal_after-open",
+              beforeClose: "deliveryModal_before-close"
+            }}
+            overlayClassName={{
+              base: "deliveryModalOverlay",
+              afterOpen: "deliveryModalOverlay_after-open",
+              beforeClose: "deliveryModalOverlay_before-close"
+            }}
+          >
+            <h2 id="contractModalTitle">{this.state.productName}</h2>
+            <h3>Sovittu toimitusmäärä: <span id="contractedQuantity">{this.state.contractedQuantity}</span> </h3>
+            <h3><label htmlFor="deliveryQuantity">Toimitettava määrä: </label>
+              <input type="number" id="deliveryQuantity" name="deliveryQuantity" className="right-justified"
+                min="0" max={this.state.contractedQuantity}
+                onChange={this.updateDeliveryQuantity} value={this.state.deliveryQuantity}
+              /></h3>
+            <div>
+              <button id="cancelDeliveryModal" className="rui btn btn-primary flat olga-listing-btn-default pull-right"
+                onClick={() => this.closeDeliveryModal()}
+              >Peruuta</button>
+              <button id="confirmDelivery" className="rui btn btn-primary flat olga-listing-btn-success pull-right"
+                onClick={() => this.closeDeliveryModal($("#quantity").val())}
+              >Vahvista</button>
+            </div>
+          </Modal>
 
-              <AlertContainer ref={a => this.msg = a} {...this.alertOptions} />
+          <AlertContainer ref={a => this.msg = a} {...this.alertOptions} />
 
-              <ReactTable
-                data={this.props.productStats}
-                noDataText="Avoimia tilauksia ei löytynyt"
-                columns={supplierColumns}
-                defaultPageSize={10}
-                minRows={0}
-                className="olga-list-table"
-                filterable
-                defaultFilterMethod={(filter, row) =>
-                  String(row[filter.id]) === filter.value}
-              />
+          <ReactTable
+            data={this.props.productStats}
+            noDataText="Avoimia tilauksia ei löytynyt"
+            columns={supplierColumns}
+            defaultPageSize={10}
+            minRows={0}
+            className="olga-list-table"
+            filterable
+            defaultFilterMethod={(filter, row) =>
+              String(row[filter.id]) === filter.value}
+          />
         </div>
       );
     }
