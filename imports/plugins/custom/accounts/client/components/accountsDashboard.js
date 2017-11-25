@@ -97,9 +97,22 @@ class AccountsDashboard extends Component {
     );
   };
 
-  handleChange = (selectedOption) => {
-    this.setState({ selectedOption });
-    console.log(`Selected: ${selectedOption.label}`);
+  getInitialState () {
+    return {
+      multi: true,
+      removeSelected: true,
+      value: [],
+    };
+  }
+
+  handleChange = (value) => {
+    this.setState({ value });
+    console.log(`Selected: ${value.label}`);
+  }
+
+    handleSelectChange (value) {
+    console.log('You\'ve selected:', value);
+    this.setState({ value });
   }
 
   renderGroupsTable(groups) {
@@ -157,8 +170,10 @@ class AccountsDashboard extends Component {
             <Select
               name="itemModal-select"
               value={this.state.value}
+              multi
               onChange={this.handleChange}
               options={this.state.options}
+              simpleValue
             />
             <button id="cancelItemModal" className="rui btn btn-primary flat olga-listing-btn-default pull-right"
               onClick={() => this.closeItemModal()}
