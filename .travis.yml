@@ -49,6 +49,7 @@ deploy:
   api_key:
     secure: "$HEROKU"
   on: master
+  app: olga-verkkokauppa
 
 notifications:
   slack: olgaverkkokauppa:VyuKQR5JBQpHmyOWE6bPRBZp
