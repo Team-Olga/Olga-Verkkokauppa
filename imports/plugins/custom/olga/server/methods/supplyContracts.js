@@ -6,9 +6,10 @@ import { ValidatedMethod } from "meteor/mdg:validated-method";
 import { SimpleSchema } from "meteor/aldeed:simple-schema";
 import { Reaction } from "/server/api";
 import { Roles } from "meteor/alanning:roles";
-import { isInRole } from "../../lib/userChecks";
+import UserChecks from "../../lib/userChecks";
 import _ from "lodash";
 
+// TODO: siivoa pois turhat date-jutut
 function initializeContract(userId, productId, quantity) {
     if(!hasOpenOrders(productId)) {
         return null;
@@ -26,11 +27,14 @@ function initializeContract(userId, productId, quantity) {
     return supplyContractId;
 }
 
+// TODO: tää ei nyt palauta pelkästään ordereita joissa on avointa saldoa vaan tuotteen kaikki tilaukset...
+// refaktoroinnin jälkeen voi hyödyntää tätä avointen haussa
 function hasOpenOrders(productId) {
     let openOrders = Orders.find({ "productSupplies.productId": productId }).fetch();
     return openOrders.length > 0;
 }
 
+// TODO: refaktoroi
 function coverOrders(productId, quantity, supplyContractId) {
     let openOrders = Orders.find({}, { sort: { createdAt: 1 }}).fetch();
     // filters those orders where product matches and at least part of the
@@ -57,8 +61,6 @@ function coverOrders(productId, quantity, supplyContractId) {
     while(contractQuantity > 0 && i < openOrders.length) {
         let openQuantity = getOpenQuantity(openOrders[i], productId);
         let supplyQuantity = openQuantity < contractQuantity ? openQuantity : contractQuantity;
-        // console.log("Verrataan tarjottua määrää " + contractQuantity + " avoimeen " + openQuantity);
-        // console.log("Toimitettavaa " + supplyQuantity + " tilaukselle " + openOrders[i]._id);
         if(supplyQuantity > 0) {
             updateOpenQuantity(openOrders[i], productId, supplyQuantity, supplyContractId);
             coveredOrders.push(openOrders[i]._id);
@@ -66,8 +68,6 @@ function coverOrders(productId, quantity, supplyContractId) {
         }
         i++;
     }
-    // console.log(coveredOrders);
-    // console.log("Tilauksia: " + coveredOrders.length);
     return coveredOrders;
 }
 
@@ -113,8 +113,9 @@ export const methods = {
         check(quantity, Number);
 
         let userId = Meteor.userId();
+        let userChecks = new UserChecks();
         
-        if(!Reaction.hasAdminAccess() && !isInRole("supplier")) {
+        if(!Reaction.hasAdminAccess() && !userChecks.isInRole("supplier")) {
             throw new Meteor.Error(403, "Access Denied");
         }
 

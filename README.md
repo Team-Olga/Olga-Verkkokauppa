@@ -8,3 +8,5 @@ Toimeksianto: https://studies.cs.helsinki.fi/ohtuprojekti/topic_descriptions/191
 Backlog: https://docs.google.com/spreadsheets/d/1gBblgibUUB4J8WGohQoQAUcSnaD_x9VMQ35J8YMuZJs/edit?usp=sharing
 
 Definition of done: https://docs.google.com/document/d/1RdBhAvnS5gm7JUdGSCek-xXySAnB-YvbLTxdJ1gaqGo/edit?usp=sharing
+
+Heroku: http://olga-verkkokauppa.herokuapp.com/
