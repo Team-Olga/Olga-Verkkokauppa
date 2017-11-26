@@ -1,11 +1,13 @@
 import { Meteor } from "meteor/meteor";
 import { Roles } from "meteor/alanning:roles";
 import { SupplyContracts } from "../../lib/collections";
-import { isInRole } from "../../lib/userChecks";
+import UserChecks from "../../lib/userChecks";
 import { Reaction } from "/server/api";
 
 // kts. server/publications/collections/orders.js
 Meteor.publish("SupplyContracts", function() {
+    let userChecks = new UserChecks();
+
     if(this.userId === null)  {
         return this.ready();
     }
@@ -14,7 +16,7 @@ Meteor.publish("SupplyContracts", function() {
         return this.ready;
     }
     
-    if(isInRole("admin")) {
+    if(userChecks.isInRole("admin")) {
         return SupplyContracts.find({});
     } else {
         return SupplyContracts.find({

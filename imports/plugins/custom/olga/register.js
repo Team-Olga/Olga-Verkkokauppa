@@ -48,7 +48,7 @@ Reaction.registerPackage({
       route: "/contracts",
       name: "contracts",
       label: "Supply contracts",
-      provides: ["contractDropdown"],
+      provides: ["supplierAccountDropdown"],
       icon: "fa fa-telegram",
       layout: "coreLayoutOlga",
       template: "contractList",

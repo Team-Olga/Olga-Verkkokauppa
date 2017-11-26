@@ -27,11 +27,13 @@ function createSupplierUsers() {
 
   accounts.forEach((doc) => {
     if (Meteor.users.find({ "emails.address": doc.emails[0].address }).count() !== 0) {
-      Meteor.users.remove({'emails.address': doc.emails[0].address});
+      //Meteor.users.remove({'emails.address': doc.emails[0].address});
+      return false;
     }
 
     if (Accounts.find({ "emails.address": doc.emails[0].address }).count() !== 0) {
-      Accounts.remove({'emails.address': doc.emails[0].address});
+      //Accounts.remove({'emails.address': doc.emails[0].address});
+      return false;
     }
 
     let supplierProducts = _.slice(products, i, i + 3);
