@@ -27,24 +27,24 @@ Reaction.registerPackage({
     }
   }],
   registry: [
-    {
+/*    {
       route: "/supplierproducts",
       name: "supplierproducts",
       layout: "coreLayoutOlga",
       template: "supplierProductsLanding",
       workflow: "coreProductGridWorkflow"
-    },
+    },*/
     {
       route: "/supplierproductsreact",
       name: "supplierproductsreact",
-      label: "Supplier products",
+      label: "Open Orders",
       provides: ["supplierAccountDropdown"],
       icon: "fa fa-telegram",
       layout: "coreLayoutOlga",
       template: "supplierProductsReact",
       workflow: "coreProductGridWorkflow"
     },
-    {
+/*    {
       route: "/contracts",
       name: "contracts",
       label: "Supply contracts",
@@ -53,7 +53,7 @@ Reaction.registerPackage({
       layout: "coreLayoutOlga",
       template: "contractList",
       workflow: "coreProductGridWorkflow"
-    },
+    },*/
     {
       route: "/about",
       name: "about",

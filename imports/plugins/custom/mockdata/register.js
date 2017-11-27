@@ -14,7 +14,7 @@ supplier2@localhost
 password: test
 */
 
-const supplierRoles = ["supplier", "customer", "supplierproducts", "supplierproductsreact"];
+const supplierRoles = ["supplier", "supplierproducts", "supplierproductsreact", "supplier/products", "supplier/contracts"];
 const defaultCustomerRoles = [ "guest", "account/profile", "product", "tag", "index", "cart/checkout", "cart/completed", "about"];
 const defaultVisitorRoles = ["anonymous", "guest", "product", "tag", "index", "cart/checkout", "cart/completed", "about"];
 const defaultSupplierRoles = supplierRoles.concat(defaultCustomerRoles);

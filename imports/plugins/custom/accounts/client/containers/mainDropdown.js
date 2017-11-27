@@ -101,6 +101,8 @@ function handleChange(event, value) {
     return Reaction.Router.go(value.route);
   } else if (value.name === "supplier/contracts") {
     return Reaction.Router.go(value.route);
+  } else if (value.name === "admin/contracts") {
+    return Reaction.Router.go(value.route);
   } else if (value.name !== "account/profile") {
     console.log("Haloo profiili");
     return Reaction.showActionView(value);
