@@ -22,6 +22,7 @@ class ContractList extends Component {
           row[filter.id].toLowerCase().includes(filter.value.toLowerCase())
         ),
         id: "productTitle",
+        accessor: d => d.product.title,
         Cell: info => (
           <span className="product-name"> {info.original.product.title} </span>
         ),
