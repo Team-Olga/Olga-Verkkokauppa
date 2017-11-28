@@ -165,15 +165,7 @@ function packingSlipHTML() {
                                     </tr>
 
                                     <tr>
-                                      <td align="left" valign="top">
-                                        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="emailwrapto100pc">
-                                          <tbody>
-                                            <tr>
-                                              <td width="33%" align="left" valign="top" style="font-size:14px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica; font-weight:bold;">Toimittajan osoite</td>
-                                            </tr>
-                                          </tbody>
-                                        </table>
-                                      </td>
+                                      <td width="100%" align="left" valign="top" style="font-size:14px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica; font-weight:bold;">Toimittaja</td>
                                     </tr>
 
                                     <tr>
@@ -191,18 +183,37 @@ function packingSlipHTML() {
                                         <table width="100%" border="0" cellspacing="0" cellpadding="0" class="emailwrapto100pc">
                                           <tbody>
                                             <tr>
-                                              <td width="33%" align="left" valign="top" style="font-size:10px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica;">{{shipping.address.address}},<br> {{shipping.address.city}},
-                                                {{shipping.address.region}} {{shipping.address.postal}}</td>                                          
+                                              <td width="33%" align="left" valign="top" style="font-size:14px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica;">Tunnus</td>
+                                              <td width="67%" align="left" valign="top" style="font-size:14px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica;">{{supplier._id}}</td>
                                             </tr>
                                             <tr>
-                                              <td valign="top" align="left" height="40" style="line-height:1px; font-size:1px;">&nbsp;</td>
+                                              <td width="33%" align="left" valign="top" style="font-size:14px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica;">Nimi</td>
+                                              <td width="67%" align="left" valign="top" style="font-size:14px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica;">{{supplier.name}}</td>
+                                            </tr>                                            
+                                            <tr>
+                                              <td width="33%" align="left" valign="top" style="font-size:14px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica;">Osoite</td>
+                                              <td width="67%" align="left" valign="top" style="font-size:14px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica;">{{supplier.address.address}}</td>
                                             </tr>
                                             <tr>
-                                              <td valign="top" align="left" style="font-size:14px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica; font-weight:bold;">Item(s)</td>
+                                              <td width="33%" align="left" valign="top" style="font-size:14px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica;"></td>
+                                              <td width="67%" align="left" valign="top" style="font-size:14px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica;">{{supplier.address.postal}} {{supplier.address.city}}</td>
                                             </tr>
                                           </tbody>
-                                        </table>
+                                        </table>  
                                       </td>
+                                    </tr>
+
+                                    <tr>
+                                      <td valign="top" align="left" height="15" style="line-height:1px; font-size:1px;">&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                      <td valign="top" align="left" height="15" style="line-height:1px; font-size:1px;">&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                      <td valign="top" align="left" height="15" style="line-height:1px; font-size:1px;">&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                      <td width="100%" align="left" valign="top" style="font-size:14px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica; font-weight:bold;">Lähetyksen sisältö</td>
                                     </tr>
 
                                     <tr>
@@ -211,39 +222,51 @@ function packingSlipHTML() {
                                     <tr>
                                       <td valign="top" align="left" height="2" style="line-height:1px; font-size:1px; border-top:solid 2px #efefee;">&nbsp;</td>
                                     </tr>
-
                                     <tr>
-                                      <td valign="top" align="right">
-                                        <table width="210" border="0" cellspacing="0" cellpadding="0" class="emailwrapto100pc">
-                                          <tbody>
-                                            <tr>
-                                              <td valign="top" align="left" height="20" style="line-height:1px; font-size:1px;">&nbsp;</td>
-                                            </tr>
-                                            <tr>
-                                              <td valign="top" align="right" style="font-size:12px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica;">Tuote: {{product.title}}</td>
-                                            </tr>
-                                            <tr>
-                                              <td valign="top" align="right" style="font-size:12px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica;">Tuotetunnus: {{billing.shipping}}</td>
-                                            </tr>
-                                            <tr>
-                                              <td valign="top" align="right" style="font-size:12px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica;">Toimitusmäärä: {{billing.taxes}}</td>
-                                            </tr>
-                                            <tr>
-                                              <td valign="top" align="left" height="10" style="line-height:1px; font-size:1px;">&nbsp;</td>
-                                            </tr>
-                                            <tr>
-                                              <td valign="top" align="left" height="2" style="line-height:1px; font-size:1px; border-top:solid 3px #4c4d4e;">&nbsp;</td>
-                                            </tr>
-                                            <tr>
-                                              <td valign="top" align="left" height="10" style="line-height:1px; font-size:1px;">&nbsp;</td>
-                                            </tr>
-                                          </tbody>
-                                        </table>
-                                      </td>
+                                      <td valign="top" align="left" height="13" style="line-height:1px; font-size:1px;">&nbsp;</td>
                                     </tr>
 
                                     <tr>
-                                      <td valign="top" align="right" style="font-size:12px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica;">Toimitus liittyy seuraaviin toimitussopimuksiin:</td>
+                                      <td align="left" valign="top">
+                                        <table width="100%" border="0" cellspacing="0" cellpadding="0" class="emailwrapto100pc">
+                                          <tbody>
+                                            <tr>
+                                              <td width="33%" align="left" valign="top" style="font-size:14px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica;">Tuotteen tunnus</td>
+                                              <td width="67%" align="left" valign="top" style="font-size:14px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica;">{{product._id}}</td>
+                                            </tr>
+                                            <tr>
+                                              <td width="33%" align="left" valign="top" style="font-size:14px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica;">Tuotteen nimi</td>
+                                              <td width="67%" align="left" valign="top" style="font-size:14px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica;">{{product.title}}</td>
+                                            </tr>                                            
+                                            <tr>
+                                              <td width="33%" align="left" valign="top" style="font-size:14px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica;">Tuotteen määrä</td>
+                                              <td width="67%" align="left" valign="top" style="font-size:14px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica;">{{deliveryQuantity}}</td>
+                                            </tr>
+                                          </tbody>
+                                        </table>  
+                                      </td>
+                                    </tr>
+                                    <tr>
+                                      <td valign="top" align="left" height="15" style="line-height:1px; font-size:1px;">&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                      <td valign="top" align="left" height="15" style="line-height:1px; font-size:1px;">&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                      <td valign="top" align="left" height="15" style="line-height:1px; font-size:1px;">&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                      <td width="100%" align="left" valign="top" style="font-size:14px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica; font-weight:bold;">Toimitussopimukset</td>
+                                    </tr>
+
+                                    <tr>
+                                      <td valign="top" align="left" height="15" style="line-height:1px; font-size:1px;">&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                      <td valign="top" align="left" height="2" style="line-height:1px; font-size:1px; border-top:solid 2px #efefee;">&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                      <td valign="top" align="left" height="13" style="line-height:1px; font-size:1px;">&nbsp;</td>
                                     </tr>
 
                                     {{#each supplyContracts}}
@@ -251,24 +274,17 @@ function packingSlipHTML() {
                                       <td valign="top" align="left">
                                         <table width="100%" border="0" cellspacing="0" cellpadding="0" class="emailwrapto100pc">
                                           <tbody>
-                                            <tr>        
-                                              <td width="180">&nbsp;</td>
-                                              <td valign="middle" align="left">
-                                                <table width="360" border="0" cellspacing="0" cellpadding="0" class="emailwrapto100pc">
-                                                  <thead>
-                                                    <tr>
-                                                      <td align="left" valign="middle" style="font-size:12px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica;">Sopimustunnus</td>
-                                                      <td align="left" valign="middle" style="font-size:12px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica;">Sopimuksesta toimittamatta</td>
-                                                    </tr>
-                                                  </thead>
-                                                  <tbody>
-                                                    <tr>
-                                                      <td align="left" valign="middle" style="font-size:12px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica;">{{_id}}</td>
-                                                      <td align="right" valign="middle" style="font-size:12px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica;">{{remainingQuantity}}</td>
-                                                    </tr>
-                                                  </tbody>
-                                                </table>
-                                              </td>
+                                            <tr>
+                                              <td width="33%" align="left" valign="top" style="font-size:14px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica;">Sopimuksen tunnus</td>
+                                              <td width="67%" align="left" valign="top" style="font-size:14px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica;">{{_id}}</td>
+                                            </tr>
+                                            <tr>
+                                              <td width="33%" align="left" valign="top" style="font-size:14px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica;">Sopimuksesta toimittamatta</td>
+                                              <td width="67%" align="left" valign="top" style="font-size:14px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica;">{{remainingQuantity}}</td>
+                                            </tr>                                            
+                                            <tr>
+                                              <td width="33%" align="left" valign="top" style="font-size:14px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica;"></td>
+                                              <td width="67%" align="left" valign="top" style="font-size:14px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica;"></td>
                                             </tr>
                                           </tbody>
                                         </table>
@@ -316,7 +332,7 @@ function packingSlipHTML() {
                               <td height="8" align="left" valign="top" style="font-size:1px; line-height:1px;">&nbsp;</td>
                             </tr>
                             <tr>
-                              <td align="left" valign="top" style="font-family:Arial, Helvetica, sans-serif; font-size:10px; font-weight:normal; line-height:10px; color:#787878;">{{physicalAddress.address}}, {{physicalAddress.city}}, {{physicalAddress.region}} {{physicalAddress.postal}}</td>
+                              <td align="left" valign="top" style="font-family:Arial, Helvetica, sans-serif; font-size:10px; font-weight:normal; line-height:10px; color:#787878;">{{physicalAddress.address}}, {{physicalAddress.postal}} {{physicalAddress.city}}</td>
                             </tr>
                             <!-- End footer -->
 
