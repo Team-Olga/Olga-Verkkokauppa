@@ -192,7 +192,11 @@ function packingSlipHTML() {
                                             </tr>                                            
                                             <tr>
                                               <td width="33%" align="left" valign="top" style="font-size:14px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica;">Osoite</td>
-                                              <td width="67%" align="left" valign="top" style="font-size:14px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica;">{{supplier.address.address}}</td>
+                                              <td width="67%" align="left" valign="top" style="font-size:14px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica;">{{supplier.address.address1}}</td>
+                                            </tr>
+                                            <tr>
+                                              <td width="33%" align="left" valign="top" style="font-size:14px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica;"></td>
+                                              <td width="67%" align="left" valign="top" style="font-size:14px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica;">{{supplier.address.address2}}</td>
                                             </tr>
                                             <tr>
                                               <td width="33%" align="left" valign="top" style="font-size:14px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica;"></td>

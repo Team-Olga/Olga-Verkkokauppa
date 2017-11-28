@@ -122,8 +122,6 @@ function sendPackingListEmail(userId, deliveryId) {
       copyrightDate: moment().format("YYYY"),
     }
 
-    console.log(data.supplier.address);
-
     // get template and merge with data
     let tpl = "deliveries/packing-slip";
     let subject = "deliveries/packing-slip/subject";
