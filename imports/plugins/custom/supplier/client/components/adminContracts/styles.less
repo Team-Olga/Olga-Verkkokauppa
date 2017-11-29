@@ -1,6 +1,89 @@
-.SubTable .rt-thead.-header {
+main {
+  background-color: #FFF;
+}
+
+.contract-total {
+    border-radius: 25px;
+    background: #20b5f2;
+    color: white;
+    width: 50%;
+    max-width: 60px;
+    margin: 0 auto;
+    cursor: pointer;
+}
+
+.contract-total:hover {
+    background: #54c3f1;
+}
+
+.contract-table-container {
+  margin: 40px;
+}
+
+.supplier-table-container {
+  margin-left: 35px;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.rui.order.table.table-header-visible .rt-thead .rt-tr {
+    height: 36px;
+}
+
+.rui.order.table {
+  .rt-thead .rt-th,
+  .rt-thead .rt-td {
+    padding: 5px 5px;
+    line-height: normal;
+    position: relative;
+    border-right: none;
+    //transition: box-shadow 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    //box-shadow: inset 0 0 0 0 transparent;
+  }
+
+  .contract-table-list {
+    border: 1px solid rgba(0, 0, 0, 0.05);
+  }
+  // Table Headers
+  contract-table-thead {
+    border-right: none;
+    border-top: none;
+    border-left: none;
+  }
+
+  .contract-table-name-header {
+    border-right: 1px solid rgba(0, 0, 0, 0.05);
+    text-align: left;
+  }
+  .contract-table-mid-header {
+    border-right: none;
+    text-align: center;
+  }
+
+  .contract-total .-left {
+    float:right;
+  }
+
+  .contract-total .-right {
+    float:left;
+  }
+}
+
+.supplier-table .rt-thead.-header {
+  display: none;
+}
+
+.ReactTable.rui.order.table.supplier-table {
+  margin: 0px;
+  background-color: white;
+}
+.supplier-full-name {
+  padding-top: 2px;
+  padding-left: 10px;
+}
+
+SubTable .rt-thead.-header {
     box-shadow: 0 1px 5px 0px rgba(0, 0, 0, 0.15);
-    height: 0px;
+    
 }
 
 .OlgaTable {
@@ -15,7 +98,7 @@
   box-sizing: border-box;
 }
 
-.contract-total {
+/*.contract-total {
     color: #222;
     font-weight: 400;
     vertical-align: baseline;
@@ -23,7 +106,7 @@
     font-size: 14px;
     margin: 0 5px 0 5px;
     text-align: center;
-}
+}*/
 
 .OlgaTable .rt-table {
   flex: auto 1;
