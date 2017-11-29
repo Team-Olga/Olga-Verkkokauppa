@@ -285,10 +285,12 @@ function packingSlipHTML() {
                                             <tr>
                                               <td width="33%" align="left" valign="top" style="font-size:14px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica;">Sopimuksesta toimittamatta</td>
                                               <td width="67%" align="left" valign="top" style="font-size:14px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica;">{{remainingQuantity}}</td>
+                                            </tr>
+                                            <tr>
+                                              <td colspan="2" align="center" height="15" valign="top" style="font-size:14px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica;"></td>
                                             </tr>                                            
                                             <tr>
-                                              <td width="33%" align="left" valign="top" style="font-size:14px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica;"></td>
-                                              <td width="67%" align="left" valign="top" style="font-size:14px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica;"></td>
+                                              <td colspan="2" align="center" valign="top" style="font-size:14px; line-height:normal; color:#4c4c4d; font-family:Arial, helvetica;"><img src="data:image/jpeg;base64, {{barcodeImg}}" /></td>
                                             </tr>
                                           </tbody>
                                         </table>
@@ -300,6 +302,9 @@ function packingSlipHTML() {
                                     </tr>
                                     <tr>
                                       <td valign="top" align="left" height="2" style="line-height:1px; font-size:1px; border-top:solid 2px #efefee;">&nbsp;</td>
+                                    </tr>
+                                    <tr>
+                                      <td valign="top" align="left" height="15" style="line-height:1px; font-size:1px;">&nbsp;</td>
                                     </tr>
 																		{{/each}}
                                     

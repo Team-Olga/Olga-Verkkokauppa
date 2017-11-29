@@ -7,6 +7,7 @@ import { SimpleSchema } from "meteor/aldeed:simple-schema";
 import { Reaction } from "/server/api";
 import { SSR } from "meteor/meteorhacks:ssr";
 import { Roles } from "meteor/alanning:roles";
+const bwipjs = require("bwip-js");
 import UserChecks from "../../lib/userChecks";
 import _ from "lodash";
 import moment from "moment";
@@ -69,11 +70,27 @@ function sendPackingListEmail(userId, deliveryId) {
     let contracts = SupplyContracts.find({ _id: { "$in": delivery.supplyContracts } }).fetch();
     let supplyContracts = [];
     _.forEach(contracts, function(contract){
-      supplyContracts.push({
-        _id: contract._id,
-        remainingQuantity: contract.quantity - contract.sentQuantity
+      let barcodeImg;
+      bwipjs.toBuffer({
+        bcid: 'code128',
+        text: contract._id,
+        height: 15,
+        includetext: true      
+      }, function (err, png) {
+        if(err) {
+          console.log("Kuvaa ei muodostettu");
+        } else if(!png) {
+          console.log("Bufferia ei ole");
+        } else {
+          barcodeImg = png.toString('base64');
+          supplyContracts.push({
+            _id: contract._id,
+            remainingQuantity: contract.quantity - contract.sentQuantity,
+            barcodeImg: barcodeImg
+          });
+        }
       });
-    })
+    });
    
     const shop = Collections.Shops.findOne(supplier.shopId);
     let emailLogo;
