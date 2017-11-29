@@ -7,7 +7,7 @@ import { Components, registerComponent } from "@reactioncommerce/reaction-compon
 import { Reaction } from "/client/api";
 import { getUserAvatar } from "/imports/plugins/core/accounts/client/helpers/helpers";
 
-const GroupsTableCell = ({ account, columnName, group, adminGroups, handleRemoveUserFromGroup, handleUserGroupChange, openItemModal, ...props }) => {
+const GroupsTableCell = ({ account, columnName, group, adminGroups, handleRemoveUserFromGroup, handleUserGroupChange, openItemModal, setOptions, ...props }) => {
   const email = _.get(account, "emails[0].address");
   const groups = adminGroups;
   const userAvatar = getUserAvatar(account);

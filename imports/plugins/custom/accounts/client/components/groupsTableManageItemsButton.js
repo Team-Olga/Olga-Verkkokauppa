@@ -26,7 +26,7 @@ const GroupsTableManageItemsButton = ({ account, group, openItemModal, hasPermis
     <div className="group-table-button">
       <Components.Button
         status="default"
-        onClick={openItemModal}
+        onClick={() => openItemModal(account)}
         bezelStyle="solid"
         i18nKeyLabel="admin.groups.manageItems"
         label="Items"
@@ -38,7 +38,7 @@ const GroupsTableManageItemsButton = ({ account, group, openItemModal, hasPermis
 GroupsTableManageItemsButton.propTypes = {
   account: PropTypes.object,
   group: PropTypes.object, // current group in interation
-  handleManageItems: PropTypes.func,
+  openItemModal: PropTypes.func,
   hasPermissions: PropTypes.bool
 };
 

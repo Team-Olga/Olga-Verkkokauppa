@@ -31,32 +31,7 @@ class AccountsDashboard extends Component {
       products: products,
       itemModalIsOpen: false
     };
-
-    this.openItemModal = this.openItemModal.bind(this);
     this.closeItemModal = this.closeItemModal.bind(this);
-  }
-
-  openItemModal(products) {
-    this.setState({
-      itemModalIsOpen: true,
-      supplierProducts: products
-    });
-
-    let p = null;
-    let i = 0;
-    const setOptions = [];
-    for (p in this.props.products) {
-      if (this.props.products[p].type === "simple") {
-        setOptions[i] = { value: this.props.products[p]._id, label: this.props.products[p].title };
-        i++;
-      }
-    }
-
-    this.setState({ options: setOptions });
-  }
-
-  closeItemModal() {
-    this.setState({ itemModalIsOpen: false });
   }
 
   componentWillReceiveProps(nextProps) {
@@ -70,6 +45,40 @@ class AccountsDashboard extends Component {
       selectedGroup
     });
   }
+
+  setOptions = () => {
+    let p = null;
+    let i = 0;
+    const options = [];
+    for (p in this.props.products) {
+      if (this.props.products[p].type === "simple") {
+        options[i] = { value: this.props.products[p]._id, label: this.props.products[p].title };
+        i++;
+      }
+    }
+
+    this.setState({ options: options });
+  };
+
+  openItemModal = (products) => {
+    if (!this.state.itemModalIsOpen) {
+      this.setState({
+        itemModalIsOpen: true
+      });
+    } else {
+      return;
+    }
+
+    this.setState({
+      supplierProducts: products
+    });
+
+    this.setOptions();
+  };
+
+  closeItemModal = () => {
+    this.setState({ itemModalIsOpen: false });
+  };
 
   handleGroupSelect = (group) => {
     this.setState({ selectedGroup: group });
@@ -97,11 +106,11 @@ class AccountsDashboard extends Component {
     );
   };
 
-  getInitialState () {
+  getInitialState() {
     return {
       multi: true,
       removeSelected: true,
-      value: [],
+      value: []
     };
   }
 
@@ -110,8 +119,8 @@ class AccountsDashboard extends Component {
     console.log(`Selected: ${value.label}`);
   }
 
-    handleSelectChange (value) {
-    console.log('You\'ve selected:', value);
+  handleSelectChange(value) {
+    console.log("You've selected:", value);
     this.setState({ value });
   }
 
@@ -130,6 +139,7 @@ class AccountsDashboard extends Component {
                 onMethodDone={this.handleMethodDone}
                 onGroupSelect={this.handleGroupSelect}
                 openItemModal={this.openItemModal}
+                setOptions={this.setOptions}
               />
             );
           })}
