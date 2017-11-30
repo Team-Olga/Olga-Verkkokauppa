@@ -26,12 +26,17 @@ class AccountsDashboard extends Component {
       adminGroups: sortedGroups,
       selectedGroup: defaultSelectedGroup,
       options: [],
-      selectedOption: "",
+      value: [],
+      currentAccount: {},
+      selectedOption: [],
       supplierProducts: [],
       products: products,
       itemModalIsOpen: false
     };
     this.closeItemModal = this.closeItemModal.bind(this);
+    this.openItemModal = this.openItemModal.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+
   }
 
   componentWillReceiveProps(nextProps) {
@@ -52,22 +57,24 @@ class AccountsDashboard extends Component {
     const options = [];
     for (p in this.props.products) {
       if (this.props.products[p].type === "simple") {
-        options[i] = { value: this.props.products[p]._id, label: this.props.products[p].title };
+        options[i] = { label: this.props.products[p].title, value: this.props.products[p]._id };
         i++;
       }
     }
-
     this.setState({ options: options });
   };
 
-  openItemModal = (products) => {
+  openItemModal = (account) => {
     if (!this.state.itemModalIsOpen) {
       this.setState({
-        itemModalIsOpen: true
+        itemModalIsOpen: true,
+        currentAccount: account
       });
     } else {
       return;
     }
+
+    const products = account.products;
 
     this.setState({
       supplierProducts: products
@@ -77,7 +84,10 @@ class AccountsDashboard extends Component {
   };
 
   closeItemModal = () => {
-    this.setState({ itemModalIsOpen: false });
+    this.setState({
+      itemModalIsOpen: false,
+      currentAccount: {}
+    });
   };
 
   handleGroupSelect = (group) => {
@@ -106,23 +116,13 @@ class AccountsDashboard extends Component {
     );
   };
 
-  getInitialState() {
-    return {
-      multi: true,
-      removeSelected: true,
-      value: []
-    };
-  }
+  postSelection= () => {
+    this.setState({ supplierProducts: this.state.value });
+  };
 
   handleChange = (value) => {
     this.setState({ value });
-    console.log(`Selected: ${value.label}`);
-  }
-
-  handleSelectChange(value) {
-    console.log("You've selected:", value);
-    this.setState({ value });
-  }
+  };
 
   renderGroupsTable(groups) {
     if (Array.isArray(groups)) {
@@ -139,7 +139,6 @@ class AccountsDashboard extends Component {
                 onMethodDone={this.handleMethodDone}
                 onGroupSelect={this.handleGroupSelect}
                 openItemModal={this.openItemModal}
-                setOptions={this.setOptions}
               />
             );
           })}
@@ -183,11 +182,22 @@ class AccountsDashboard extends Component {
               multi
               onChange={this.handleChange}
               options={this.state.options}
-              simpleValue
+              joinValues
             />
             <button id="cancelItemModal" className="rui btn btn-primary flat olga-listing-btn-default pull-right"
               onClick={() => this.closeItemModal()}
             >Peruuta</button>
+          </div>
+          <div>
+            <button id="confirmSelection" className="rui btn btn-primary olga-listing-btn-success pull-right"
+              onClick={() => this.postSelection()}
+            >Lähetä</button>
+            <ul>
+              {this.state.supplierProducts.map((product) => {
+                return <li>{product.label}</li>;
+              }
+              )}
+            </ul>
           </div>
         </Modal>
 
