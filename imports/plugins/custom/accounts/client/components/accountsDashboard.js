@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { Components } from "@reactioncommerce/reaction-components";
 import Modal from "react-modal";
 import Select from "react-select";
+import { Meteor } from "meteor/meteor";
 import { default as sortUsersIntoGroups, sortGroups } from "imports/plugins/core/accounts/client/helpers/accountsHelper";
 
 class AccountsDashboard extends Component {
@@ -36,7 +37,6 @@ class AccountsDashboard extends Component {
     this.closeItemModal = this.closeItemModal.bind(this);
     this.openItemModal = this.openItemModal.bind(this);
     this.handleChange = this.handleChange.bind(this);
-
   }
 
   componentWillReceiveProps(nextProps) {
@@ -79,7 +79,7 @@ class AccountsDashboard extends Component {
     this.setState({
       supplierProducts: products
     });
-
+    console.log(account.products);
     this.setOptions();
   };
 
@@ -116,8 +116,24 @@ class AccountsDashboard extends Component {
     );
   };
 
-  postSelection= () => {
-    this.setState({ supplierProducts: this.state.value });
+  postSelection = () => {
+    const productList = [];
+
+    let i = 0;
+    let j = 0;
+    while (i < this.state.value.length) {
+      if (this.state.value[i].value === this.props.products[j]._id) {
+        productList[i] = this.props.products[j];
+        i++;
+      }
+      j++;
+    }
+
+    console.log(productList);
+
+    Meteor.call("accounts/productsUpdate", productList, this.state.currentAccount);
+    this.setState({ value: [] });
+    this.closeItemModal();
   };
 
   handleChange = (value) => {
@@ -174,7 +190,7 @@ class AccountsDashboard extends Component {
             beforeClose: "itemModalOverlay_before-close"
           }}
         >
-          <h2> Tutturuu </h2>
+          <h2> Lisää tai poista tuotteita tavarantoimittajalta </h2>
           <div>
             <Select
               name="itemModal-select"
@@ -200,7 +216,6 @@ class AccountsDashboard extends Component {
             </ul>
           </div>
         </Modal>
-
       </div>
     );
   }
