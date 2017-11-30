@@ -4,7 +4,7 @@ import { Reaction } from "/lib/api";
 
 
 
-const supplierRoles = [ "supplier",  "customer",  "supplierproducts", "supplierproductsreact" ];
+const supplierRoles = [ "supplier",  "supplierproducts", "supplierproductsreact", "supplier/products", "supplier/contracts" ];
 const defaultCustomerRoles = [ "guest", "account/profile", "product", "tag", "index", "cart/checkout", "cart/completed", "about"];
 const defaultVisitorRoles = ["anonymous", "guest", "product", "tag", "index", "cart/checkout", "cart/completed", "about"];
 export const defaultSupplierRoles = supplierRoles.concat(defaultCustomerRoles);
@@ -25,7 +25,8 @@ export function createCustomGroups() {
     const groupExists = allGroups.find(grp => grp.slug === groupKeys && grp.shopId === shopId);
 
     if (groupExists) {
-      Groups.remove({'slug': groupKeys, 'shopId': shopId});
+      return false;
+      //Groups.remove({'slug': groupKeys, 'shopId': shopId});
     }
 
     Groups.insert({

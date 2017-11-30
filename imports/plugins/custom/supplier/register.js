@@ -30,8 +30,9 @@ Reaction.registerPackage({
       name: "supplier/products",
       layout: "coreLayoutOlga",
       provides: ["supplierAccountDropdown"],
+      audience: ["supplier"],
       icon: "fa fa-vine",
-      label: "My Products",
+      label: "Products",
       template: "supplierProducts",
       workflow: "coreProductGridWorkflow"
     },
@@ -40,9 +41,21 @@ Reaction.registerPackage({
       name: "supplier/contracts",
       layout: "coreLayoutOlga",
       provides: ["supplierAccountDropdown"],
+      audience: ["supplier"],
       icon: "fa fa-vine",
-      label: "My Contracts",
+      label: "Contracts",
       template: "supplierContracts",
+      workflow: "coreProductGridWorkflow"
+    },
+    {
+      route: "/admin/contracts",
+      name: "admin/contracts",
+      layout: "coreLayoutOlga",
+      provides: ["shortcut"],
+      audience: ["dashboard"],
+      icon: "fa fa-vine",
+      label: "Admin Contracts",
+      template: "adminContracts",
       workflow: "coreProductGridWorkflow"
     }
   ]
