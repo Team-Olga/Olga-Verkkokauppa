@@ -1,15 +1,16 @@
 import { Meteor } from "meteor/meteor";
 import { check, Match } from "meteor/check"; 
 import { Deliveries, SupplyContracts } from "../../lib/collections";
-import { Orders } from "/lib/collections";
+import { Media, Orders } from "/lib/collections";
 import * as Collections from "/lib/collections";
 import { SimpleSchema } from "meteor/aldeed:simple-schema";
-import { Reaction } from "/server/api";
+import { Logger, Reaction } from "/server/api";
 import { SSR } from "meteor/meteorhacks:ssr";
 import { Roles } from "meteor/alanning:roles";
 const bwipjs = require("bwip-js");
 import UserChecks from "../../lib/userChecks";
 import _ from "lodash";
+import path from "path";
 import moment from "moment";
 
 function initializeDelivery(userId, productId, quantity) {
@@ -94,11 +95,14 @@ function sendPackingListEmail(userId, deliveryId) {
    
     const shop = Collections.Shops.findOne(supplier.shopId);
     let emailLogo;
-    if (Array.isArray(shop.brandAssets)) {
+    if (Array.isArray(shop.brandAssets) && shop.brandAssets.length > 0) {
       const brandAsset = shop.brandAssets.find((asset) => asset.type === "navbarBrandImage");
       const mediaId = Media.findOne(brandAsset.mediaId);
-      emailLogo = path.join(Meteor.absoluteUrl(), mediaId.url());
-    } else {
+      if(mediaId) {
+        emailLogo = path.join(Meteor.absoluteUrl(), mediaId.url());
+      }
+    }
+    if(!emailLogo) {
       emailLogo = Meteor.absoluteUrl() + "resources/email-templates/shop-logo.png";
     }
 
@@ -175,6 +179,7 @@ export const methods = {
         check(quantity, Number);
 
         let userId = Meteor.userId();
+        console.log("Meteor.userId palautti " + userId);
         let userChecks = new UserChecks();
 
         if(!Reaction.hasAdminAccess() && !userChecks.isInRole("supplier")) {
