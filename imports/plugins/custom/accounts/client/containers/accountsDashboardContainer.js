@@ -1,5 +1,6 @@
 import { compose, withProps } from "recompose";
 import Alert from "sweetalert2";
+import _ from "lodash";
 import { registerComponent, composeWithTracker } from "@reactioncommerce/reaction-components";
 import { Meteor } from "meteor/meteor";
 import { Accounts, Groups, Products } from "/lib/collections";
@@ -102,7 +103,8 @@ const composer = (props, onData) => {
 
     const adminUsers = Meteor.users.find(adminQuery, { fields: { _id: 1 } }).fetch();
     // Otetaa tähän hetkee viel kaikki
-    const products = Products.find({}).fetch();
+    const products = Products.find({ type: "simple" }).fetch();
+    const productsById = _.keyBy(products, product => product._id);
     const ids = adminUsers.map((user) => user._id);
     const accounts = Accounts.find({ _id: { $in: ids } }).fetch();
     const adminGroups = groups.reduce((admGrps, group) => {
@@ -112,7 +114,7 @@ const composer = (props, onData) => {
       return admGrps;
     }, []);
 
-    onData(null, { accounts, groups, adminGroups, products });
+    onData(null, { accounts, groups, adminGroups, products, productsById });
   }
 };
 

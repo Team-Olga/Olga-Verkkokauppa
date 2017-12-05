@@ -10,7 +10,8 @@ class AccountsDashboard extends Component {
     accounts: PropTypes.array,
     adminGroups: PropTypes.array, // only admin groups
     groups: PropTypes.array, // all groups including non-admin default groups
-    products: PropTypes.array
+    products: PropTypes.array,
+    productsById: PropTypes.object
   };
 
   constructor(props) {
@@ -50,19 +51,6 @@ class AccountsDashboard extends Component {
     });
   }
 
-  setOptions = () => {
-    let p = null;
-    let i = 0;
-    const options = [];
-    for (p in this.props.products) {
-      if (this.props.products[p].type === "simple") {
-        options[i] = { label: this.props.products[p].title, value: this.props.products[p]._id };
-        i++;
-      }
-    }
-    this.setState({ options: options });
-  };
-
   openItemModal = (account) => {
     if (!this.state.itemModalIsOpen) {
       this.setState({
@@ -81,6 +69,22 @@ class AccountsDashboard extends Component {
     console.log(account.products);
     this.setOptions();
   };
+
+  setOptions = () => {
+    let p = null;
+    let i = 0;
+    const options = [];
+    const currentProducts = this.state.currentAccount.products;
+
+    for (p in this.props.products) {
+      if (this.props.products[p].type === "simple") {
+        options[i] = { label: this.props.products[p].title, value: this.props.products[p]._id };
+        i++;
+      }
+    }
+    this.setState({ options: options });
+  };
+
 
   closeItemModal = () => {
     this.setState({
@@ -118,23 +122,14 @@ class AccountsDashboard extends Component {
   postSelection = () => {
     const productList = [];
 
-    let i = 0;
-    let j = 0;
-    while (i < this.state.value.length) {
-      if (this.state.value[i].value === this.props.products[j]._id) {
-        productList[i] = this.props.products[j];
-        i++;
-      }
-      j++;
+    for (const p in this.state.value) {
+      productList.push(this.props.productsById[this.state.value[p].value]);
     }
-
-    console.log(productList);
-
     const shopId = "J8Bhq3uTtdgwZx3rz";
+
 
     Meteor.call("accounts/productsUpdate", productList, this.state.currentAccount, shopId);
     this.setState({ value: [] });
-    this.closeItemModal();
   };
 
   handleChange = (value) => {
@@ -211,7 +206,7 @@ class AccountsDashboard extends Component {
             >Lähetä</button>
             <ul>
               {this.state.supplierProducts.map((product) => {
-                return <li>{product.label}</li>;
+                return <li key={ product._id }>{product.title}</li>;
               }
               )}
             </ul>

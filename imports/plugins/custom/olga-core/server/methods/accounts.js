@@ -16,10 +16,9 @@ export const methods = {
       throw new Meteor.Error(403, "Access Denied");
     }
 
-    Accounts.update({ id: account._id },
-      { $set: {
-        products: productList,
-        shopId: shopId } }, { upsert: true });
+    Accounts.update({ _id: account._id },
+      { $addToSet: {
+        products: { $each: productList } } });
   }
 };
 
