@@ -3,7 +3,6 @@ import PropTypes from "prop-types";
 import { Components } from "@reactioncommerce/reaction-components";
 import Modal from "react-modal";
 import Select from "react-select";
-import { Meteor } from "meteor/meteor";
 import { default as sortUsersIntoGroups, sortGroups } from "imports/plugins/core/accounts/client/helpers/accountsHelper";
 
 class AccountsDashboard extends Component {
@@ -131,7 +130,9 @@ class AccountsDashboard extends Component {
 
     console.log(productList);
 
-    Meteor.call("accounts/productsUpdate", productList, this.state.currentAccount);
+    const shopId = "J8Bhq3uTtdgwZx3rz";
+
+    Meteor.call("accounts/productsUpdate", productList, this.state.currentAccount, shopId);
     this.setState({ value: [] });
     this.closeItemModal();
   };
