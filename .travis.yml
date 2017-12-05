@@ -45,7 +45,6 @@ branches:
 
 deploy:
   provider: heroku
-  buildpack: https://github.com/jordansissel/heroku-buildpack-meteor.git
   api_key:
     secure: "$HEROKU"
   on: master
