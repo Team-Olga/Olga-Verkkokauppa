@@ -50,6 +50,7 @@ deploy:
     secure: "$HEROKU"
   on: master
   app: olga-verkkokauppa
+  skip_cleanup: true
 
 notifications:
   slack: olgaverkkokauppa:VyuKQR5JBQpHmyOWE6bPRBZp
