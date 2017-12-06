@@ -33,17 +33,17 @@ Reaction.registerPackage({
       layout: "coreLayoutOlga",
       template: "supplierProductsLanding",
       workflow: "coreProductGridWorkflow"
-    },*/
+    },*//*
     {
       route: "/supplierproductsreact",
       name: "supplierproductsreact",
-      label: "Open Orders",
+      label: "Supplierproducts",
       provides: ["supplierAccountDropdown"],
       icon: "fa fa-telegram",
       layout: "coreLayoutOlga",
       template: "supplierProductsReact",
       workflow: "coreProductGridWorkflow"
-    },
+    },*/
 /*    {
       route: "/contracts",
       name: "contracts",
