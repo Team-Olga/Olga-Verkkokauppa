@@ -1,2 +1,2 @@
 # ignore package-lock in heroku
-yarn.lock
+package-lock.lock
