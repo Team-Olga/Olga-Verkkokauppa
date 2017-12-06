@@ -1,2 +1,2 @@
 # ignore package-lock in heroku
-package-lock.lock
+package-lock.json
