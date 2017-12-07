@@ -1,6 +1,7 @@
 import { Reaction } from "/server/api";
 import "./server/methods";
 import "./server/hooks";
+import packingSlipHTML from "./lib/templates/packing-slip";
 
 // Register package as ReactionCommerce package
 Reaction.registerPackage({
@@ -70,4 +71,12 @@ Reaction.registerPackage({
     }
 
   ]
+});
+
+Reaction.registerTemplate({
+  title: "Delivery packing slip",
+  name: "deliveries/packing-slip",
+  type: "email",
+  template: packingSlipHTML(),
+  subject: "Toimituksen lähetyslista"
 });

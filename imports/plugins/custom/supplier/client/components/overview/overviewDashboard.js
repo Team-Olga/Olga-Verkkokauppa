@@ -3,9 +3,12 @@ import { Meteor } from 'meteor/meteor';
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { registerComponent, composeWithTracker } from "@reactioncommerce/reaction-components";
+import { Tooltip } from 'react-tippy';
 
 import OverviewSearch from './overviewSearch';
-import ProductOverviewList from './productOverviewList'; 
+import ProductOverviewList from './productOverviewList';
+
+import 'react-tippy/dist/tippy.css';
 
 
 class OverviewDashboard extends Component {
@@ -37,8 +40,15 @@ class OverviewDashboard extends Component {
           </div>
           <div className="overview-toolbar-item" style={{ width:'40px'}}>
             <div className="toggle-open-orders">
+              <Tooltip
+              title="Suodata avoimet tilaukset"
+              position="top"
+              delay="500"
+              arrow="true"
+              >
               <input type="checkbox" value="1" id="checkboxOneInput" name="" onClick={this.toggleFilter.bind(this)}/>
               <label htmlFor="checkboxOneInput"></label>
+              </Tooltip>
             </div>
           </div>
         </div>
@@ -58,8 +68,8 @@ class OverviewDashboard extends Component {
 */
 function composer(props, onData) {
 
-  onData(null, { 
-    ...props });  
+  onData(null, {
+    ...props });
 }
 
 

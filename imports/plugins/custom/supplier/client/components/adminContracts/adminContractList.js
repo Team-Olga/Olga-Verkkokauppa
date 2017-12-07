@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 import { registerComponent, composeWithTracker } from "@reactioncommerce/reaction-components";
 
 import ReactTable from "react-table";
+
 import { VelocityComponent, VelocityTransitionGroup } from 'velocity-react';
 import { SortableTablePagination } from "/imports/plugins/core/ui/client/components/table/sortableTableComponents";
 import Avatar from "react-avatar";
@@ -23,6 +24,7 @@ class AdminContractList extends Component {
   }
 
   render() {   
+
     const productTotalsCol = [
       {
         Header: "Tuote",
@@ -201,7 +203,6 @@ class AdminContractList extends Component {
             };
           }}
           PaginationComponent={SortableTablePagination}
-
           SubComponent={row => {
             const contractTotals = ContractTotals.find({
               productId: row.original.productId
