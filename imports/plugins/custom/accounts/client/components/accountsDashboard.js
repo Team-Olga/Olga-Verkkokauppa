@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import _ from "lodash";
 import { Components } from "@reactioncommerce/reaction-components";
 import Modal from "react-modal";
 import Select from "react-select";
@@ -62,26 +63,32 @@ class AccountsDashboard extends Component {
     }
 
     const products = account.products;
-
     this.setState({
       supplierProducts: products
     });
-    console.log(account.products);
-    this.setOptions();
+    this.setOptions(products);
   };
 
-  setOptions = () => {
+  setOptions = (products) => {
     let p = null;
+    let o = null;
     let i = 0;
     const options = [];
-    const currentProducts = this.state.currentAccount.products;
+    let currentProductIds = [];
 
-    for (p in this.props.products) {
-      if (this.props.products[p].type === "simple") {
-        options[i] = { label: this.props.products[p].title, value: this.props.products[p]._id };
+    for (o in products) {
+      currentProductIds[o] = products[o]._id;
+    }
+
+    const currentProducts = _.omit(this.props.productsById, currentProductIds);
+
+    for (p in currentProducts) {
+      if (currentProducts[p].type === "simple") {
+        options[i] = { label: currentProducts[p].title, value: currentProducts[p]._id };
         i++;
       }
     }
+
     this.setState({ options: options });
   };
 
