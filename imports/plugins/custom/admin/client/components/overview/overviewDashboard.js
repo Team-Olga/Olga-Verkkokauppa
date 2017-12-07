@@ -8,7 +8,9 @@ import OverviewSearch from './overviewSearch';
 import ProductSummaryList from './productSummaryList';
 import SupplierSummaryList from './supplierSummaryList';
 import SideView from './sideView';
+import AccountDetails from './accountDetails';
 import { Tooltip } from 'react-tippy';
+
 
 import { VelocityTransitionGroup } from "velocity-react";
 import 'velocity-animate';
@@ -76,10 +78,13 @@ class AdminOverviewDashboard extends Component {
           leave={{animation: "transition.slideRightOut", duration: 600, easing: "ease-in-out"}}
           runOnMount={true}
         >
-        {this.state.sideViewOpen ?
-          <SideView
-            content={this.props.sideViewContent}
+        {this.state.sideViewOpen ? 
+          <SideView 
+            content={this.state.sideViewContent} 
             handleSideViewClose={this.handleSideViewClose} />
+/*          SideView = (props) => ({})
+            content={this.props.sideViewContent} 
+            handleSideViewClose={this.handleSideViewClose} />*/
           :
           undefined
         }
@@ -147,6 +152,7 @@ class AdminOverviewDashboard extends Component {
             :
             <SupplierSummaryList
             searchQuery={this.state.searchQuery}
+            setSideViewContent={this.setSideView}
             />
           }
         </div>

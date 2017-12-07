@@ -17,6 +17,9 @@ import { ContractItems, SupplierTotals } from 'imports/plugins/custom/olga-core/
 import { getProductVariants, getVariantOptions, 
          getProductSummary, getVariantSummary } from '../../helpers/productOverview';
 
+
+import AccountDetails from './accountDetails';
+
 class SupplierSummaryList extends Component {
   constructor(props) {
     super(props);
@@ -36,6 +39,12 @@ class SupplierSummaryList extends Component {
     return defaultImage;
   }
 
+/*  renderDetailView() {
+    return <AccountDetails supplier={this.props.supplier}/>
+  }
+*/
+  
+
   renderProducts(supplier) {
     const { displayMedia } = this.props;
     //const invoice = getBillingInfo(order).invoice || {};
@@ -43,15 +52,15 @@ class SupplierSummaryList extends Component {
     return (
       <div className="order-info">
         <div className="order-totals">
-          <span className="order-data order-data-id">
+{/*          <span className="order-data order-data-id">
             <strong>Supplier ID: </strong>
-{/*            <ClickToCopy
+             <ClickToCopy
               copyToClipboard={supplier._id}
               displayText={supplier._id}
               i18nKeyTooltip="admin.orderWorkflow.summary.copyOrderLink"
               tooltip="Copy Order Link"
-            />*/}
-          </span>
+            />
+          </span>*/}
 
 {/*          <span className="order-data order-data-total">
             <strong>Total: {formatPriceString(invoice.total)}</strong>
@@ -106,7 +115,9 @@ class SupplierSummaryList extends Component {
       id: "",
       Cell: row => (
         <div className="rui card order">
-          <div className="content" onClick={() => this.props.handleClick(order, false)}>
+          <div className="content" onClick={() => this.props.setSideViewContent(
+              <AccountDetails supplier={row.original}/>
+            )}>
             {this.renderSupplierSummary(row.original)}
             {this.renderProducts(row.original)}
           </div>

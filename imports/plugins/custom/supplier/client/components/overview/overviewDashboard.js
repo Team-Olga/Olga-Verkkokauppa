@@ -33,12 +33,12 @@ class OverviewDashboard extends Component {
     return (
       <div className="supplier-overview-container">
         <div className="overview-toolbar">
-          <div className="overview-toolbar-item" style={{ width:'80%' }}>
+          <div className="overview-toolbar-item" style={{ width:'100%' }}>
             <OverviewSearch
               handleChange={this.handleSearchChange}
             />
           </div>
-          <div className="overview-toolbar-item" style={{ width:'15%'}}>
+          <div className="overview-toolbar-item" style={{ width:'40px'}}>
             <div className="toggle-open-orders">
               <Tooltip
               title="Suodata avoimet tilaukset"
