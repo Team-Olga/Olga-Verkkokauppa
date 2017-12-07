@@ -140,4 +140,4 @@ export const methods = {
     }
 };
 
-Meteor.methods(methods);
+//Meteor.methods(methods);

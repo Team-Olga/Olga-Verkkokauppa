@@ -78,6 +78,7 @@
     "radium": "^0.19.4",
     "react": "15.6.1",
     "react-addons-create-fragment": "15.6.0",
+    "react-addons-css-transition-group": "^15.6.2",
     "react-addons-pure-render-mixin": "15.6.0",
     "react-addons-shallow-compare": "^15.6.0",
     "react-alert": "^2.4.0",

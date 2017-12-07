@@ -97,9 +97,9 @@ function handleChange(event, value) {
         });
       }
     });
-  } else if (value.name === "supplierproductsreact") {
+  } else if (value.name === "supplier/overview") {
     return Reaction.Router.go(value.route);
-  } else if (value.name === "supplier/contracts") {
+  } else if (value.name === "admin/overview") {
     return Reaction.Router.go(value.route);
   } else if (value.name !== "account/profile") {
     console.log("Haloo profiili");
