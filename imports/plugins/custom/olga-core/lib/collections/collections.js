@@ -25,7 +25,7 @@ ContractItems.attachSchema(Schemas.ContractItemSchema);
  * Contract Aggregates per product and user
  * @ignore
  */
-export const ContractTotals = new Mongo.Collection("ContractTotals", {
+export const SupplierTotals = new Mongo.Collection("SupplierTotals", {
   transform: (totals) => {
     //totals.product = Products.findOne({'_id': totals.productId});
     totals.user = Accounts.findOne({'_id': totals.userId});
