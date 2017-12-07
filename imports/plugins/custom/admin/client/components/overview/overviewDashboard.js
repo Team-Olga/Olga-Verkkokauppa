@@ -8,6 +8,7 @@ import OverviewSearch from './overviewSearch';
 import ProductSummaryList from './productSummaryList'; 
 import SupplierSummaryList from './supplierSummaryList';
 import SideView from './sideView';
+import AccountDetails from './accountDetails';
 
 import { VelocityTransitionGroup } from "velocity-react";
 import 'velocity-animate';
@@ -76,8 +77,11 @@ class AdminOverviewDashboard extends Component {
         >
         {this.state.sideViewOpen ? 
           <SideView 
-            content={this.props.sideViewContent} 
+            content={this.state.sideViewContent} 
             handleSideViewClose={this.handleSideViewClose} />
+/*          SideView = (props) => ({})
+            content={this.props.sideViewContent} 
+            handleSideViewClose={this.handleSideViewClose} />*/
           :
           undefined
         }
@@ -123,6 +127,7 @@ class AdminOverviewDashboard extends Component {
             :
             <SupplierSummaryList
             searchQuery={this.state.searchQuery}
+            setSideViewContent={this.setSideView}
             />
           }
         </div>
