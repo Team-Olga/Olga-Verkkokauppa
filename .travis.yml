@@ -43,13 +43,5 @@ branches:
   - dev
 
 
-deploy:
-  provider: heroku
-  api_key:
-    secure: "$HEROKU"
-  on: master
-  app: olga-verkkokauppa
-  skip_cleanup: true
-
 notifications:
   slack: olgaverkkokauppa:VyuKQR5JBQpHmyOWE6bPRBZp
