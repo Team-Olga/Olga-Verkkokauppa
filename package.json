@@ -150,6 +150,7 @@
   "scripts": {
     "start": "reaction",
     "test": "jest",
+    "heroku-postbuild": "npm install -g reaction-cli",
     "docs": "jsdoc . --configure .reaction/jsdoc/jsdoc.json --readme .reaction/jsdoc/templates/static/README.md"
   },
   "babel": {
