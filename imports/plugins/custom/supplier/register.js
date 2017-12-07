@@ -58,7 +58,7 @@ Reaction.registerPackage({
       template: "supplierContracts",
       workflow: "coreProductGridWorkflow"
     },*/
-    {
+/*    {
       route: "/admin/contracts",
       name: "admin/contracts",
       layout: "coreLayoutOlga",
@@ -68,6 +68,6 @@ Reaction.registerPackage({
       label: "Admin Contracts",
       template: "adminContracts",
       workflow: "coreProductGridWorkflow"
-    }
+    }*/
   ]
 });
