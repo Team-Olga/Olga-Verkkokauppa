@@ -10,7 +10,8 @@ import { VelocityComponent, VelocityTransitionGroup } from 'velocity-react';
 import { SortableTablePagination } from "/imports/plugins/core/ui/client/components/table/sortableTableComponents";
 import Avatar from "react-avatar";
 
-import { DeliveryProductTotals, DeliveryProductUserTotals, Deliveries } from 'imports/plugins/custom/olga/lib/collections/collections';
+import { Products, Accounts } from "/lib/collections";
+import { Deliveries, DeliveryProductTotals, DeliveryProductUserTotals } from '../../../../olga/lib/collections/collections';
 
 import './styles.less';
 
@@ -266,21 +267,26 @@ DeliverySummaryList.propTypes = {
 }
 
 function composer(props, onData) {
+  console.log("Tilataan collecctionit");
   const productDeliveryTotalsSub = Meteor.subscribe("DeliveryProductTotals");
   const productUserDeliveryTotalsSub = Meteor.subscribe("DeliveryProductUserTotals");
   const productsSub = Meteor.subscribe("Products");
   const deliveriesSub = Meteor.subscribe("Deliveries");
+  console.log("Tilaukset tehty");
 
-  if(productDeliveryTotalsSub.ready() 
+  if(
+    productDeliveryTotalsSub.ready() 
     && productUserDeliveryTotalsSub.ready()
     && productsSub.ready()
-    && deliveriesSub.ready()) {
-    const productDeliveryTotals = DeliveryProductTotals.find({}).fetch();
-    const productUserDeliveryTotals = DeliveryProductUserTotals.find({}).fetch();
-    console.log("Noudettu data:");
-    _.forEach(productDeliveryTotals, function(row) {
-      console.log(row);
-    });
+    && deliveriesSub.ready()
+  ) {
+      console.log("Tilaukset valmiit");
+      const productDeliveryTotals = DeliveryProductTotals.find({}).fetch();
+      const productUserDeliveryTotals = DeliveryProductUserTotals.find({}).fetch();
+    //   console.log("Noudettu data:");
+    //   _.forEach(productDeliveryTotals, function(row) {
+    //     console.log(row);
+    // });
 
     onData(null, {
       productDeliveryTotals: productDeliveryTotals,
@@ -290,6 +296,6 @@ function composer(props, onData) {
   }
 }
 
-registerComponent("DeliverySummaryList", DeliverySummaryList, composeWithTracker(composer));
+//registerComponent("DeliverySummaryList", DeliverySummaryList, composeWithTracker(composer));
 
 export default composeWithTracker(composer)(DeliverySummaryList);
