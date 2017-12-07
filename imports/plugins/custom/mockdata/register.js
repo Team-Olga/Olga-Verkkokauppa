@@ -2,6 +2,7 @@ import { Meteor } from "meteor/meteor";
 import { Accounts, Products, Orders, Groups }  from "/lib/collections";
 import { SupplyContracts } from "imports/plugins/custom/olga/lib/collections";
 import { Accounts as AccountsBase } from "meteor/accounts-base";
+import { Roles } from "meteor/alanning:roles";
 
 import { Reaction, Hooks } from "/server/api";
 import _ from 'lodash';
@@ -26,14 +27,22 @@ function createSupplierUsers() {
   let i = 0;
 
   accounts.forEach((doc) => {
+    console.log("ADDING: " + doc.emails[0].address)
+
     if (Meteor.users.find({ "emails.address": doc.emails[0].address }).count() !== 0) {
       //Meteor.users.remove({'emails.address': doc.emails[0].address});
-      return false;
+/*      console.log("Not adding: " + doc.emails[0].address)
+      var user = Meteor.users.findOne({ "emails.address": doc.emails[0].address });
+      const supplierGroup = Groups.findone({ slug: "supplier" });
+      groupAddUser(user._id, supplierGroup._id);*/
+
+      return;
     }
 
     if (Accounts.find({ "emails.address": doc.emails[0].address }).count() !== 0) {
       //Accounts.remove({'emails.address': doc.emails[0].address});
-      return false;
+      //console.log("(Accounts) Not adding: " + doc.emails[0].address);
+      return;
     }
 
     let supplierProducts = _.slice(products, i, i + 3);
