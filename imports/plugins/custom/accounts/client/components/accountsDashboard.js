@@ -5,6 +5,7 @@ import { Components } from "@reactioncommerce/reaction-components";
 import Modal from "react-modal";
 import Select from "react-select";
 import { default as sortUsersIntoGroups, sortGroups } from "imports/plugins/core/accounts/client/helpers/accountsHelper";
+import AlertContainer from "react-alert";
 
 class AccountsDashboard extends Component {
   static propTypes = {
@@ -39,6 +40,21 @@ class AccountsDashboard extends Component {
     this.openItemModal = this.openItemModal.bind(this);
     this.handleChange = this.handleChange.bind(this);
   }
+
+  alertOptions = {
+    offset: 40,
+    position: "top right",
+    theme: "light",
+    time: 5000,
+    transition: "scale"
+    }
+
+  showAlert = (message, type) => {
+    this.msg.show(message, {
+      time: 5000,
+      type: type
+    });
+  }  
 
   componentWillReceiveProps(nextProps) {
     const { adminGroups, accounts, groups } = nextProps;
@@ -128,15 +144,24 @@ class AccountsDashboard extends Component {
 
   postSelection = () => {
     const productList = [];
+    const titles = [];
 
     for (const p in this.state.value) {
       productList.push(this.props.productsById[this.state.value[p].value]);
+      titles.push(this.props.productsById[this.state.value[p].value].title);
+
     }
     const shopId = "J8Bhq3uTtdgwZx3rz";
 
 
     Meteor.call("accounts/productsUpdate", productList, this.state.currentAccount, shopId);
     this.setState({ value: [] });
+
+    if (titles.length == 0) {
+      this.showAlert("Et valinnut yhtäkään tuotetta", "error");
+    } else {
+    this.showAlert("Lisätty " + titles.join(', '), "success");
+    }
   };
 
   handleChange = (value) => {
@@ -211,6 +236,7 @@ class AccountsDashboard extends Component {
             <button id="confirmSelection" className="rui btn btn-primary olga-listing-btn-success pull-right"
               onClick={() => this.postSelection()}
             >Lähetä</button>
+            <AlertContainer ref={a => this.msg = a} {...this.alertOptions} />
             <ul>
               {this.state.supplierProducts.map((product) => {
                 return <li key={ product._id }>{product.title}</li>;
