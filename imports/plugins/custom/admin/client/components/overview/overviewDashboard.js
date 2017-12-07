@@ -5,13 +5,15 @@ import PropTypes from "prop-types";
 import { registerComponent, composeWithTracker } from "@reactioncommerce/reaction-components";
 
 import OverviewSearch from './overviewSearch';
-import ProductSummaryList from './productSummaryList'; 
+import ProductSummaryList from './productSummaryList';
 import SupplierSummaryList from './supplierSummaryList';
 import SideView from './sideView';
+import { Tooltip } from 'react-tippy';
 
 import { VelocityTransitionGroup } from "velocity-react";
 import 'velocity-animate';
 import 'velocity-animate/velocity.ui';
+import 'react-tippy/dist/tippy.css';
 
 
 class AdminOverviewDashboard extends Component {
@@ -74,9 +76,9 @@ class AdminOverviewDashboard extends Component {
           leave={{animation: "transition.slideRightOut", duration: 600, easing: "ease-in-out"}}
           runOnMount={true}
         >
-        {this.state.sideViewOpen ? 
-          <SideView 
-            content={this.props.sideViewContent} 
+        {this.state.sideViewOpen ?
+          <SideView
+            content={this.props.sideViewContent}
             handleSideViewClose={this.handleSideViewClose} />
           :
           undefined
@@ -91,31 +93,53 @@ class AdminOverviewDashboard extends Component {
             </div>
             <div className="overview-toolbar-item" style={{ width:'40px'}}>
               <div className="toggle-open-orders">
+              <Tooltip
+              title="Suodata avoimet tilaukset"
+              position="top"
+              delay="500"
+              arrow="true"
+              >
                 <input type="checkbox" value="1" id="checkboxOneInput" name="" onClick={this.toggleFilter.bind(this)}/>
                 <label htmlFor="checkboxOneInput"></label>
+                </Tooltip>
               </div>
             </div>
           </div>
 
           <div className="order-toggle-buttons-container">
             <div className="order-toggle-buttons">
+
+            <Tooltip
+            title="Tavarantoimittajat"
+            position="top"
+            delay="500"
+            arrow="true"
+            >
               <button
                 className={`order-toggle-btn ${this.state.detailClassName}`}
                 onClick={this.handleDetailToggle}
               >
                 <i className="fa fa-th-list" />
               </button>
+              </Tooltip>
 
+              <Tooltip
+              title="Tuotteet"
+              position="top"
+              delay="500"
+              arrow="true"
+              >
               <button
                 className={`order-toggle-btn ${this.state.listClassName}`}
                 onClick={this.handleListToggle}
               >
                 <i className="fa fa-list" />
               </button>
+              </Tooltip>
             </div>
           </div>
 
-          {this.state.openList ? 
+          {this.state.openList ?
             <ProductSummaryList
             searchQuery={this.state.searchQuery}
             filterOpen={this.state.filterOpen}
@@ -137,8 +161,8 @@ class AdminOverviewDashboard extends Component {
 */
 function composer(props, onData) {
 
-  onData(null, { 
-    ...props });  
+  onData(null, {
+    ...props });
 }
 
 
