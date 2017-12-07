@@ -3,12 +3,12 @@ import { SupplyContracts } from "/imports/plugins/custom/olga/lib/collections";
 import { ReactiveAggregate } from './reactiveAggregate';
 
 
-Meteor.publish("ContractTotals", function() {
+Meteor.publish("SupplierTotals", function() {
   ReactiveAggregate(this, SupplyContracts, [
     {"$group" : {
-      _id: {$concat: ["$productId", "-", "$userId"]},
+      _id: {$concat: ["$userId"]},
       userId: {$first: "$userId"},
-      productId: {$min: "$productId"},
+      productIds: {$addToSet: "$simpleId"},
       received:{$sum:"$receivedQuantity"},
       delivery:{$sum:"$sentQuantity"},
       production: {
@@ -18,14 +18,7 @@ Meteor.publish("ContractTotals", function() {
             ]
           }
         }
-      },
-      simpleId: {$first: "$simpleId"},
-      variantId: {$first: "$variantId"},
-      optionId: {$first: "$optionId"},
-      simpleTitle: {$first: "$simpleTitle"},
-      variantTitle: {$first: "$variantTitle"},
-      optionTitle: {$first: "$optionTitle"},
-      isOption: {$first: "$isOption"}
+      }
     }], { clientCollection: "ContractTotals" }
   );
 });
