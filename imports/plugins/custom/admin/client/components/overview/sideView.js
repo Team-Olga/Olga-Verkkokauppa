@@ -32,20 +32,22 @@ class SideView extends Component {
 
   render() {
     const styles = {
+      borderLeft: "1px solid #98afbc",
       width: "400px",
-      border: "2px solid #1999dd",
       top: "0",
       right: "65px",
       position: "absolute",
       zIndex: "1050",
       background: "white",
-      opacity: "0.5",
       height: "100%"
     };
 
+    console.log("content");
+    console.dir(this.props.content);
+
     return (
       <div className="side-view" style={styles}>
-        <div className="side-view-header">
+        <div className="side-view-header" style={{margin: "5px"}}>
           {this.renderBackButton()}
         </div> 
         <div className="side-view-content">
