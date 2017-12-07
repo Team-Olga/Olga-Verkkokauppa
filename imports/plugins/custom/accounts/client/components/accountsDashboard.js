@@ -74,7 +74,7 @@ class AccountsDashboard extends Component {
     let o = null;
     let i = 0;
     const options = [];
-    let currentProductIds = [];
+    const currentProductIds = [];
 
     for (o in products) {
       currentProductIds[o] = products[o]._id;
@@ -127,16 +127,32 @@ class AccountsDashboard extends Component {
   };
 
   postSelection = () => {
-    const productList = [];
+    if (this.state.value !== []) {
+      const productList = [];
 
-    for (const p in this.state.value) {
-      productList.push(this.props.productsById[this.state.value[p].value]);
+      for (const p in this.state.value) {
+        productList.push(this.props.productsById[this.state.value[p].value]);
+      }
+      const shopId = "J8Bhq3uTtdgwZx3rz";
+
+
+      Meteor.call("accounts/productsUpdate", productList, this.state.currentAccount, shopId);
+      this.setState({ value: [] });
+      this.closeItemModal();
     }
-    const shopId = "J8Bhq3uTtdgwZx3rz";
+  };
 
+  removeProduct = (productId) => {
+    Meteor.call("accounts/removeProduct", productId, this.state.currentAccount);
+    let p = 0;
+    const suppProds = this.state.supplierProducts;
+    for (p in suppProds) {
+      if (suppProds[p]._id === productId) {
+        _.pullAt(suppProds, p);
+      }
+    }
 
-    Meteor.call("accounts/productsUpdate", productList, this.state.currentAccount, shopId);
-    this.setState({ value: [] });
+    this.setState({ supplierProducts: suppProds });
   };
 
   handleChange = (value) => {
@@ -213,7 +229,10 @@ class AccountsDashboard extends Component {
             >Lähetä</button>
             <ul>
               {this.state.supplierProducts.map((product) => {
-                return <li key={ product._id }>{product.title}</li>;
+                return <li key={product._id} id={product._id}>{product.title}<button
+                  className="rui btn btn-primary olga-listing-btn-danger pull-right"
+                  onClick={() => this.removeProduct(product._id)}
+                >Poista</button></li>;
               }
               )}
             </ul>
