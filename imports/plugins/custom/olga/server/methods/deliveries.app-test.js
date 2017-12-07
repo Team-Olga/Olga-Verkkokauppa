@@ -15,7 +15,7 @@ import { delimiter } from "path";
 
 Fixtures();
 
-describe("Deliveries methods test", function() {
+describe.skip("Deliveries methods test", function() {
     this.timeout(5000);
 
     let methods;
@@ -126,7 +126,7 @@ describe("Deliveries methods test", function() {
         return done();
     });
 
-    it("should throw error if non-admin/non-supplier tries to create a delivery", function(done) {
+    it.skip("should throw error if non-admin/non-supplier tries to create a delivery", function(done) {
         sandbox.stub(Reaction, "hasAdminAccess", () => false); 
         sandbox.stub(UserChecks.prototype, "isInRole", () => false);
 

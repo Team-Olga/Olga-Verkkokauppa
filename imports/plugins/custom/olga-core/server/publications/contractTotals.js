@@ -18,15 +18,22 @@ Meteor.publish("ContractTotals", function() {
             ]
           }
         }
-      }
+      },
+      simpleId: {$first: "$simpleId"},
+      variantId: {$first: "$variantId"},
+      optionId: {$first: "$optionId"},
+      simpleTitle: {$first: "$simpleTitle"},
+      variantTitle: {$first: "$variantTitle"},
+      optionTitle: {$first: "$optionTitle"},
+      isOption: {$first: "$isOption"}
     }], { clientCollection: "ContractTotals" }
   );
 });
 
-Meteor.publish("ProductTotals", function() {
+Meteor.publish("SimpleContractTotals", function() {
   ReactiveAggregate(this, SupplyContracts, [
     {"$group" : {
-      _id: {$concat: ["$productId"]},
+      _id: {$concat: ["$simpleId"]},
       users: {$addToSet: "$userId"},
       productId: {$min: "$productId"},
       received:{$sum:"$receivedQuantity"},
@@ -37,8 +44,42 @@ Meteor.publish("ProductTotals", function() {
             {$add: [ "$receivedQuantity", "$sentQuantity" ]}
             ]
           }
-        }
-      }
-    }], { clientCollection: "ProductTotals" }
+        },
+      simpleId: {$first: "$simpleId"},
+      variantId: {$first: "$variantId"},
+      optionId: {$first: "$optionId"},
+      simpleTitle: {$first: "$simpleTitle"},
+      variantTitle: {$first: "$variantTitle"},
+      optionTitle: {$first: "$optionTitle"},
+      isOption: {$first: "$isOption"},
+      },
+    }], { clientCollection: "SimpleContractTotals" }
+  );
+});
+
+Meteor.publish("VariantContractTotals", function() {
+  ReactiveAggregate(this, SupplyContracts, [
+    {"$group" : {
+      _id: {$concat: ["$variantId", "-", "$optionId"]},
+      users: {$addToSet: "$userId"},
+      productId: {$min: "$productId"},
+      received:{$sum:"$receivedQuantity"},
+      delivery:{$sum:"$sentQuantity"},
+      production: {
+        $sum:{
+          $subtract: ["$quantity", 
+            {$add: [ "$receivedQuantity", "$sentQuantity" ]}
+            ]
+          }
+        },
+      simpleId: {$first: "$simpleId"},
+      variantId: {$first: "$variantId"},
+      optionId: {$first: "$optionId"},
+      simpleTitle: {$first: "$simpleTitle"},
+      variantTitle: {$first: "$variantTitle"},
+      optionTitle: {$first: "$optionTitle"},
+      isOption: {$first: "$isOption"},
+      },
+    }], { clientCollection: "VariantContractTotals" }
   );
 });

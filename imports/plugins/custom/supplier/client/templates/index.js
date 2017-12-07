@@ -6,3 +6,6 @@ import "./contracts/contractList";
 
 import "./adminContracts/adminContractList.html";
 import "./adminContracts/adminContractList";
+
+import "./overview/overviewDashboard.html";
+import "./overview/overviewDashboard";
