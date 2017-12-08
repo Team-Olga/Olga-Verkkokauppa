@@ -267,12 +267,10 @@ DeliverySummaryList.propTypes = {
 }
 
 function composer(props, onData) {
-  console.log("Tilataan collecctionit");
   const productDeliveryTotalsSub = Meteor.subscribe("DeliveryProductTotals");
   const productUserDeliveryTotalsSub = Meteor.subscribe("DeliveryProductUserTotals");
   const productsSub = Meteor.subscribe("Products");
   const deliveriesSub = Meteor.subscribe("Deliveries");
-  console.log("Tilaukset tehty");
 
   if(
     productDeliveryTotalsSub.ready() 
@@ -280,13 +278,8 @@ function composer(props, onData) {
     && productsSub.ready()
     && deliveriesSub.ready()
   ) {
-      console.log("Tilaukset valmiit");
       const productDeliveryTotals = DeliveryProductTotals.find({}).fetch();
       const productUserDeliveryTotals = DeliveryProductUserTotals.find({}).fetch();
-    //   console.log("Noudettu data:");
-    //   _.forEach(productDeliveryTotals, function(row) {
-    //     console.log(row);
-    // });
 
     onData(null, {
       productDeliveryTotals: productDeliveryTotals,
@@ -295,7 +288,5 @@ function composer(props, onData) {
     });
   }
 }
-
-//registerComponent("DeliverySummaryList", DeliverySummaryList, composeWithTracker(composer));
 
 export default composeWithTracker(composer)(DeliverySummaryList);
