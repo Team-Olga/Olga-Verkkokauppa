@@ -17,6 +17,8 @@ import { ContractItems, OpenSimpleTotals, OpenVariantOptionTotals,
 import { getProductVariants, getVariantOptions, 
          getProductSummary, getVariantSummary } from '../../helpers/productOverview';
 
+import ContractDialog from './contractDialog';
+
 class ProductOverviewList extends Component {
   constructor(props) {
     super(props);
@@ -41,10 +43,16 @@ class ProductOverviewList extends Component {
         Header: "Avoinna",
         id: "openQuantity",
         Cell: info => (
-          <div className={"open-total" + (info.original.openQuantity ? "" : "-zero")}
-          onClick={() => this.props.setSideViewContent(
-              <div> I AM OPEN </div> 
-            )}> 
+          <div 
+            className={"open-total" + (info.original.openQuantity ? "" : "-zero")}
+            onClick={() => this.props.setSideViewContent(
+              <ContractDialog
+                productId={info.original.simpleId}
+                productName={info.original.simpleTitle}
+                openQuantity={info.original.openQuantity}
+              />
+            )}
+          >
             {info.original.openQuantity} 
           </div>
         ),
@@ -55,7 +63,7 @@ class ProductOverviewList extends Component {
           <div className="contract-total"> {info.original.production} </div>
         ),
       }, {
-        Header: "Lähetyksiä",
+        Header: "Lähetetty",
         id: "delivery",
         Cell: info => (
           <div className="contract-total"> {info.original.delivery} </div>
@@ -171,6 +179,9 @@ class ProductOverviewList extends Component {
 
 ProductOverviewList.propTypes = {
   productOverviews: PropTypes.arrayOf(PropTypes.object),
+  searchQuery: PropTypes.string,
+  filterOpen: PropTypes.bool,
+  setSideViewContent: PropTypes.func
 }
 
 function composer(props, onData) {

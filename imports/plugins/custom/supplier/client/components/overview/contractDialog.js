@@ -14,6 +14,9 @@ class ContractDialog extends Component {
     this.state = {
       supplyQuantity: 0
     };
+
+    this.closeDialog = this.closeDialog.bind(this);
+    this.updateSupplyQuantity = this.updateSupplyQuantity.bind(this);
   }
 
   updateSupplyQuantity(e) {
@@ -26,12 +29,14 @@ class ContractDialog extends Component {
     }
   }
 
-  closeContractModal(cancelled) {
+  closeDialog(cancelled) {
     if (cancelled || this.state.supplyQuantity == 0 || this.props.openQuantity <= 0) {
       this.setState({ contractModalIsOpen: false }); // TODO sulje sideview
     } else {
+      console.log("Kutsutaan metodia: " + this.props.productId + " / " + parseInt(this.state.supplyQuantity) + " kpl")
       const contractId = Meteor.call("supplyContracts/create", this.props.productId, parseInt(this.state.supplyQuantity));
       this.showAlert("Toimitussopimus tehty (" + this.state.productName + " " + this.state.supplyQuantity + " kpl)", "success");
+      //TODO sulje sideview
     }
   }
 
@@ -54,17 +59,33 @@ class ContractDialog extends Component {
 
     return (
       <div>
-        <h1>Tee toimitussopimus</h1>
-        <h2 id="contractModalTitle">{this.props.productName}</h2>
-        <h3>Avoin määrä: <span id="openQuantity">{this.props.openQuantity}</span> </h3>
-        <h3><label htmlFor="quantity">Toimitettava määrä: </label>
-        <input type="number" id="quantity" name="quantity" className="right-justified" min="0" max={this.props.openQuantity}
-            onChange={this.updateSupplyQuantity} value={this.state.supplyQuantity}/></h3>
-        <div>
-            <button id="cancelContractModal" className="rui btn btn-primary flat olga-listing-btn-default pull-right"
-                onClick={() => this.closeContractModal("cancel")} >Peruuta</button>
-            <button id="confirmContract" className="rui btn btn-primary flat olga-listing-btn-success pull-right"
-                onClick={() => this.closeContractModal()} >Vahvista</button>
+        <AlertContainer ref={a => this.msg = a} {...this.alertOptions} />
+
+        <div className="olga-dialogpanel">
+          <h2>Tee toimitussopimus</h2>
+          <h3 id="contractModalTitle">{this.props.productName}</h3>
+          <br />
+          <table>
+            <tbody>
+              <tr>
+                <td>Avoin määrä</td>
+                <td>{this.props.openQuantity}</td>
+              </tr>
+              <tr>
+                <td>Toimitettava määrä</td>
+                <td>
+                  <input type="number" id="quantity" name="quantity" className="right-justified" min="0" max={this.props.openQuantity}
+                    onChange={this.updateSupplyQuantity} value={this.state.supplyQuantity}/>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div>
+              <button id="cancelContractModal" className="rui btn btn-primary flat olga-listing-btn-default pull-right"
+                  onClick={() => this.closeDialog("cancel")} >Peruuta</button>
+              <button id="confirmContract" className="rui btn btn-primary flat olga-listing-btn-success pull-right"
+                  onClick={() => this.closeDialog()} >Vahvista</button>
+          </div>
         </div>
       </div>
     );
