@@ -7,8 +7,14 @@ import { Tooltip } from 'react-tippy';
 
 import OverviewSearch from './overviewSearch';
 import ProductOverviewList from './productOverviewList';
+import SideView from './sideView';
+
 
 import 'react-tippy/dist/tippy.css';
+
+import { VelocityTransitionGroup } from "velocity-react";
+import 'velocity-animate';
+import 'velocity-animate/velocity.ui';
 
 
 class OverviewDashboard extends Component {
@@ -29,9 +35,38 @@ class OverviewDashboard extends Component {
     this.setState({ filterOpen: !this.state.filterOpen });
   }
 
+  handleSideViewClose = () => {
+    this.setState({
+      sideViewOpen: false
+    });
+  }
+
+  setSideView = (component) => {
+    this.setState({
+      sideViewOpen: true,
+      sideViewContent: component
+    })
+  }
+
   render() {
     return (
       <div className="supplier-overview-container">
+        <VelocityTransitionGroup
+          enter={{animation: "transition.slideRightIn", delay:10, duration: 400, easing: "ease-in-out"}}
+          leave={{animation: "transition.slideRightOut", duration: 600, easing: "ease-in-out"}}
+          runOnMount={true}
+        >
+        {this.state.sideViewOpen ? 
+          <SideView 
+            content={this.state.sideViewContent} 
+            handleSideViewClose={this.handleSideViewClose} />
+/*          SideView = (props) => ({})
+            content={this.props.sideViewContent} 
+            handleSideViewClose={this.handleSideViewClose} />*/
+          :
+          undefined
+        }
+        </VelocityTransitionGroup>
         <div className="overview-toolbar">
           <div className="overview-toolbar-item" style={{ width:'100%' }}>
             <OverviewSearch
@@ -56,6 +91,7 @@ class OverviewDashboard extends Component {
         <ProductOverviewList
           searchQuery={this.state.searchQuery}
           filterOpen={this.state.filterOpen}
+          setSideViewContent={this.setSideView}
         />
       </div>
     );
