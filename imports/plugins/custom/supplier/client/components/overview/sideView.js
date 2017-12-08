@@ -35,7 +35,7 @@ class SideView extends Component {
       borderLeft: "1px solid #98afbc",
       width: "400px",
       top: "0",
-      right: "65px",
+      right: "0px",
       position: "absolute",
       zIndex: "1050",
       background: "white",

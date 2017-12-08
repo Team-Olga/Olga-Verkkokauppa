@@ -41,7 +41,10 @@ class ProductOverviewList extends Component {
         Header: "Avoinna",
         id: "openQuantity",
         Cell: info => (
-          <div className={"open-total" + (info.original.openQuantity ? "" : "-zero")}> 
+          <div className={"open-total" + (info.original.openQuantity ? "" : "-zero")}
+          onClick={() => this.props.setSideViewContent(
+              <div> I AM OPEN </div> 
+            )}> 
             {info.original.openQuantity} 
           </div>
         ),
