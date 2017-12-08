@@ -31,7 +31,7 @@ class ContractDialog extends Component {
 
   closeDialog(cancelled) {
     if (cancelled || this.state.supplyQuantity == 0 || this.props.openQuantity <= 0) {
-      this.setState({ contractModalIsOpen: false }); // TODO sulje sideview
+      this.props.closeSideView();
     } else {
       console.log("Kutsutaan metodia: " + this.props.productId + " / " + parseInt(this.state.supplyQuantity) + " kpl")
       const contractId = Meteor.call("supplyContracts/create", this.props.productId, parseInt(this.state.supplyQuantity));
@@ -41,7 +41,7 @@ class ContractDialog extends Component {
         this.props.variantName  + " " +
         this.state.supplyQuantity + " kpl)",
          "success");
-      //TODO sulje sideview
+      this.props.closeSideView();
     }
   }
 
@@ -86,7 +86,7 @@ class ContractDialog extends Component {
             </tbody>
           </table>
           <div className="olga-dialogpanel">
-              <button id="cancelContractModal" className="rui btn btn-primary flat olga-listing-btn-default pull-right"
+              <button id="cancelContract" className="rui btn btn-primary flat olga-listing-btn-default pull-right"
                   onClick={() => this.closeDialog("cancel")} >Peruuta</button>
               <button id="confirmContract" className="rui btn btn-primary flat olga-listing-btn-success pull-right"
                   onClick={() => this.closeDialog()} >Vahvista</button>
@@ -102,7 +102,8 @@ ContractDialog.propTypes = {
   productId: PropTypes.string,
   productName: PropTypes.string,
   variantName: PropTypes.string,
-  openQuantity: PropTypes.number
+  openQuantity: PropTypes.number,
+  closeSideView: PropTypes.func
 }
 
 export default ContractDialog;

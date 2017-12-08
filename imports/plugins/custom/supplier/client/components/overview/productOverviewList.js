@@ -18,6 +18,7 @@ import { getProductVariants, getVariantOptions,
          getProductSummary, getVariantSummary } from '../../helpers/productOverview';
 
 import ContractDialog from './contractDialog';
+import DeliveryDialog from './deliveryDialog';
 
 class ProductOverviewList extends Component {
   constructor(props) {
@@ -51,6 +52,7 @@ class ProductOverviewList extends Component {
                 productName={info.original.simpleTitle}
                 variantName={info.original.title}
                 openQuantity={info.original.openQuantity}
+                closeSideView={this.props.closeSideView}
               />
             )}
           >
@@ -61,7 +63,20 @@ class ProductOverviewList extends Component {
         Header: "Tuotannossa",
         id: "production",
         Cell: info => (
-          <div className="contract-total"> {info.original.production} </div>
+          <div 
+            className="contract-total"
+            onClick={() => this.props.setSideViewContent(
+              <DeliveryDialog
+                productId={info.original.productId}
+                productName={info.original.simpleTitle}
+                variantName={info.original.title}
+                contractQuantity={info.original.production}
+                closeSideView={this.props.closeSideView}
+              />
+            )}
+          >
+            {info.original.production}
+          </div>
         ),
       }, {
         Header: "Lähetetty",
@@ -182,7 +197,8 @@ ProductOverviewList.propTypes = {
   productOverviews: PropTypes.arrayOf(PropTypes.object),
   searchQuery: PropTypes.string,
   filterOpen: PropTypes.bool,
-  setSideViewContent: PropTypes.func
+  setSideViewContent: PropTypes.func,
+  closeSideView: PropTypes.func
 }
 
 function composer(props, onData) {
