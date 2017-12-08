@@ -47,8 +47,9 @@ class ProductOverviewList extends Component {
             className={"open-total" + (info.original.openQuantity ? "" : "-zero")}
             onClick={() => this.props.setSideViewContent(
               <ContractDialog
-                productId={info.original.simpleId}
+                productId={info.original.productId}
                 productName={info.original.simpleTitle}
+                variantName={info.original.title}
                 openQuantity={info.original.openQuantity}
               />
             )}

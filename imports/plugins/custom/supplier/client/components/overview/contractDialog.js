@@ -35,7 +35,12 @@ class ContractDialog extends Component {
     } else {
       console.log("Kutsutaan metodia: " + this.props.productId + " / " + parseInt(this.state.supplyQuantity) + " kpl")
       const contractId = Meteor.call("supplyContracts/create", this.props.productId, parseInt(this.state.supplyQuantity));
-      this.showAlert("Toimitussopimus tehty (" + this.state.productName + " " + this.state.supplyQuantity + " kpl)", "success");
+      this.showAlert(
+        "Toimitussopimus tehty (" + 
+        this.props.productName  + " " +
+        this.props.variantName  + " " +
+        this.state.supplyQuantity + " kpl)",
+         "success");
       //TODO sulje sideview
     }
   }
@@ -63,24 +68,24 @@ class ContractDialog extends Component {
 
         <div className="olga-dialogpanel">
           <h2>Tee toimitussopimus</h2>
-          <h3 id="contractModalTitle">{this.props.productName}</h3>
+          <h3 id="contractModalTitle">{this.props.productName} {this.props.variantName}</h3>
           <br />
           <table>
             <tbody>
               <tr>
-                <td>Avoin määrä</td>
-                <td>{this.props.openQuantity}</td>
+                <td className="olga-dialogpanel-cell">Avoin määrä</td>
+                <td className="olga-dialogpanel-cell pull-right">{this.props.openQuantity}</td>
               </tr>
               <tr>
-                <td>Toimitettava määrä</td>
-                <td>
+                <td className="olga-dialogpanel-cell">Toimitettava määrä</td>
+                <td className="olga-dialogpanel-cell">
                   <input type="number" id="quantity" name="quantity" className="right-justified" min="0" max={this.props.openQuantity}
                     onChange={this.updateSupplyQuantity} value={this.state.supplyQuantity}/>
                 </td>
               </tr>
             </tbody>
           </table>
-          <div>
+          <div className="olga-dialogpanel">
               <button id="cancelContractModal" className="rui btn btn-primary flat olga-listing-btn-default pull-right"
                   onClick={() => this.closeDialog("cancel")} >Peruuta</button>
               <button id="confirmContract" className="rui btn btn-primary flat olga-listing-btn-success pull-right"
@@ -96,6 +101,7 @@ class ContractDialog extends Component {
 ContractDialog.propTypes = {
   productId: PropTypes.string,
   productName: PropTypes.string,
+  variantName: PropTypes.string,
   openQuantity: PropTypes.number
 }
 
