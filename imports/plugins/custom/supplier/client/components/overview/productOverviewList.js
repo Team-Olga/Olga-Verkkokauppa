@@ -45,16 +45,19 @@ class ProductOverviewList extends Component {
         id: "openQuantity",
         Cell: info => (
           <div 
-            className={"open-total" + (info.original.openQuantity ? "" : "-zero")}
-            onClick={() => this.props.setSideViewContent(
-              <ContractDialog
-                productId={info.original.productId}
-                productName={info.original.simpleTitle}
-                variantName={info.original.title}
-                openQuantity={info.original.openQuantity}
-                closeSideView={this.props.closeSideView}
-              />
-            )}
+            className={info.original.isVariant ? "open-total" + (info.original.openQuantity ? "" : "-zero") : "contract-info"}
+            onClick={() => {(info.original.isVariant && info.original.openQuantity > 0) ? 
+              this.props.setSideViewContent(
+                <ContractDialog
+                  productId={info.original.productId}
+                  productName={info.original.simpleTitle}
+                  variantName={info.original.title}
+                  openQuantity={info.original.openQuantity}
+                  closeSideView={this.props.closeSideView}
+                />
+              ) : 
+              {}
+            }}
           >
             {info.original.openQuantity} 
           </div>
@@ -64,16 +67,19 @@ class ProductOverviewList extends Component {
         id: "production",
         Cell: info => (
           <div 
-            className={info.original.isVariant ? "contract-total" : "contract-info"}
-            onClick={() => {info.original.isVariant ? this.props.setSideViewContent(
-              <DeliveryDialog
-                productId={info.original.productId}
-                productName={info.original.simpleTitle}
-                variantName={info.original.title}
-                contractQuantity={info.original.production}
-                closeSideView={this.props.closeSideView}
-              />
-            ) : {}}}
+            className={info.original.isVariant ? (info.original.production > 0 ? "contract-total" : "open-total-zero") : "contract-info"}
+            onClick={() => {(info.original.isVariant && info.original.production > 0) ? 
+              this.props.setSideViewContent(
+                <DeliveryDialog
+                  productId={info.original.productId}
+                  productName={info.original.simpleTitle}
+                  variantName={info.original.title}
+                  contractQuantity={info.original.production}
+                  closeSideView={this.props.closeSideView}
+                />
+              ) : 
+              {}
+            }}
           >
             {info.original.production}
           </div>
