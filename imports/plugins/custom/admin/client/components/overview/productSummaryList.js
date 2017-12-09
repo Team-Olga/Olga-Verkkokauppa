@@ -41,7 +41,7 @@ class ProductSummaryList extends Component {
         Header: "Avoinna",
         id: "openQuantity",
         Cell: info => (
-          <div className={"open-total" + (info.original.openQuantity ? "" : "-zero")}> 
+          <div className={info.original.isVariant ? "open-total" + (info.original.openQuantity ? "" : "-zero"): "contract-info"}> 
             {info.original.openQuantity} 
           </div>
         ),
@@ -49,19 +49,23 @@ class ProductSummaryList extends Component {
         Header: "Tuotannossa",
         id: "production",
         Cell: info => (
-          <div className="contract-total"> {info.original.production} </div>
+          <div className={info.original.isVariant ? (info.original.production > 0 ? "contract-total": "open-total-zero") : "contract-info"}> 
+            {info.original.production}
+          </div>
         ),
       }, {
         Header: "Lähetyksiä",
         id: "delivery",
         Cell: info => (
-          <div className="contract-total"> {info.original.delivery} </div>
+          <div className={info.original.isVariant ? (info.original.received > 0 ? "contract-total": "open-total-zero") : "contract-info"}> 
+            {info.original.delivery} 
+          </div>
         ),
       }, {
         Header: "Vastaanotettu",
         id: "received",
         Cell: info => (
-          <div className="contract-total"> {info.original.received} </div>
+          <div className="contract-info"> {info.original.received} </div>
         ),
       }
     ];
