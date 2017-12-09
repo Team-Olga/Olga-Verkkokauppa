@@ -143,14 +143,15 @@ class AdminOverviewDashboard extends Component {
 
           {this.state.openList ?
             <ProductSummaryList
-            searchQuery={this.state.searchQuery}
-            filterOpen={this.state.filterOpen}
-            setSideViewContent={this.setSideView}
+              searchQuery={this.state.searchQuery}
+              filterOpen={this.state.filterOpen}
+              setSideViewContent={this.setSideView}
+              closeSideView={this.handleSideViewClose}
             />
             :
             <SupplierSummaryList
-            searchQuery={this.state.searchQuery}
-            setSideViewContent={this.setSideView}
+              searchQuery={this.state.searchQuery}
+              setSideViewContent={this.setSideView}
             />
           }
         </div>

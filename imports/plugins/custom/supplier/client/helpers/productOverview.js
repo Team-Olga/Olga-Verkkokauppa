@@ -44,8 +44,10 @@ export function getVariantSummary(variant, option = false) {
     ), {
       variantTitle: variant.title,
       optionTitle: option.optionTitle,
+      productId: productId,
       title: title,
       isOption: option ? true : false,
+      isVariant: true,
       openQuantity: 0,
       production: 0,
       delivery: 0,

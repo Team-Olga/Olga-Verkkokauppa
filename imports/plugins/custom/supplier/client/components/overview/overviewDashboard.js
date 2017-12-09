@@ -92,6 +92,7 @@ class OverviewDashboard extends Component {
           searchQuery={this.state.searchQuery}
           filterOpen={this.state.filterOpen}
           setSideViewContent={this.setSideView}
+          closeSideView={this.handleSideViewClose}
         />
       </div>
     );
