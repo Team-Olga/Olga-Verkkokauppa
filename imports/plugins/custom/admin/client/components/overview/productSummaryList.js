@@ -10,12 +10,14 @@ import { SortableTablePagination } from "/imports/plugins/custom/ui/client/compo
 import Avatar from "react-avatar";
 import './styles.less';
 
-import { Products, Accounts } from "/lib/collections";
+import { Products, Accounts, Media } from "/lib/collections";
 import { ContractItems, OpenSimpleTotals, OpenVariantOptionTotals,
-         SimpleContractTotals, VariantContractTotals } from 'imports/plugins/custom/olga-core/lib/collections/collections';
+         SimpleContractTotals, VariantContractTotals, ProductSettings  } from 'imports/plugins/custom/olga-core/lib/collections/collections';
 
 import { getProductVariants, getVariantOptions, 
          getProductSummary, getVariantSummary } from '../../helpers/productOverview';
+
+import ProductDetails from "./productDetails";
 
 class ProductSummaryList extends Component {
   constructor(props) {
@@ -26,12 +28,40 @@ class ProductSummaryList extends Component {
     };
   }
 
+  /**
+   * Media - find media based on a product/variant
+   * @param  {Object} item object containing a product and variant id
+   * @return {Object|false} An object contianing the media or false
+   */
+  handleDisplayMedia = (product) => {
+    const defaultImage = Media.findOne({
+      "metadata.productId": product._id,
+      "metadata.priority": 0
+    });
+
+    return defaultImage;
+  }
+
   render() {   
     const simpleTitleColumn = {
       Header: "Tuote",
       id: "simpleTitle",
-      Cell: info => (
-        <span className="product-name"> {info.original.simpleTitle} </span>
+      Cell: row => (
+        <div>
+          <div className="product-name"> {row.original.simpleTitle} </div>
+          <div className="product-settings" 
+            onClick={() => this.props.setSideViewContent(
+              <ProductDetails 
+                product={_.defaults(
+                  row.original, 
+                  ProductSettings.findOne({ productId: row.original.simpleId })
+                )} 
+                displayMedia={this.handleDisplayMedia}
+              />
+            )}>
+            <i className="fa fa-cog"></i>
+          </div>
+        </div>
       ),
       className: "contract-table-name-header"
     };
@@ -40,28 +70,28 @@ class ProductSummaryList extends Component {
       {
         Header: "Avoinna",
         id: "openQuantity",
-        Cell: info => (
-          <div className={"open-total" + (info.original.openQuantity ? "" : "-zero")}> 
-            {info.original.openQuantity} 
+        Cell: row => (
+          <div className={"open-total" + (row.original.openQuantity ? "" : "-zero")}> 
+            {row.original.openQuantity} 
           </div>
         ),
       }, {
         Header: "Tuotannossa",
         id: "production",
-        Cell: info => (
-          <div className="contract-total"> {info.original.production} </div>
+        Cell: row => (
+          <div className="contract-total"> {row.original.production} </div>
         ),
       }, {
         Header: "Lähetyksiä",
         id: "delivery",
-        Cell: info => (
-          <div className="contract-total"> {info.original.delivery} </div>
+        Cell: row => (
+          <div className="contract-total"> {row.original.delivery} </div>
         ),
       }, {
         Header: "Vastaanotettu",
         id: "received",
-        Cell: info => (
-          <div className="contract-total"> {info.original.received} </div>
+        Cell: row => (
+          <div className="contract-total"> {row.original.received} </div>
         ),
       }
     ];
@@ -171,7 +201,10 @@ ProductSummaryList.propTypes = {
 }
 
 function composer(props, onData) {
+  const mediaSub = Meteor.subscribe("Media");
   const productSub = Meteor.subscribe("Products");
+  const productSettingsSub = Meteor.subscribe("ProductSettings");
+
   const simpleOpenSub = Meteor.subscribe("OpenSimpleTotals");
   const variantOpenSub = Meteor.subscribe("OpenVariantOptionTotals");
 
@@ -180,7 +213,7 @@ function composer(props, onData) {
 
 
   if (productSub.ready() && simpleOpenSub.ready() && variantOpenSub.ready() &&
-      simpleContractSub.ready() && variantContractSub.ready()) {
+      simpleContractSub.ready() && variantContractSub.ready() && mediaSub.ready()) {
     
     var products = Products.find({ type: 'simple' }).fetch();
 
