@@ -6,10 +6,18 @@ import *  as Schemas from "./schemas";
 
 
 /**
- * Extending Accounts and Meteor.users with supplier-products
+ * Extending Accounts with a product-list
  * @ignore
  */
 Accounts.attachSchema(Schemas.productlistSchema)
+
+/**
+ * Product settings schema for setting product production time
+ * @ignore
+ */
+export const ProductSettings = new Mongo.Collection("ProductSettings");
+
+ProductSettings.attachSchema(Schemas.ProductSettingsSchema);
 
 
 /**

@@ -1,1 +1,2 @@
-import './supplyContracts'
+import './supplyContracts';
+import './productSettings';
