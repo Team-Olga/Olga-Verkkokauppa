@@ -64,8 +64,8 @@ class ProductOverviewList extends Component {
         id: "production",
         Cell: info => (
           <div 
-            className="contract-total"
-            onClick={() => this.props.setSideViewContent(
+            className={info.original.isVariant ? "contract-total" : "contract-info"}
+            onClick={() => {info.original.isVariant ? this.props.setSideViewContent(
               <DeliveryDialog
                 productId={info.original.productId}
                 productName={info.original.simpleTitle}
@@ -73,7 +73,7 @@ class ProductOverviewList extends Component {
                 contractQuantity={info.original.production}
                 closeSideView={this.props.closeSideView}
               />
-            )}
+            ) : {}}}
           >
             {info.original.production}
           </div>
@@ -82,13 +82,13 @@ class ProductOverviewList extends Component {
         Header: "Lähetetty",
         id: "delivery",
         Cell: info => (
-          <div className="contract-total"> {info.original.delivery} </div>
+          <div className="contract-info"> {info.original.delivery} </div>
         ),
       }, {
         Header: "Vastaanotettu",
         id: "received",
         Cell: info => (
-          <div className="contract-total"> {info.original.received} </div>
+          <div className="contract-info"> {info.original.received} </div>
         ),
       }
     ];
