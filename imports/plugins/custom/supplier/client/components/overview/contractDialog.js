@@ -33,7 +33,6 @@ class ContractDialog extends Component {
     if (cancelled || this.state.supplyQuantity == 0 || this.props.openQuantity <= 0) {
       this.props.closeSideView();
     } else {
-      console.log("Kutsutaan metodia: " + this.props.productId + " / " + parseInt(this.state.supplyQuantity) + " kpl")
       const contractId = Meteor.call("supplyContracts/create", this.props.productId, parseInt(this.state.supplyQuantity));
       this.showAlert(
         "Toimitussopimus tehty (" + 
