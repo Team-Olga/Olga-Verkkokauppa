@@ -17,6 +17,9 @@ import { ContractItems, OpenSimpleTotals, OpenVariantOptionTotals,
 import { getProductVariants, getVariantOptions, 
          getProductSummary, getVariantSummary } from '../../helpers/productOverview';
 
+import ContractDialog from '../../../../supplier/client/components/overview/contractDialog';         
+import DeliveryDialog from '../../../../supplier/client/components/overview/deliveryDialog';         
+
 class ProductSummaryList extends Component {
   constructor(props) {
     super(props);
@@ -41,7 +44,21 @@ class ProductSummaryList extends Component {
         Header: "Avoinna",
         id: "openQuantity",
         Cell: info => (
-          <div className={info.original.isVariant ? "open-total" + (info.original.openQuantity ? "" : "-zero"): "contract-info"}> 
+          <div 
+            className={info.original.isVariant ? "open-total" + (info.original.openQuantity ? "" : "-zero"): "contract-info"}
+            onClick={() => {(info.original.isVariant && info.original.openQuantity > 0) ? 
+              this.props.setSideViewContent(
+                <ContractDialog
+                  productId={info.original.productId}
+                  productName={info.original.simpleTitle}
+                  variantName={info.original.title}
+                  openQuantity={info.original.openQuantity}
+                  closeSideView={this.props.closeSideView}
+                />
+              ) : 
+              {}
+            }}
+          > 
             {info.original.openQuantity} 
           </div>
         ),
@@ -49,12 +66,26 @@ class ProductSummaryList extends Component {
         Header: "Tuotannossa",
         id: "production",
         Cell: info => (
-          <div className={info.original.isVariant ? (info.original.production > 0 ? "contract-total": "open-total-zero") : "contract-info"}> 
+          <div 
+            className={info.original.isVariant ? (info.original.production > 0 ? "contract-total": "open-total-zero") : "contract-info"}
+            onClick={() => {(info.original.isVariant && info.original.production > 0) ? 
+              this.props.setSideViewContent(
+                <DeliveryDialog
+                  productId={info.original.productId}
+                  productName={info.original.simpleTitle}
+                  variantName={info.original.title}
+                  contractQuantity={info.original.production}
+                  closeSideView={this.props.closeSideView}
+                />
+              ) : 
+              {}
+            }}
+          > 
             {info.original.production}
           </div>
         ),
       }, {
-        Header: "Lähetyksiä",
+        Header: "Lähetetty",
         id: "delivery",
         Cell: info => (
           <div className={info.original.isVariant ? (info.original.received > 0 ? "contract-total": "open-total-zero") : "contract-info"}> 
@@ -172,6 +203,10 @@ class ProductSummaryList extends Component {
 
 ProductSummaryList.propTypes = {
   productSummaries: PropTypes.arrayOf(PropTypes.object),
+  searchQuery: PropTypes.string,
+  filterOpen: PropTypes.bool,
+  setSideViewContent: PropTypes.func,
+  closeSideView: PropTypes.func
 }
 
 function composer(props, onData) {
