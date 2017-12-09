@@ -82,9 +82,6 @@ class AdminOverviewDashboard extends Component {
           <SideView 
             content={this.state.sideViewContent} 
             handleSideViewClose={this.handleSideViewClose} />
-/*          SideView = (props) => ({})
-            content={this.props.sideViewContent} 
-            handleSideViewClose={this.handleSideViewClose} />*/
           :
           undefined
         }
@@ -148,6 +145,7 @@ class AdminOverviewDashboard extends Component {
             <ProductSummaryList
             searchQuery={this.state.searchQuery}
             filterOpen={this.state.filterOpen}
+            setSideViewContent={this.setSideView}
             />
             :
             <SupplierSummaryList

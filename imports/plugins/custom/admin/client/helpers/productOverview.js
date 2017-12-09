@@ -20,6 +20,7 @@ export function getVariantOptions(variantId) {
 export function getProductSummary(product) {
   return _.defaults(
     _.merge(
+      product,
       OpenSimpleTotals.findOne({simpleId: product._id}),
       SimpleContractTotals.findOne({simpleId: product._id})
     ), {
