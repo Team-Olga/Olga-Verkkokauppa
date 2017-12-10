@@ -8,7 +8,7 @@ import { Logger, Reaction } from "/server/api";
 import { SSR } from "meteor/meteorhacks:ssr";
 import { Roles } from "meteor/alanning:roles";
 const bwipjs = require("bwip-js");
-import UserChecks from "../../lib/userChecks";
+import UserChecks from "../helpers/userChecks";
 import _ from "lodash";
 import path from "path";
 import moment from "moment";

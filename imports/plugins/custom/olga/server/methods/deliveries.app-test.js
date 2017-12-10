@@ -5,7 +5,7 @@ import { Random } from "meteor/random";
 import StubCollections from "meteor/hwillson:stub-collections";
 import { sinon } from "meteor/practicalmeteor:sinon";
 import { Reaction } from "/server/api";
-import UserChecks from "../../lib/userChecks";
+import UserChecks from "../helpers/userChecks";
 import { addProduct } from "/server/imports/fixtures/products";
 import { getUser } from "/server/imports/fixtures/users";
 import Fixtures from "/server/imports/fixtures";

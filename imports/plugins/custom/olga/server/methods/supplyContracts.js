@@ -6,7 +6,7 @@ import { ValidatedMethod } from "meteor/mdg:validated-method";
 import { SimpleSchema } from "meteor/aldeed:simple-schema";
 import { Reaction } from "/server/api";
 import { Roles } from "meteor/alanning:roles";
-import UserChecks from "../../lib/userChecks";
+import UserChecks from "../helpers/userChecks";
 import _ from "lodash";
 
 // TODO: siivoa pois turhat date-jutut

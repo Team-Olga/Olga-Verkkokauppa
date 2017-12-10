@@ -3,13 +3,13 @@ import { composeWithTracker } from "@reactioncommerce/reaction-components";
 import { Meteor } from "meteor/meteor";
 import PropTypes from "prop-types";
 import _ from "lodash";
-import UserChecks from "../../../lib/userChecks";
+//import UserChecks from "../../../lib/userChecks";
 import { Products, Orders, Accounts } from "lib/collections";
 import { SupplyContracts } from "../../../lib/collections";
 import { Loading } from "/imports/plugins/core/ui/client/components";
 import SupplierProductsListReact from "../../components/products/supplierProductsListReact";
 
-let userChecks = new UserChecks();
+//let userChecks = new UserChecks();
 
 class SupplierProductsContainer extends Component {
     static propTypes = {
@@ -29,12 +29,12 @@ class SupplierProductsContainer extends Component {
         );
       }
 
-      let userStatus;
-      if (userChecks.isInRole("admin")) {
-        userStatus = "admin";
-      } else if (userChecks.isInRole("supplierproductsreact")) {
-        userStatus = "supplier";
-      }
+      let userStatus = "admin";
+      // if (userChecks.isInRole("admin")) {
+      //   userStatus = "admin";
+      // } else if (userChecks.isInRole("supplierproductsreact")) {
+      //   userStatus = "supplier";
+      // }
 
       return (
         <div>
