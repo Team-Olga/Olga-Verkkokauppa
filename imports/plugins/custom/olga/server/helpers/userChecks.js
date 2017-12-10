@@ -22,7 +22,6 @@ export default class UserChecks {
     }
 
     roleIsInArray(loggedInUser, role, shopId) {
-      // "J8Bhq3uTtdgwZx3rz"
         if(loggedInUser.roles[shopId] && 
             _.indexOf(loggedInUser.roles[shopId], role ) > -1)
             return true; 
@@ -31,8 +30,6 @@ export default class UserChecks {
     }
 
     userIsInGroup(loggedInUser, role) {
-        console.log("Käyttäjän ryhmät:");
-        console.log(Roles.getGroupsForUser(loggedInUser));
         if(Roles.getGroupsForUser(loggedInUser).indexOf(role) > 1)
             return true;
         else

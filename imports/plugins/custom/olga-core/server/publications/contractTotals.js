@@ -1,9 +1,17 @@
 import { Meteor } from 'meteor/meteor';
 import { SupplyContracts } from "/imports/plugins/custom/olga/lib/collections";
 import { ReactiveAggregate } from './reactiveAggregate';
-
+import UserChecks from "../../../olga/server/helpers/userChecks";
 
 Meteor.publish("SupplierTotals", function() {
+  let userChecks = new UserChecks();
+  let observeSelector = {};
+  if(userChecks.isInRole("admin")) {
+    observeSelector = {};
+  } else {
+    observeSelector = { userId: this.userId };
+  }
+
   ReactiveAggregate(this, SupplyContracts, [
     {"$group" : {
       _id: {$concat: ["$userId"]},
@@ -19,11 +27,23 @@ Meteor.publish("SupplierTotals", function() {
           }
         }
       }
-    }], { clientCollection: "ContractTotals" }
+    }], 
+    { 
+      clientCollection: "ContractTotals",
+      observeSelector: observeSelector
+    }
   );
 });
 
 Meteor.publish("SimpleContractTotals", function() {
+  let userChecks = new UserChecks();
+  let observeSelector = {};
+  if(userChecks.isInRole("admin")) {
+    observeSelector = {};
+  } else {
+    observeSelector = { userId: this.userId };
+  }
+
   ReactiveAggregate(this, SupplyContracts, [
     {"$group" : {
       _id: {$concat: ["$simpleId"]},
@@ -46,11 +66,23 @@ Meteor.publish("SimpleContractTotals", function() {
       optionTitle: {$first: "$optionTitle"},
       isOption: {$first: "$isOption"},
       },
-    }], { clientCollection: "SimpleContractTotals" }
+    }], 
+    { 
+      clientCollection: "SimpleContractTotals",
+      observeSelector: observeSelector 
+    }
   );
 });
 
 Meteor.publish("VariantContractTotals", function() {
+  let userChecks = new UserChecks();
+  let observeSelector = {};
+  if(userChecks.isInRole("admin")) {
+    observeSelector = {};
+  } else {
+    observeSelector = { userId: this.userId };
+  }
+
   ReactiveAggregate(this, SupplyContracts, [
     {"$group" : {
       _id: {$concat: ["$variantId", "-", "$optionId"]},
@@ -73,6 +105,10 @@ Meteor.publish("VariantContractTotals", function() {
       optionTitle: {$first: "$optionTitle"},
       isOption: {$first: "$isOption"},
       },
-    }], { clientCollection: "VariantContractTotals" }
+    }], 
+    { 
+      clientCollection: "VariantContractTotals", 
+      observeSelector: observeSelector
+    }
   );
 });
