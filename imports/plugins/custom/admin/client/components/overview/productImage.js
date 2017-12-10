@@ -27,7 +27,7 @@ class ProductImage extends Component {
   }
 
   renderMedia() {
-    const { displayMedia, item, size } = this.props;
+    const { displayMedia, item, size, styles } = this.props;
     let mediaUrl;
 
     if (displayMedia(item)) {
@@ -42,6 +42,7 @@ class ProductImage extends Component {
           alt={item.title}
           className={`procuct-image product-image-${size}`}
           src={mediaUrl}
+          style={styles}
         />
         {this.renderBadge()}
       </div>

@@ -24,7 +24,7 @@
     transition: all .5s ease;
     padding: 3px;
     color: rgba(80, 85, 88, 0.56);
-    font-size: 22px;
+    font-size: 19px;
   }
 
   .rui.card.order .content {
@@ -34,15 +34,17 @@
     overflow-x: visible;
   }
 
-  .contract-total {
-    border-radius: 25px;
-    background: #20b5f2;
-    color: white;
-    width: 40%;
-    height: 22px;
-    max-width: 60px;
-    margin: 0 auto;
-    cursor: pointer;
+  .supplier-summary-container {
+    .contract-total {
+      border-radius: 25px;
+      background: #20b5f2;
+      color: white;
+      width: 40%;
+      height: 22px;
+      max-width: 60px;
+      margin: 0 auto;
+      cursor: pointer;
+    }
   }
 
   .rui.card.order {
@@ -156,5 +158,165 @@
     text-align: right;
     padding: 10px 10px 10px 0px;
     border-bottom: 1px solid #98afbc;
+  }
+
+
+
+}
+
+.product-details {
+  font-size:14px;
+
+  .product-info {
+    margin-top: 20px;
+    border-bottom: 1px solid #98afbc;
+    border-top: 1px solid #98afbc;
+    font-size: 14px;
+    background: #FAFAFA;
+    padding: 10px;
+  }
+
+  .product-settings-container {
+    border-bottom: 1px solid #98afbc;
+    padding: 10px;
+    background: white;
+    padding-top: 2px;
+    min-height: 60px;
+    transition: all .5s ease;
+  }
+
+  .product-settings-container-edit {
+    border-bottom: 1px solid #98afbc;
+    padding: 10px;
+    background: rgba(241, 219, 95, 0.36);
+    padding-top: 2px;
+    min-height: 60px;
+    transition: all .5s ease;
+  }
+
+  .production-time-input-none {
+    border: none;
+    border-bottom: 1px solid #738690;
+    //color: #1999dd;
+    background: transparent;
+    border-radius: 0px;
+    margin: 0px;
+    padding: 0px;
+    text-align: center;
+    width: 0px;
+    opacity: 0;
+  }
+
+  .production-time-input {
+    border: none;
+    border-bottom: 1px solid #738690;
+    //color: #1999dd;
+    background: transparent;
+    border-radius: 0px;
+    margin: 0px;
+    padding: 0px;
+    text-align: center;
+    width: 50px;
+    opacity: 1;
+  }
+
+
+  .accept-button {
+    position: relative;
+    background-color: #1999dd;
+    border: none;
+    color: #FFFFFF;
+    height: 25px;
+    opacity: 1;
+    float: right;
+    margin: 2px;
+    text-align: center;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+    text-decoration: none;
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  .accept-button-none {
+    position: relative;
+    background-color: #1999dd;
+    border: none;
+    color: #FFFFFF;
+    height: 25px;
+    opacity: 0;
+    float: right;
+    margin: 2px;
+    text-align: center;
+    -webkit-transition-duration: 0.4s; /* Safari */
+    transition-duration: 0.4s;
+    text-decoration: none;
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  .accept-button:after {
+      content: "";
+      background: #f1f1f1;
+      display: block;
+      position: absolute;
+      padding-top: 300%;
+      padding-left: 350%;
+      margin-left: -20px !important;
+      margin-top: -120%;
+      opacity: 0;
+      transition: all 0.8s
+  }
+
+  .accept-button:active:after {
+      padding: 0;
+      margin: 0;
+      opacity: 1;
+      transition: 0s
+  }
+
+  .production-time-container {
+    display: flex;
+  }
+
+  .production-time-label {
+    text-align: left;
+    flex: auto;
+  }
+
+  .production-time-value {
+    text-align: right;
+    flex: auto;
+  }
+
+  .edit-mode-icon-container {
+    /*float: right;
+    margin-bottom: 100%;
+    margin-left: 10px;*/
+    margin-left: 97%;
+  }
+}
+
+
+.product-summary-container {
+  .product-settings {
+    text-align: right;
+    margin-right: 10px;
+  }
+
+  .product-name {
+    float: left;
+  }
+
+  .product-settings {
+    cursor: pointer;
+    color: #999;
+    transition: all .5s ease;
+  }
+
+  .product-settings:hover {
+    cursor: pointer;
+    color: #1999dd;
+    transition: all .5s ease;
   }
 }

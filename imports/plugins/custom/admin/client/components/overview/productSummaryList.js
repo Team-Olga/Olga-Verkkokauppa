@@ -10,13 +10,14 @@ import { SortableTablePagination } from "/imports/plugins/custom/ui/client/compo
 import Avatar from "react-avatar";
 import './styles.less';
 
-import { Products, Accounts } from "/lib/collections";
+import { Products, Accounts, Media } from "/lib/collections";
 import { ContractItems, OpenSimpleTotals, OpenVariantOptionTotals,
-         SimpleContractTotals, VariantContractTotals } from 'imports/plugins/custom/olga-core/lib/collections/collections';
+         SimpleContractTotals, VariantContractTotals, ProductSettings  } from 'imports/plugins/custom/olga-core/lib/collections/collections';
 
 import { getProductVariants, getVariantOptions, 
          getProductSummary, getVariantSummary } from '../../helpers/productOverview';
 
+import ProductDetails from "./productDetails";
 import ContractDialog from '../../../../supplier/client/components/overview/contractDialog';         
 import DeliveryDialog from '../../../../supplier/client/components/overview/deliveryDialog';         
 
@@ -29,12 +30,40 @@ class ProductSummaryList extends Component {
     };
   }
 
+  /**
+   * Media - find media based on a product/variant
+   * @param  {Object} item object containing a product and variant id
+   * @return {Object|false} An object contianing the media or false
+   */
+  handleDisplayMedia = (product) => {
+    const defaultImage = Media.findOne({
+      "metadata.productId": product._id,
+      "metadata.priority": 0
+    });
+
+    return defaultImage;
+  }
+
   render() {   
     const simpleTitleColumn = {
       Header: "Tuote",
       id: "simpleTitle",
-      Cell: info => (
-        <span className="product-name"> {info.original.simpleTitle} </span>
+      Cell: row => (
+        <div>
+          <div className="product-name"> {row.original.simpleTitle} </div>
+          <div className="product-settings" 
+            onClick={() => this.props.setSideViewContent(
+              <ProductDetails 
+                product={_.defaults(
+                  row.original, 
+                  ProductSettings.findOne({ productId: row.original.simpleId })
+                )} 
+                displayMedia={this.handleDisplayMedia}
+              />
+            )}>
+            <i className="fa fa-cog"></i>
+          </div>
+        </div>
       ),
       className: "contract-table-name-header"
     };
@@ -210,7 +239,10 @@ ProductSummaryList.propTypes = {
 }
 
 function composer(props, onData) {
+  const mediaSub = Meteor.subscribe("Media");
   const productSub = Meteor.subscribe("Products");
+  const productSettingsSub = Meteor.subscribe("ProductSettings");
+
   const simpleOpenSub = Meteor.subscribe("OpenSimpleTotals");
   const variantOpenSub = Meteor.subscribe("OpenVariantOptionTotals");
 
@@ -219,7 +251,7 @@ function composer(props, onData) {
 
 
   if (productSub.ready() && simpleOpenSub.ready() && variantOpenSub.ready() &&
-      simpleContractSub.ready() && variantContractSub.ready()) {
+      simpleContractSub.ready() && variantContractSub.ready() && mediaSub.ready()) {
     
     var products = Products.find({ type: 'simple' }).fetch();
 
