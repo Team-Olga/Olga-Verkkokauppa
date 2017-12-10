@@ -250,7 +250,7 @@ class AccountsDashboard extends Component {
             <ul>
               {this.state.supplierProducts.map((product) => {
                 return <li key={product._id} id={product._id}>{product.title}<button
-                  className="rui btn btn-primary olga-listing-btn-danger pull-right"
+                  className="rui btn btn-primary olga-listing-btn-danger"
                   onClick={() => this.removeProduct(product._id)}
                 >Poista</button></li>;
               }
