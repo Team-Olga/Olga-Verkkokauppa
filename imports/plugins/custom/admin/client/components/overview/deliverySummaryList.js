@@ -20,7 +20,7 @@ class DeliverySummaryList extends Component {
     super(props);
 
     this.state = {
-      expanded: {}
+      //expanded: {}
     }
   }
 
@@ -185,8 +185,7 @@ class DeliverySummaryList extends Component {
           defaultPageSize={10}
           className="rui order table -highlight table-header-visible"
           minRows={1}
-          expanded={this.state.expanded}
-          onExpandedChange={expanded => this.setState({expanded})}
+          
           filterable
           headerClassName="contract-table-mid-header"
           getTableProps={getTableProps}
@@ -205,12 +204,8 @@ class DeliverySummaryList extends Component {
             }).fetch();
 
             return (
-              <VelocityTransitionGroup
-                enter={{animation: "slideDown", delay: 10, duration: 400, easing: "ease-in-out"}}
-                leave={{animation: "slideUp", duration: 600, easing: "ease-in-out"}}
-                runOnMount={true}
-              >
-                {this.state.expanded[row.index] !== false ?
+              
+                
                 <div className="delivery-subtable-container">
                   <ReactTable
                     data={userTotals}
@@ -218,8 +213,7 @@ class DeliverySummaryList extends Component {
                     className="rui order table supplier-table -highlight"
                     showPagination={false}
                     minRows={1}
-                    expanded={this.state.expanded}
-                    onExpandedChange={expanded => this.setState({expanded})}
+                    
                     SubComponent={row => {
                       const deliveries = Deliveries.find({
                         productId: row.original.productId,
@@ -227,12 +221,8 @@ class DeliverySummaryList extends Component {
                       }).fetch();
 
                       return(
-                        <VelocityTransitionGroup
-                          enter={{animation: "slideDown", delay: 10, duration: 400, easing: "ease-in-out"}}
-                          leave={{animation: "slideUp", duration: 600, easing: "ease-in-out"}}
-                          runOnMount={true}
-                        >
-                          {this.state.expanded[row.index] !== false ?
+                        
+                          
                           <div className="delivery-subtable-container">
                             <ReactTable
                               data={deliveries}
@@ -242,16 +232,12 @@ class DeliverySummaryList extends Component {
                               minRows={1}
                             />
                           </div>
-                          : undefined
-                          }
-                        </VelocityTransitionGroup>
+                          
                       );
                     }}
                   />
                 </div>
-                : undefined
-                }
-              </VelocityTransitionGroup>
+                
             );
           }}
         />
