@@ -22,6 +22,8 @@ class DeliveryDialog extends Component {
       this.props.showAlert("Toimitusmäärän on oltava kokonaisluku", "error");
     } else if (Number(e.target.value) > this.props.contractQuantity) {
       this.props.showAlert("Voit toimittaa enintään sovitun määrän", "error");
+    } else if (Number(e.target.value) <= 0) {
+      this.props.showAlert("Toimitusmäärän on oltava positiivinen luku", "error");
     } else {
       this.setState({ deliveryQuantity: e.target.value });
     }

@@ -22,6 +22,8 @@ class ContractDialog extends Component {
       this.props.showAlert("Toimitusmäärän on oltava kokonaisluku", "error");
     } else if (Number(e.target.value) > this.props.openQuantity) {
       this.props.showAlert("Voit toimittaa enintään avoinna olevan määrän", "error");
+    } else if (Number(e.target.value) <= 0) {
+      this.props.showAlert("Toimitusmäärän on oltava positiivinen luku", "error");
     } else {
       this.setState({ supplyQuantity: e.target.value });
     }
