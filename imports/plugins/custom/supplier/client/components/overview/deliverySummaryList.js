@@ -21,7 +21,6 @@ class DeliverySummaryList extends Component {
     super(props);
 
     this.state = {
-      //expanded: {}
     }
   }
 
