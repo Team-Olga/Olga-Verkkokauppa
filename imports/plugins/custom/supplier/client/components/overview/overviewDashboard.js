@@ -7,6 +7,7 @@ import { Tooltip } from 'react-tippy';
 
 import OverviewSearch from './overviewSearch';
 import ProductOverviewList from './productOverviewList';
+import DeliverySummaryList from './deliverySummaryList';
 import SideView from './sideView';
 
 import AlertContainer from "react-alert";
@@ -23,7 +24,10 @@ class OverviewDashboard extends Component {
 
     this.state = {
       searchQuery: "",
-      filterOpen: false
+      filterOpen: false,
+      openList: "product",
+      productClassName: "order-icon-toggle",
+      deliveryClassName: ""
     };
   }
 
@@ -33,6 +37,14 @@ class OverviewDashboard extends Component {
 
   toggleFilter = () => {
     this.setState({ filterOpen: !this.state.filterOpen });
+  }
+
+  handleListToggle = (selectedList) => {
+    this.setState({
+      productClassName: selectedList === "product" ? "order-icon-toggle" : "",
+      deliveryClassName: selectedList === "delivery" ? "order-icon-toggle" : "",
+      openList: selectedList
+    });
   }
 
   handleSideViewClose = () => {
@@ -63,6 +75,20 @@ class OverviewDashboard extends Component {
     });
   }
 
+  resendPackingSlip = (deliveryId) => {
+    Meteor.call(
+      "deliveries/resendPackingSlip",
+      deliveryId,
+      (error, result) => {
+        if(error) {
+          this.showAlert("Lähetyslistaa ei pystytty lähettämään!", "error");
+        } else {
+          this.showAlert("Lähetyslista lähetetty sähköpostilla", "success");
+        }
+      }
+    )
+  }
+
   render() {
     return (
       <div className="supplier-overview-container">
@@ -75,9 +101,6 @@ class OverviewDashboard extends Component {
           <SideView 
             content={this.state.sideViewContent} 
             handleSideViewClose={this.handleSideViewClose} />
-/*          SideView = (props) => ({})
-            content={this.props.sideViewContent} 
-            handleSideViewClose={this.handleSideViewClose} />*/
           :
           undefined
         }
@@ -103,15 +126,56 @@ class OverviewDashboard extends Component {
           </div>
         </div>
 
+        <div className="order-toggle-buttons-container">
+            <div className="order-toggle-buttons">
+
+              <Tooltip
+                title="Tuotteet"
+                position="top"
+                delay="500"
+                arrow="true"
+              >
+                <button
+                  className={`order-toggle-btn ${this.state.productClassName}`}
+                  onClick={() => this.handleListToggle("product")}
+                >
+                  <i className="fa fa-list" />
+                </button>
+              </Tooltip>
+
+              <Tooltip
+                title="Toimitukset"
+                position="top"
+                delay="500"
+                arrow="true"
+              >
+                <button
+                  className={`order-toggle-btn ${this.state.deliveryClassName}`}
+                  onClick={() => this.handleListToggle("delivery")}
+                >
+                  <i className="fa fa-list" />
+                </button>
+              </Tooltip>
+            </div>
+          </div>
+
         <AlertContainer ref={a => this.msg = a} {...this.alertOptions} />
 
+        {this.state.openList === "product" &&
         <ProductOverviewList
           searchQuery={this.state.searchQuery}
           filterOpen={this.state.filterOpen}
           setSideViewContent={this.setSideView}
           closeSideView={this.handleSideViewClose}
           showAlert={this.showAlert}
-        />
+        />}
+
+        {this.state.openList === "delivery" &&
+        <DeliverySummaryList
+          searchQuery={this.state.searchQuery}
+          resendPackingSlip={this.resendPackingSlip}
+        />}
+
       </div>
     );
   }

@@ -63,7 +63,7 @@ function enrichDelivery(deliveryId, coveredContracts) {
     )
 }
 
-function sendPackingListEmail(userId, deliveryId) {
+function sendPackingListEmail(deliveryId) {
     // get data for email
     let delivery = Deliveries.findOne({ _id: deliveryId });    
     let supplier = Collections.Accounts.findOne({ _id: delivery.userId });
@@ -194,9 +194,14 @@ export const methods = {
         }
         let coveredContracts = coverContracts(productId, quantity, deliveryId);
         enrichDelivery(deliveryId, coveredContracts);
-        sendPackingListEmail(userId, deliveryId);
+        sendPackingListEmail(deliveryId);
         
         return deliveryId;
+    },
+
+    "deliveries/resendPackingSlip": function(deliveryId) {
+        check(deliveryId, String);
+        sendPackingListEmail(deliveryId);
     }
 
 }

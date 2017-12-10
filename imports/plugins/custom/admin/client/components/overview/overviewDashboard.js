@@ -80,8 +80,18 @@ class AdminOverviewDashboard extends Component {
     });
   }
 
-  resendPackingSlip = () => {
-    console.log("Luodaan lähetyslista");
+  resendPackingSlip = (deliveryId) => {
+    Meteor.call(
+      "deliveries/resendPackingSlip",
+      deliveryId,
+      (error, result) => {
+        if(error) {
+          this.showAlert("Lähetyslistaa ei pystytty lähettämään!", "error");
+        } else {
+          this.showAlert("Lähetyslista lähetetty sähköpostilla", "success");
+        }
+      }
+    )
   }
 
   render() {
