@@ -41,7 +41,7 @@ export function getVariantSummary(variant, option = false) {
   return _.defaults(
     _.merge(
       OpenVariantOptionTotals.findOne({productId: productId}),
-      VariantContractTotals.findOne({productIs: productId})
+      VariantContractTotals.findOne({productId: productId})
     ), {
       variantTitle: variant.title,
       optionTitle: option.optionTitle,

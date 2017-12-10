@@ -8,7 +8,7 @@ import { Logger, Reaction } from "/server/api";
 import { SSR } from "meteor/meteorhacks:ssr";
 import { Roles } from "meteor/alanning:roles";
 const bwipjs = require("bwip-js");
-import UserChecks from "../../lib/userChecks";
+import UserChecks from "../helpers/userChecks";
 import _ from "lodash";
 import path from "path";
 import moment from "moment";
@@ -176,10 +176,12 @@ export const methods = {
 
     "deliveries/create": function (productId, quantity) {
         check(productId, String);
-        check(quantity, Number);
+        check(quantity, Match.Where((x) => {
+          check(x, Number);
+          return x > 0;
+        }));
 
         let userId = Meteor.userId();
-        console.log("Meteor.userId palautti " + userId);
         let userChecks = new UserChecks();
 
         if(!Reaction.hasAdminAccess() && !userChecks.isInRole("supplier")) {

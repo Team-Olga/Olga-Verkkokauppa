@@ -1,7 +1,7 @@
 import { Meteor } from "meteor/meteor";
 import { check, Match } from "meteor/check";
 import { Roles } from "meteor/alanning:roles";
-import UserChecks from "../../lib/userChecks";
+import UserChecks from "../helpers/userChecks";
 import { ReactiveAggregate } from "./reactiveAggregate";
 import { Orders } from "/lib/collections";
 import { Reaction } from "/server/api";

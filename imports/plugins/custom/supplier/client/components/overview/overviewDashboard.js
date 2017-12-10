@@ -9,7 +9,7 @@ import OverviewSearch from './overviewSearch';
 import ProductOverviewList from './productOverviewList';
 import SideView from './sideView';
 
-
+import AlertContainer from "react-alert";
 import 'react-tippy/dist/tippy.css';
 
 import { VelocityTransitionGroup } from "velocity-react";
@@ -46,6 +46,21 @@ class OverviewDashboard extends Component {
       sideViewOpen: true,
       sideViewContent: component
     })
+  }
+
+  alertOptions = {
+    offset: 14,
+    position: "top left",
+    theme: "light",
+    time: 5000,
+    transition: "scale"
+  }
+
+  showAlert = (message, type) => {
+    this.msg.show(message, {
+      time: 5000,
+      type: type
+    });
   }
 
   render() {
@@ -88,11 +103,14 @@ class OverviewDashboard extends Component {
           </div>
         </div>
 
+        <AlertContainer ref={a => this.msg = a} {...this.alertOptions} />
+
         <ProductOverviewList
           searchQuery={this.state.searchQuery}
           filterOpen={this.state.filterOpen}
           setSideViewContent={this.setSideView}
           closeSideView={this.handleSideViewClose}
+          showAlert={this.showAlert}
         />
       </div>
     );

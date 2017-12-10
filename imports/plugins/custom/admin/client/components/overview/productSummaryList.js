@@ -83,6 +83,7 @@ class ProductSummaryList extends Component {
                   variantName={info.original.title}
                   openQuantity={info.original.openQuantity}
                   closeSideView={this.props.closeSideView}
+                  showAlert={this.props.showAlert}
                 />
               ) : 
               {}
@@ -105,6 +106,7 @@ class ProductSummaryList extends Component {
                   variantName={info.original.title}
                   contractQuantity={info.original.production}
                   closeSideView={this.props.closeSideView}
+                  showAlert={this.props.showAlert}
                 />
               ) : 
               {}
@@ -235,7 +237,8 @@ ProductSummaryList.propTypes = {
   searchQuery: PropTypes.string,
   filterOpen: PropTypes.bool,
   setSideViewContent: PropTypes.func,
-  closeSideView: PropTypes.func
+  closeSideView: PropTypes.func,
+  showAlert: PropTypes.func
 }
 
 function composer(props, onData) {

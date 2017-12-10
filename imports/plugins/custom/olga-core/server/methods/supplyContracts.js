@@ -10,7 +10,10 @@ import { SupplyContracts } from "/imports/plugins/custom/olga/lib/collections";
 Meteor.methods({
   "supplyContracts/create": function (productId, quantity) {
     check(productId, String);
-    check(quantity, Number);
+    check(quantity, Match.Where((x) => {
+      check(x, Number);
+      return x > 0;
+    }));
 
     let userId = Meteor.userId();
 

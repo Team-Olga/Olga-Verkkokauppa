@@ -2,8 +2,6 @@ import { Meteor } from 'meteor/meteor';
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 
-import AlertContainer from "react-alert";
-
 import './styles.less';
 
 class ContractDialog extends Component {
@@ -21,9 +19,11 @@ class ContractDialog extends Component {
 
   updateSupplyQuantity(e) {
     if (Number.isNaN(e.target.value) || !Number.isInteger(Number(e.target.value))) {
-      this.showAlert("Toimitusmäärän on oltava kokonaisluku", "error");
+      this.props.showAlert("Toimitusmäärän on oltava kokonaisluku", "error");
     } else if (Number(e.target.value) > this.props.openQuantity) {
-      this.showAlert("Voit toimittaa enintään avoinna olevan määrän", "error");
+      this.props.showAlert("Voit toimittaa enintään avoinna olevan määrän", "error");
+    } else if (Number(e.target.value) <= 0) {
+      this.props.showAlert("Toimitusmäärän on oltava positiivinen luku", "error");
     } else {
       this.setState({ supplyQuantity: e.target.value });
     }
@@ -33,38 +33,31 @@ class ContractDialog extends Component {
     if (cancelled || this.state.supplyQuantity == 0 || this.props.openQuantity <= 0) {
       this.props.closeSideView();
     } else {
-      const contractId = Meteor.call("supplyContracts/create", this.props.productId, parseInt(this.state.supplyQuantity));
-      this.showAlert(
-        "Toimitussopimus tehty (" + 
-        this.props.productName  + " " +
-        this.props.variantName  + " " +
-        this.state.supplyQuantity + " kpl)",
-         "success");
-      this.props.closeSideView();
+      Meteor.call(
+        "supplyContracts/create", 
+        this.props.productId, 
+        parseInt(this.state.supplyQuantity),
+        (error, result) => {
+          if(error) {            
+            this.props.showAlert("Toimitussopimuksen teko ei onnistunut!", "error");
+          } else {
+            this.props.showAlert(
+              "Toimitussopimus tehty (" + 
+              this.props.productName  + " " +
+              this.props.variantName  + " " +
+              this.state.supplyQuantity + " kpl)",
+               "success");
+            this.props.closeSideView();
+          }
+        }
+      );
     }
-  }
-
-  alertOptions = {
-    offset: 14,
-    position: "top left",
-    theme: "light",
-    time: 5000,
-    transition: "scale"
-  }
-
-  showAlert = (message, type) => {
-    this.msg.show(message, {
-      time: 5000,
-      type: type
-    });
   }
 
   render() {
 
     return (
       <div>
-        <AlertContainer ref={a => this.msg = a} {...this.alertOptions} />
-
         <div className="olga-dialogpanel">
           <h2>Tee toimitussopimus</h2>
           <h3 id="contractModalTitle">{this.props.productName} {this.props.variantName}</h3>
@@ -102,7 +95,8 @@ ContractDialog.propTypes = {
   productName: PropTypes.string,
   variantName: PropTypes.string,
   openQuantity: PropTypes.number,
-  closeSideView: PropTypes.func
+  closeSideView: PropTypes.func,
+  showAlert: PropTypes.func
 }
 
 export default ContractDialog;
