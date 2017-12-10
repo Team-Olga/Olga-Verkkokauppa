@@ -143,7 +143,7 @@ class AccountsDashboard extends Component {
   };
 
   postSelection = () => {
-    if (this.state.value !== []) {
+    if (this.state.value.length) {
       const productList = [];
       const titles = [];
 
@@ -240,7 +240,7 @@ class AccountsDashboard extends Component {
             />
             <button id="cancelItemModal" className="rui btn btn-primary flat olga-listing-btn-default pull-right"
               onClick={() => this.closeItemModal()}
-            >Peruuta</button>
+            >Sulje</button>
           </div>
           <div>
             <button id="confirmSelection" className="rui btn btn-primary olga-listing-btn-success pull-right"
