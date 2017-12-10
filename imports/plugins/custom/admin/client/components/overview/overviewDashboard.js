@@ -7,6 +7,7 @@ import { registerComponent, composeWithTracker } from "@reactioncommerce/reactio
 import OverviewSearch from './overviewSearch';
 import ProductSummaryList from './productSummaryList';
 import SupplierSummaryList from './supplierSummaryList';
+import DeliverySummaryList from './deliverySummaryList';
 import SideView from './sideView';
 import AccountDetails from './accountDetails';
 import { Tooltip } from 'react-tippy';
@@ -18,7 +19,6 @@ import 'velocity-animate';
 import 'velocity-animate/velocity.ui';
 import 'react-tippy/dist/tippy.css';
 
-
 class AdminOverviewDashboard extends Component {
   constructor(props) {
     super(props);
@@ -26,8 +26,10 @@ class AdminOverviewDashboard extends Component {
     this.state = {
       searchQuery: "",
       filterOpen: false,
-      listClassName: "order-icon-toggle",
-      openList: true,
+      productClassName: "order-icon-toggle",
+      supplierClassName: "",
+      deliveryClassName: "",
+      openList: "product",
       sideViewOpen: false,
       sideViewContent: undefined
     };
@@ -41,19 +43,12 @@ class AdminOverviewDashboard extends Component {
     this.setState({ filterOpen: !this.state.filterOpen });
   }
 
-  handleListToggle = () => {
+  handleListToggle = (selectedList) => {
     this.setState({
-      detailClassName: "",
-      listClassName: "order-icon-toggle",
-      openList: true
-    });
-  }
-
-  handleDetailToggle = () => {
-    this.setState({
-      detailClassName: "order-icon-toggle",
-      listClassName: "",
-      openList: false
+      supplierClassName: selectedList === "supplier" ? "order-icon-toggle" : "",
+      productClassName: selectedList === "product" ? "order-icon-toggle" : "",
+      deliveryClassName: selectedList === "delivery" ? "order-icon-toggle" : "",
+      openList: selectedList
     });
   }
 
@@ -127,52 +122,71 @@ class AdminOverviewDashboard extends Component {
           <div className="order-toggle-buttons-container">
             <div className="order-toggle-buttons">
 
-            <Tooltip
-            title="Tavarantoimittajat"
-            position="top"
-            delay="500"
-            arrow="true"
-            >
-              <button
-                className={`order-toggle-btn ${this.state.detailClassName}`}
-                onClick={this.handleDetailToggle}
+              <Tooltip
+                title="Tavarantoimittajat"
+                position="top"
+                delay="500"
+                arrow="true"
               >
-                <i className="fa fa-th-list" />
-              </button>
+                <button
+                  className={`order-toggle-btn ${this.state.supplierClassName}`}
+                  onClick={() => this.handleListToggle("supplier")}
+                >
+                  <i className="fa fa-th-list" />
+                </button>
               </Tooltip>
 
               <Tooltip
-              title="Tuotteet"
-              position="top"
-              delay="500"
-              arrow="true"
+                title="Tuotteet"
+                position="top"
+                delay="500"
+                arrow="true"
               >
-              <button
-                className={`order-toggle-btn ${this.state.listClassName}`}
-                onClick={this.handleListToggle}
+                <button
+                  className={`order-toggle-btn ${this.state.productClassName}`}
+                  onClick={() => this.handleListToggle("product")}
+                >
+                  <i className="fa fa-list" />
+                </button>
+              </Tooltip>
+
+              <Tooltip
+                title="Toimitukset"
+                position="top"
+                delay="500"
+                arrow="true"
               >
-                <i className="fa fa-list" />
-              </button>
+                <button
+                  className={`order-toggle-btn ${this.state.deliveryClassName}`}
+                  onClick={() => this.handleListToggle("delivery")}
+                >
+                  <i className="fa fa-list" />
+                </button>
               </Tooltip>
             </div>
           </div>
 
           <AlertContainer ref={a => this.msg = a} {...this.alertOptions} />
+          
+          {this.state.openList === "product" &&
+          <ProductSummaryList
+            searchQuery={this.state.searchQuery}
+            filterOpen={this.state.filterOpen}
+            setSideViewContent={this.setSideView}
+            closeSideView={this.handleSideViewClose}
+            showAlert={this.showAlert}
+          />}
 
-          {this.state.openList ?
-            <ProductSummaryList
-              searchQuery={this.state.searchQuery}
-              filterOpen={this.state.filterOpen}
-              setSideViewContent={this.setSideView}
-              closeSideView={this.handleSideViewClose}
-              showAlert={this.showAlert}
-            />
-            :
-            <SupplierSummaryList
-              searchQuery={this.state.searchQuery}
-              setSideViewContent={this.setSideView}              
-            />
-          }
+          {this.state.openList === "supplier" &&
+          <SupplierSummaryList
+            searchQuery={this.state.searchQuery}
+            setSideViewContent={this.setSideView}
+          />}
+
+          {this.state.openList === "delivery" &&
+          <DeliverySummaryList
+            searchQuery={this.state.searchQuery}
+          /> }
         </div>
       </div>
     );
