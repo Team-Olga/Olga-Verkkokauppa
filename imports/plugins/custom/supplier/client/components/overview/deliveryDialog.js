@@ -32,16 +32,25 @@ class DeliveryDialog extends Component {
   closeDialog(cancelled) {
     if (cancelled || this.state.deliveryQuantity == 0 || this.props.contractQuantity <= 0) {
       this.props.closeSideView();
-    } else {
-      console.log("Kutsutaan metodia: " + this.props.productId + " / " + parseInt(this.state.deliveryQuantity) + " kpl")
-      const deliveryId = Meteor.call("deliveries/create", this.props.productId, parseInt(this.state.deliveryQuantity));
-      this.props.showAlert(
-        "Toimitusilmoitus tehty (" + 
-        this.props.productName  + " " +
-        this.props.variantName  + " " +
-        this.state.deliveryQuantity + " kpl)",
-         "success");
-      this.props.closeSideView();      
+    } else {      
+      Meteor.call(
+        "deliveries/create", 
+        this.props.productId, 
+        parseInt(this.state.deliveryQuantity),
+        (error, result) => {
+          if(error) {            
+            this.props.showAlert("Toimitusilmoituksen teko ei onnistunut!", "error");
+          } else {
+            this.props.showAlert(
+              "Toimitusilmoitus tehty (" + 
+              this.props.productName  + " " +
+              this.props.variantName  + " " +
+              this.state.deliveryQuantity + " kpl)",
+              "success");
+            this.props.closeSideView(); 
+          }
+        }
+      );           
     }
   }
 

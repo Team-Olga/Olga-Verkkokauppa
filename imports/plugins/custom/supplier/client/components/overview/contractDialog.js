@@ -33,14 +33,24 @@ class ContractDialog extends Component {
     if (cancelled || this.state.supplyQuantity == 0 || this.props.openQuantity <= 0) {
       this.props.closeSideView();
     } else {
-      const contractId = Meteor.call("supplyContracts/create", this.props.productId, parseInt(this.state.supplyQuantity));
-      this.props.showAlert(
-        "Toimitussopimus tehty (" + 
-        this.props.productName  + " " +
-        this.props.variantName  + " " +
-        this.state.supplyQuantity + " kpl)",
-         "success");
-      this.props.closeSideView();
+      Meteor.call(
+        "supplyContracts/create", 
+        this.props.productId, 
+        parseInt(this.state.supplyQuantity),
+        (error, result) => {
+          if(error) {            
+            this.props.showAlert("Toimitussopimuksen teko ei onnistunut!", "error");
+          } else {
+            this.props.showAlert(
+              "Toimitussopimus tehty (" + 
+              this.props.productName  + " " +
+              this.props.variantName  + " " +
+              this.state.supplyQuantity + " kpl)",
+               "success");
+            this.props.closeSideView();
+          }
+        }
+      );
     }
   }
 
