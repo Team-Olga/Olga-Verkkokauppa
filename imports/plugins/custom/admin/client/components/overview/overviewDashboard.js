@@ -80,6 +80,10 @@ class AdminOverviewDashboard extends Component {
     });
   }
 
+  resendPackingSlip = () => {
+    console.log("Luodaan lähetyslista");
+  }
+
   render() {
 
     return (
@@ -186,6 +190,7 @@ class AdminOverviewDashboard extends Component {
           {this.state.openList === "delivery" &&
           <DeliverySummaryList
             searchQuery={this.state.searchQuery}
+            resendPackingSlip={this.resendPackingSlip}
           /> }
         </div>
       </div>

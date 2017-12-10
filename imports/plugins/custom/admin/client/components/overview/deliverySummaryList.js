@@ -5,6 +5,7 @@ import PropTypes from "prop-types";
 import { registerComponent, composeWithTracker } from "@reactioncommerce/reaction-components";
 
 import ReactTable from "react-table";
+import moment from "moment";
 
 import { VelocityComponent, VelocityTransitionGroup } from 'velocity-react';
 import { SortableTablePagination } from "/imports/plugins/core/ui/client/components/table/sortableTableComponents";
@@ -113,12 +114,40 @@ class DeliverySummaryList extends Component {
         filterMethod: (filter, row) => (
           row[filter.id].toLowerCase().includes(filter.value.toLowerCase())
         ),
-        id: "delivery",
+        id: "deliveryDate",
         Cell: info => (
           <span className="supplier-full-name">
-            <strong>{info.original._id}</strong>
+            {moment(info.original.createdAt).format("DD.MM.YYYY")}
           </span>
         )
+      },
+      {
+        Header: "",
+        id: "deliveryId",
+        Cell: info => (
+          <div className="contract-info"> {info.original._id} </div>
+        ),
+        Filter: () => <span></span>,
+        maxWidth: 150,
+        headerClassName: "contract-total-header -mid"
+      },
+      {
+        Header: "",
+        id: "recreateSlip",
+        Cell: info => (
+          <div 
+            className="contract-info"
+            onClick={() => {(true) ?
+              this.props.resendPackingSlip(info.original._id)
+              : {}
+            }}
+          >  
+            <span>Meilaa lähetyslista</span>
+          </div>
+        ),
+        Filter: () => <span></span>,
+        maxWidth: 150,
+        headerClassName: "contract-total-header -mid"
       },
       {
         Header: "",
@@ -173,7 +202,7 @@ class DeliverySummaryList extends Component {
     };
 
     return (
-      <div className="contract-table-container">
+      <div className="delivery-subtable-container">
         {_.isEmpty(this.props.productDeliveryTotals) ?
         <div className='empty-view-message'>
           No deliveries found
@@ -249,7 +278,8 @@ class DeliverySummaryList extends Component {
 
 DeliverySummaryList.propTypes = {
   productDeliveryTotals: PropTypes.arrayOf(PropTypes.object),
-  productUserDeliveryTotals: PropTypes.arrayOf(PropTypes.object)
+  productUserDeliveryTotals: PropTypes.arrayOf(PropTypes.object),
+  resendPackingSlip: PropTypes.func
 }
 
 function composer(props, onData) {
