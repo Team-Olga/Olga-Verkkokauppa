@@ -66,7 +66,7 @@ class AccountsDashboard extends Component {
     theme: "light",
     time: 5000,
     transition: "scale"
-  }
+  };
 
   openItemModal = (account) => {
     if (!this.state.itemModalIsOpen) {
@@ -152,12 +152,15 @@ class AccountsDashboard extends Component {
         titles.push(this.props.productsById[this.state.value[p].value].title);
       }
       const shopId = "J8Bhq3uTtdgwZx3rz";
-
-
+      
       Meteor.call("accounts/productsUpdate", productList, this.state.currentAccount, shopId);
       this.setState({ value: [] });
       this.closeItemModal();
+
+    } else {
+      this.showAlert("Valitse ainakin yksi tuote lisättäväksi!", "error");
     }
+
   };
 
   removeProduct = (productId) => {
@@ -172,6 +175,7 @@ class AccountsDashboard extends Component {
     this.setState({ supplierProducts: suppProds });
 
     this.setOptions(suppProds);
+    this.showAlert("Tuote poistettu", "success");
   };
 
   handleChange = (value) => {
