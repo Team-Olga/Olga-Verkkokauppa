@@ -41,14 +41,6 @@ class AccountsDashboard extends Component {
     this.handleChange = this.handleChange.bind(this);
   }
 
-  alertOptions = {
-    offset: 40,
-    position: "top right",
-    theme: "light",
-    time: 5000,
-    transition: "scale"
-    }
-
   showAlert = (message, type) => {
     this.msg.show(message, {
       time: 5000,
@@ -66,6 +58,14 @@ class AccountsDashboard extends Component {
       accounts,
       selectedGroup
     });
+  }
+
+  alertOptions = {
+    offset: 40,
+    position: "top right",
+    theme: "light",
+    time: 5000,
+    transition: "scale"
   }
 
   openItemModal = (account) => {
@@ -143,7 +143,6 @@ class AccountsDashboard extends Component {
   };
 
   postSelection = () => {
-
     if (this.state.value !== []) {
       const productList = [];
       const titles = [];
@@ -171,6 +170,8 @@ class AccountsDashboard extends Component {
       }
     }
     this.setState({ supplierProducts: suppProds });
+
+    this.setOptions(suppProds);
   };
 
   handleChange = (value) => {
