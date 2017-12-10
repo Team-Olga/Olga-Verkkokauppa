@@ -179,7 +179,6 @@ export const methods = {
         check(quantity, Number);
 
         let userId = Meteor.userId();
-        console.log("Meteor.userId palautti " + userId);
         let userChecks = new UserChecks();
 
         if(!Reaction.hasAdminAccess() && !userChecks.isInRole("supplier")) {

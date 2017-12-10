@@ -2,8 +2,6 @@ import { Meteor } from 'meteor/meteor';
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 
-import AlertContainer from "react-alert";
-
 import './styles.less';
 
 class DeliveryDialog extends Component {
@@ -21,9 +19,9 @@ class DeliveryDialog extends Component {
 
   updateDeliveryQuantity(e) {
     if (Number.isNaN(e.target.value) || !Number.isInteger(Number(e.target.value))) {
-      this.showAlert("Toimitusmäärän on oltava kokonaisluku", "error");
+      this.props.showAlert("Toimitusmäärän on oltava kokonaisluku", "error");
     } else if (Number(e.target.value) > this.props.contractQuantity) {
-      this.showAlert("Voit toimittaa enintään sovitun määrän", "error");
+      this.props.showAlert("Voit toimittaa enintään sovitun määrän", "error");
     } else {
       this.setState({ deliveryQuantity: e.target.value });
     }
@@ -35,7 +33,7 @@ class DeliveryDialog extends Component {
     } else {
       console.log("Kutsutaan metodia: " + this.props.productId + " / " + parseInt(this.state.deliveryQuantity) + " kpl")
       const deliveryId = Meteor.call("deliveries/create", this.props.productId, parseInt(this.state.deliveryQuantity));
-      this.showAlert(
+      this.props.showAlert(
         "Toimitusilmoitus tehty (" + 
         this.props.productName  + " " +
         this.props.variantName  + " " +
@@ -45,27 +43,10 @@ class DeliveryDialog extends Component {
     }
   }
 
-  alertOptions = {
-    offset: 14,
-    position: "top left",
-    theme: "light",
-    time: 5000,
-    transition: "scale"
-  }
-
-  showAlert = (message, type) => {
-    this.msg.show(message, {
-      time: 5000,
-      type: type
-    });
-  }
-
   render() {
 
     return (
       <div>
-        <AlertContainer ref={a => this.msg = a} {...this.alertOptions} />
-
         <div className="olga-dialogpanel">
           <h2>Tee toimitusilmoitus</h2>
           <h3 id="deliveryModalTitle">{this.props.productName} {this.props.variantName}</h3>
@@ -103,7 +84,8 @@ DeliveryDialog.propTypes = {
   productName: PropTypes.string,
   variantName: PropTypes.string,
   contractQuantity: PropTypes.number,
-  closeSideView: PropTypes.func
+  closeSideView: PropTypes.func,
+  showAlert: PropTypes.func
 }
 
 export default DeliveryDialog;

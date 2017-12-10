@@ -11,6 +11,7 @@ import SideView from './sideView';
 import AccountDetails from './accountDetails';
 import { Tooltip } from 'react-tippy';
 
+import AlertContainer from "react-alert";
 
 import { VelocityTransitionGroup } from "velocity-react";
 import 'velocity-animate';
@@ -67,6 +68,21 @@ class AdminOverviewDashboard extends Component {
       sideViewOpen: true,
       sideViewContent: component
     })
+  }
+
+  alertOptions = {
+    offset: 14,
+    position: "top left",
+    theme: "light",
+    time: 5000,
+    transition: "scale"
+  }
+
+  showAlert = (message, type) => {
+    this.msg.show(message, {
+      time: 5000,
+      type: type
+    });
   }
 
   render() {
@@ -144,17 +160,20 @@ class AdminOverviewDashboard extends Component {
             </div>
           </div>
 
+          <AlertContainer ref={a => this.msg = a} {...this.alertOptions} />
+
           {this.state.openList ?
             <ProductSummaryList
               searchQuery={this.state.searchQuery}
               filterOpen={this.state.filterOpen}
               setSideViewContent={this.setSideView}
               closeSideView={this.handleSideViewClose}
+              showAlert={this.showAlert}
             />
             :
             <SupplierSummaryList
               searchQuery={this.state.searchQuery}
-              setSideViewContent={this.setSideView}
+              setSideViewContent={this.setSideView}              
             />
           }
         </div>
