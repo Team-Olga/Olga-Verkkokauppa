@@ -3,6 +3,7 @@ import { Roles } from "meteor/alanning:roles";
 import { Deliveries } from "../../lib/collections";
 import UserChecks from "../helpers/userChecks";
 import { Reaction } from "/server/api";
+import { ReactiveAggregate } from "../../../olga-core/server/publications/reactiveAggregate";
 
 // kts. server/publications/collections/orders.js
 Meteor.publish("Deliveries", function() {
@@ -23,4 +24,39 @@ Meteor.publish("Deliveries", function() {
             userId: this.userId
         });
     }
+});
+
+Meteor.publish("DeliveryProductTotals", function() {
+  ReactiveAggregate(this, Deliveries, 
+    [
+      {
+        "$group": {
+          _id: { $concat: ["$productId"] },
+          deliveries: { $addToSet: "$deliveryId" },
+          users: { $addToSet: "$userId" },
+          productId: { $min: "$productId" },
+          deliveredQuantity: { $sum: "$deliveryQuantity" },
+          receivedQuantity: { $sum: "$receivedQuantity" }
+        }
+      }
+    ],
+    { clientCollection: "DeliveryProductTotals" }
+  );
+});
+
+Meteor.publish("DeliveryProductUserTotals", function(productId) {
+  ReactiveAggregate(this, Deliveries,
+    [
+      {
+        "$group": {
+          _id: { $concat: ["$productId", "-", "$userId"] },
+          userId: { $first: "$userId" },
+          productId: { $min: "$productId" },
+          deliveredQuantity: { $sum: "$deliveryQuantity" },
+          receivedQuantity: { $sum: "$receivedQuantity" }
+        }
+      }
+    ],
+    { clientCollection: "DeliveryProductUserTotals" }
+  );
 });
