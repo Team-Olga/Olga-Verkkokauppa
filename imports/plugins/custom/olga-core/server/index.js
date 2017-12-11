@@ -1,5 +1,11 @@
-//export * as Collections from "./lib/collections";
-import * as CustomGroups from "./addCustomGroups";
-import './publications';
+import { Reaction, Hooks } from "/server/api";
 
-CustomGroups.createCustomGroups();
+import './publications';
+import './hooks';
+import './methods';
+
+import * as CustomGroups from "./addCustomGroups";
+
+Hooks.Events.add("afterCoreInit", () => {
+  CustomGroups.createCustomGroups();
+});

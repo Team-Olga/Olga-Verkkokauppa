@@ -1,7 +1,7 @@
 import { Meteor } from "meteor/meteor";
 import { Roles } from "meteor/alanning:roles";
 import { SupplyContracts } from "../../lib/collections";
-import UserChecks from "../../lib/userChecks";
+import UserChecks from "../helpers/userChecks";
 import { Reaction } from "/server/api";
 
 // kts. server/publications/collections/orders.js

@@ -14,6 +14,10 @@ export const Delivery = new SimpleSchema({
     supplyContracts: {
         type: [String]
     },
+    receivedQuantity: {
+        type: Number,
+        defaultValue: 0
+    },
     createdAt: {
         type: Date,
         autoValue: function() {

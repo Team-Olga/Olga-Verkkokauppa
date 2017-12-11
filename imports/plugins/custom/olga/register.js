@@ -1,6 +1,7 @@
 import { Reaction } from "/server/api";
 import "./server/methods";
 import "./server/hooks";
+import packingSlipHTML from "./lib/templates/packing-slip";
 
 // Register package as ReactionCommerce package
 Reaction.registerPackage({
@@ -27,24 +28,24 @@ Reaction.registerPackage({
     }
   }],
   registry: [
-    {
+/*    {
       route: "/supplierproducts",
       name: "supplierproducts",
       layout: "coreLayoutOlga",
       template: "supplierProductsLanding",
       workflow: "coreProductGridWorkflow"
-    },
+    },*//*
     {
       route: "/supplierproductsreact",
       name: "supplierproductsreact",
-      label: "Supplier products",
+      label: "Supplierproducts",
       provides: ["supplierAccountDropdown"],
       icon: "fa fa-telegram",
       layout: "coreLayoutOlga",
       template: "supplierProductsReact",
       workflow: "coreProductGridWorkflow"
-    },
-    {
+    },*/
+/*    {
       route: "/contracts",
       name: "contracts",
       label: "Supply contracts",
@@ -53,7 +54,7 @@ Reaction.registerPackage({
       layout: "coreLayoutOlga",
       template: "contractList",
       workflow: "coreProductGridWorkflow"
-    },
+    },*/
     {
       route: "/about",
       name: "about",
@@ -70,4 +71,12 @@ Reaction.registerPackage({
     }
 
   ]
+});
+
+Reaction.registerTemplate({
+  title: "Delivery packing slip",
+  name: "deliveries/packing-slip",
+  type: "email",
+  template: packingSlipHTML(),
+  subject: "Toimituksen lähetyslista"
 });
