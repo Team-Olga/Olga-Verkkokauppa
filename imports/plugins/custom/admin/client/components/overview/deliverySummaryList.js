@@ -12,7 +12,7 @@ import { SortableTablePagination } from "/imports/plugins/core/ui/client/compone
 import Avatar from "react-avatar";
 
 import { Products, Accounts } from "/lib/collections";
-import { Deliveries, DeliveryProductTotals, DeliveryProductUserTotals } from '../../../../olga/lib/collections/collections';
+import { Deliveries, DeliveryProductTotals, DeliveryProductUserTotals } from '@olga/olga-collections';
 
 import './styles.less';
 
@@ -214,8 +214,6 @@ class DeliverySummaryList extends Component {
           defaultPageSize={10}
           className="rui order table -highlight table-header-visible"
           minRows={1}
-          
-          filterable
           headerClassName="contract-table-mid-header"
           getTableProps={getTableProps}
           getTheadProps={getTheadProps}

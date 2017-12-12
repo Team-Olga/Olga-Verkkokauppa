@@ -9,7 +9,7 @@ import { VelocityTransitionGroup, VelocityComponent } from "velocity-react";
 import 'velocity-animate';
 import 'velocity-animate/velocity.ui';
 
-import ProductImage from './productImage';
+import { ProductImage } from "@olga/olga-ui";
 
 class ProductDetails extends Component {
   static propTypes = {
@@ -26,16 +26,34 @@ class ProductDetails extends Component {
     };
   }
 
+  componentWillReceiveProps(nextProps) {
+    this.setState({
+      editMode: false,
+      productionTime: nextProps.product.productionTime,
+      newProductionTime: nextProps.product.productionTime || 0
+    });
+  }
+
   toggleEditMode() {
     this.setState({
       editMode: !this.state.editMode
     });
   }
 
+  renderProductionTime() {
+    if (!this.state.productionTime) {
+      return <span>Ei asetettu</span>
+    }
+
+    if (this.state.productionTime < 7) {
+      return <span>{this.state.productionTime % 7} päivää</span>
+    }
+
+    return <span>{Math.trunc(this.state.productionTime / 7)} viikkoa, {this.state.productionTime % 7} päivää</span>
+  }
+
   updateProductionTime() {
     if (Number(this.state.newProductionTime) >= 0) {
-      console.log("Setting production time:")
-      console.log(this.state.newProductionTime)
 
       Meteor.call('product/settings/setProductionTime', 
         this.props.product.simpleId,
@@ -72,11 +90,10 @@ class ProductDetails extends Component {
     return (
       <div className="product-details">
 
-        <div className="product-info" style={{ marginTop: 4 }}>
+        <div className="product-info" style={{ marginTop: "0px" }}>
           <h3>{product.simpleTitle}</h3>
           <ProductImage 
-            displayMedia={this.props.displayMedia} 
-            item={this.props.product}
+            item={product}
             styles={{maxWidth: '50%'}}/>
         </div>
 
@@ -124,10 +141,9 @@ class ProductDetails extends Component {
                 </div>
                 )
                 :
-                ( (this.state.productionTime) ? 
-                    (<span>{Math.trunc(this.state.productionTime / 7)} viikkoa, 
-                          {this.state.productionTime % 7} päivää</span>) : 
-                    <span>Ei asetettu</span>)
+                <div>
+                  {this.renderProductionTime()}
+                </div>
                 }
               </div>
             </div>
