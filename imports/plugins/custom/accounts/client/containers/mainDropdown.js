@@ -66,6 +66,14 @@ function getAdminShortcutIcons() {
   };
 }
 
+
+function getSupplierShortcutIcons() {
+  return {
+    provides: "supplierAccountDropdown",
+    enabled: true
+  };
+}
+
 function handleChange(event, value) {
   event.preventDefault();
 
@@ -114,9 +122,11 @@ const composer = ({ currentAccount }, onData) => {
   const userImage = getUserGravatar(currentAccount, 40);
   const userName = displayName(currentAccount);
   const adminShortcuts = getAdminShortcutIcons();
+  const supplierShortcuts = getSupplierShortcutIcons();
 
   onData(null, {
     adminShortcuts,
+    supplierShortcuts,
     userImage,
     userName
   });
@@ -126,10 +136,6 @@ const handlers = {
   handleChange,
   userShortcuts: {
     provides: "userAccountDropdown",
-    enabled: true
-  },
-  supplierShortcuts: {
-    provides: "supplierAccountDropdown",
     enabled: true
   },
   contractShortcuts: {

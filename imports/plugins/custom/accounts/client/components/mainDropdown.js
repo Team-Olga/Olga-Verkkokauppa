@@ -20,6 +20,7 @@ const menuStyle = {
 class MainDropdown extends Component {
   static propTypes = {
     adminShortcuts: PropTypes.object,
+    supplierhortcuts: PropTypes.object,
     currentAccount: PropTypes.oneOfType(
       [PropTypes.bool, PropTypes.object]
     ),
@@ -116,31 +117,65 @@ class MainDropdown extends Component {
   }
 
   render() {
-    return (
-      <div className="accounts">
-        {this.props.currentAccount ?
-          <div style={{ paddingRight: 5 }}>
-            <Components.DropDownMenu
-              buttonElement={this.buttonElement()}
-              attachment="bottom right"
-              targetAttachment="top right"
-              menuStyle={menuStyle}
-              className="accounts-li-tag"
-              onChange={this.props.handleChange}
-            >
-              {this.renderUserIcons()}
-              {this.renderSupplierIcons()}
-              {this.renderAdminIcons()}
-              {this.renderSignOutButton()}
-            </Components.DropDownMenu>
-          </div>
-          :
-          <div className="accounts dropdown" role="menu">
-            {this.renderSignInComponent()}
-          </div>
-        }
-      </div>
-    );
+    var isSupplier = false;
+    
+    if (Reaction.hasPermission(["supplier"]) && !Reaction.hasPermission(["admin"])) {
+      isSupplier = true;
+    }
+
+    if (isSupplier) {
+      return (
+        <div className="accounts">
+          {this.props.currentAccount ?
+            <div style={{ paddingRight: 5 }}>
+              <Components.DropDownMenu
+                buttonElement={this.buttonElement()}
+                attachment="bottom right"
+                targetAttachment="top right"
+                menuStyle={menuStyle}
+                className="accounts-li-tag"
+                onChange={this.props.handleChange}
+              >
+                {this.renderUserIcons()}
+                {this.renderSupplierIcons()}
+                {this.renderAdminIcons()}
+                {this.renderSignOutButton()}
+              </Components.DropDownMenu>
+            </div>
+            :
+            <div className="accounts dropdown" role="menu">
+              {this.renderSignInComponent()}
+            </div>
+          }
+        </div>
+      );
+    } else {
+      return (
+        <div className="accounts">
+          {this.props.currentAccount ?
+            <div style={{ paddingRight: 5 }}>
+              <Components.DropDownMenu
+                buttonElement={this.buttonElement()}
+                attachment="bottom right"
+                targetAttachment="top right"
+                menuStyle={menuStyle}
+                className="accounts-li-tag"
+                onChange={this.props.handleChange}
+              >
+                {this.renderUserIcons()}
+                {this.renderAdminIcons()}
+                {this.renderSignOutButton()}
+              </Components.DropDownMenu>
+            </div>
+            :
+            <div className="accounts dropdown" role="menu">
+              {this.renderSignInComponent()}
+            </div>
+          }
+        </div>
+      );
+    }
+
   }
 }
 
