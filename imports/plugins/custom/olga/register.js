@@ -19,7 +19,7 @@ Reaction.registerPackage({
       // template: "productsLanding",
       template: "products",
       layoutHeader: "layoutHeader",
-      layoutFooter: "layoutFooterOlga",
+      layoutFooter: "layoutFooter",
       notFound: "productNotFound",
       dashboardHeader: "",
       dashboardControls: "dashboardControls",
@@ -61,14 +61,14 @@ Reaction.registerPackage({
       layout: "coreLayoutOlga",
       template: "aboutUs",
       workflow: "coreProductGridWorkflow"
-    },
-    {
+    }
+    /*{
       route: "/",
       name: "index",
       layout: "coreLayoutOlga",
       template: "homepageReact",
       workflow: "coreProductGridWorkflow"
-    }
+    }*/
 
   ]
 });
