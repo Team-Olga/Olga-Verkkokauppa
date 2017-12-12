@@ -1,4 +1,4 @@
-import _ from 'lodash';
+/*import _ from 'lodash';
 import { Meteor } from 'meteor/meteor';
 import React, { Component } from "react";
 import PropTypes from "prop-types";
@@ -260,4 +260,4 @@ function composer(props, onData) {
 
 registerComponent("AdminContractList", AdminContractList, composeWithTracker(composer));
 
-export default composeWithTracker(composer)(AdminContractList);
+export default composeWithTracker(composer)(AdminContractList);*/

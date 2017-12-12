@@ -1,11 +1,11 @@
-import _ from 'lodash';
+/*import _ from 'lodash';
 import { Meteor } from 'meteor/meteor';
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { registerComponent, composeWithTracker } from "@reactioncommerce/reaction-components";
 
 import ReactTable from "react-table";
-import './styles.less';
+//import './styles.less';
 
 import { ContractTotals } from 'imports/plugins/custom/olga-core/lib/collections/collections';
 
@@ -95,4 +95,4 @@ function composer(props, onData) {
 
 registerComponent("ContractList", ContractList, composeWithTracker(composer));
 
-export default composeWithTracker(composer)(ContractList);
+export default composeWithTracker(composer)(ContractList);*/

@@ -2,6 +2,8 @@ import { Meteor } from 'meteor/meteor';
 import React, { Component } from "react";
 import PropTypes from "prop-types";
 
+import { ProductImage } from "@olga/olga-ui";
+
 import './styles.less';
 
 class ContractDialog extends Component {
@@ -58,25 +60,33 @@ class ContractDialog extends Component {
 
     return (
       <div>
-        <div className="olga-dialogpanel">
-          <h2>Tee toimitussopimus</h2>
-          <h3 id="contractModalTitle">{this.props.productName} {this.props.variantName}</h3>
+        <div className="olga-dialogpanel" style={{ fontSize: '14px' }}>
+          <h3 id="contractModalTitle">{this.props.productName} - {this.props.variantName}</h3>
           <br />
-          <table>
-            <tbody>
-              <tr>
-                <td className="olga-dialogpanel-cell">Avoin määrä</td>
-                <td className="olga-dialogpanel-cell pull-right">{this.props.openQuantity}</td>
-              </tr>
-              <tr>
-                <td className="olga-dialogpanel-cell">Toimitettava määrä</td>
-                <td className="olga-dialogpanel-cell">
-                  <input type="number" id="quantity" name="quantity" className="right-justified" min="0" max={this.props.openQuantity}
-                    onChange={this.updateSupplyQuantity} value={this.state.supplyQuantity}/>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          <div className="panel-info-container" style={{display:"flex"}}>
+            <ProductImage style={{flex: "auto"}} item={{ 
+              _id: this.props.simpleId,  
+              variantId: this.props.productId 
+            }} styles={{maxWidth: '50%'}}/>
+            <div className="panel-options" style={{flex: "auto"}}>
+              <table>
+                <tbody>
+                  <tr>
+                    <td className="olga-dialogpanel-cell">Avoin määrä</td>
+                    <td className="olga-dialogpanel-cell pull-right">{this.props.openQuantity}</td>
+                  </tr>
+                  <tr>
+                    <td className="olga-dialogpanel-cell">Toimitettava määrä</td>
+                    <td className="olga-dialogpanel-cell">
+                      <input type="number" id="quantity" name="quantity" className="right-justified" min="0" max={this.props.openQuantity}
+                        onChange={this.updateSupplyQuantity} value={this.state.supplyQuantity}
+                        style={{border: 'none', borderBottom: '1px solid #738690'}}/>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
           <div className="olga-dialogpanel">
               <button id="cancelContract" className="rui btn btn-primary flat olga-listing-btn-default pull-right"
                   onClick={() => this.closeDialog("cancel")} >Peruuta</button>

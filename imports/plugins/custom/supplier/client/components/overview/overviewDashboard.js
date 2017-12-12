@@ -6,9 +6,9 @@ import { registerComponent, composeWithTracker } from "@reactioncommerce/reactio
 import { Tooltip } from 'react-tippy';
 
 import OverviewSearch from './overviewSearch';
-import ProductOverviewList from './productOverviewList';
+import ProductSummaryList from './productSummaryList';
 import DeliverySummaryList from './deliverySummaryList';
-import SideView from './sideView';
+import { SideView } from '@olga/olga-ui';
 
 import AlertContainer from "react-alert";
 import 'react-tippy/dist/tippy.css';
@@ -27,7 +27,7 @@ class OverviewDashboard extends Component {
       filterOpen: false,
       openList: "product",
       productClassName: "order-icon-toggle",
-      deliveryClassName: ""
+      deliveryClassName: "",
     };
   }
 
@@ -53,10 +53,10 @@ class OverviewDashboard extends Component {
     });
   }
 
-  setSideView = (component) => {
+  setSideViewProps = (props) => {
     this.setState({
       sideViewOpen: true,
-      sideViewContent: component
+      sideViewProps: props
     })
   }
 
@@ -93,13 +93,13 @@ class OverviewDashboard extends Component {
     return (
       <div className="supplier-overview-container">
         <VelocityTransitionGroup
-          enter={{animation: "transition.slideRightIn", delay:10, duration: 400, easing: "ease-in-out"}}
-          leave={{animation: "transition.slideRightOut", duration: 600, easing: "ease-in-out"}}
+          enter={{animation: "transition.slideLeftIn", delay:10, duration: 400, easing: "ease-in-out"}}
+          leave={{animation: "transition.slideLeftOut", duration: 600, easing: "ease-in-out"}}
           runOnMount={true}
         >
         {this.state.sideViewOpen ? 
           <SideView 
-            content={this.state.sideViewContent} 
+            {...this.state.sideViewProps}
             handleSideViewClose={this.handleSideViewClose} />
           :
           undefined
@@ -153,7 +153,7 @@ class OverviewDashboard extends Component {
                   className={`order-toggle-btn ${this.state.deliveryClassName}`}
                   onClick={() => this.handleListToggle("delivery")}
                 >
-                  <i className="fa fa-list" />
+                  <i className="fa fa-cubes" />
                 </button>
               </Tooltip>
             </div>
@@ -162,10 +162,10 @@ class OverviewDashboard extends Component {
         <AlertContainer ref={a => this.msg = a} {...this.alertOptions} />
 
         {this.state.openList === "product" &&
-        <ProductOverviewList
+        <ProductSummaryList
           searchQuery={this.state.searchQuery}
           filterOpen={this.state.filterOpen}
-          setSideViewContent={this.setSideView}
+          setSideViewProps={this.setSideViewProps}
           closeSideView={this.handleSideViewClose}
           showAlert={this.showAlert}
         />}
@@ -186,6 +186,7 @@ class OverviewDashboard extends Component {
 }
 */
 function composer(props, onData) {
+  Meteor.subscribe("ContractTotals");
 
   onData(null, {
     ...props });
