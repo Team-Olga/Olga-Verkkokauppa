@@ -8,8 +8,7 @@ import ReactTable from "react-table";
 import { VelocityComponent, VelocityTransitionGroup } from 'velocity-react';
 import { OlgaTablePagination } from "@olga/olga-ui";
 import Avatar from "react-avatar";
-import './styles.less';
-import './table.less';
+
 
 import { Products, Accounts } from "/lib/collections";
 

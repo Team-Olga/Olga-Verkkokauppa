@@ -16,6 +16,8 @@ import 'react-tippy/dist/tippy.css';
 import { VelocityTransitionGroup } from "velocity-react";
 import 'velocity-animate';
 import 'velocity-animate/velocity.ui';
+import './styles.less';
+import './table.less';
 
 
 class OverviewDashboard extends Component {

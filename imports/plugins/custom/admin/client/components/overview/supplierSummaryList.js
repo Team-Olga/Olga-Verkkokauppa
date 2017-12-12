@@ -6,19 +6,13 @@ import { registerComponent, composeWithTracker } from "@reactioncommerce/reactio
 
 import ReactTable from "react-table";
 import { VelocityComponent, VelocityTransitionGroup } from 'velocity-react';
-import { SortableTablePagination } from "/imports/plugins/custom/ui/client/components/table/sortableTableComponents";
+import { OlgaTablePagination } from "@olga/olga-ui";
 import Avatar from "react-avatar";
 import ProductImage from "./productImage"
 import './styles.less';
 
 import { Products, Accounts, Groups, Media } from "/lib/collections";
 import { SupplierTotals } from '@olga/olga-collections';
-
-import { getProductVariants, 
-         getVariantOptions, 
-         getProductSummary, 
-         getVariantSummary } from '../../helpers/productOverview';
-
 
 import AccountDetails from './accountDetails';
 
@@ -128,7 +122,7 @@ class SupplierSummaryList extends Component {
               className: "order-table-pagination-visible"
             };
           }}
-          PaginationComponent={SortableTablePagination}
+          PaginationComponent={OlgaTablePagination}
         />
         }
       </div>

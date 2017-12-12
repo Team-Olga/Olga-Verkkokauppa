@@ -46,28 +46,6 @@ Reaction.registerPackage({
       label: "Supplier Overview",
       template: "supplierOverview",
       workflow: "coreProductGridWorkflow"
-    },/*
-    {
-      route: "/supplier/contracts",
-      name: "supplier/contracts",
-      layout: "coreLayoutOlga",
-      provides: ["supplierAccountDropdown"],
-      audience: ["supplier"],
-      icon: "fa fa-vine",
-      label: "Contracts",
-      template: "supplierContracts",
-      workflow: "coreProductGridWorkflow"
-    },*/
-/*    {
-      route: "/admin/contracts",
-      name: "admin/contracts",
-      layout: "coreLayoutOlga",
-      provides: ["shortcut"],
-      audience: ["dashboard"],
-      icon: "fa fa-vine",
-      label: "Admin Contracts",
-      template: "adminContracts",
-      workflow: "coreProductGridWorkflow"
-    }*/
+    }
   ]
 });
