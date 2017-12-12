@@ -1,4 +1,4 @@
-import { Meteor } from "meteor/meteor";
+/*import { Meteor } from "meteor/meteor";
 import { check, Match } from "meteor/check"; 
 import { Deliveries, SupplyContracts } from "../../lib/collections";
 import { Media, Orders } from "/lib/collections";
@@ -206,4 +206,4 @@ export const methods = {
 
 }
 
-Meteor.methods(methods);
+Meteor.methods(methods);*/
