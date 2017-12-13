@@ -1,1 +1,1 @@
-import "./collections";
+export * from "./collections";

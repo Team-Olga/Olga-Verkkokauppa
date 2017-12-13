@@ -1,8 +1,8 @@
 import { Meteor } from 'meteor/meteor';
 import { ReactiveAggregate } from './reactiveAggregate';
-import { ContractItems } from "/imports/plugins/custom/olga-core/lib/collections/collections";
+import { ContractItems } from "@olga/olga-collections";
 
-Meteor.publish("OpenSimpleTotals", function() {
+Meteor.publish("SimpleOpenTotals", function() {
   ReactiveAggregate(this, ContractItems, [
     {"$group" : {
       _id: {$concat: ["$simpleId"]},
@@ -16,11 +16,11 @@ Meteor.publish("OpenSimpleTotals", function() {
       isOption: {$first: "$isOption"},
       openQuantity:{$sum:"$openQuantity"},
       }
-    }], { clientCollection: "OpenSimpleTotals" }
+    }], { clientCollection: "SimpleOpenTotals" }
   );
 });
 
-Meteor.publish("OpenVariantOptionTotals", function() {
+Meteor.publish("VariantOpenTotals", function() {
   ReactiveAggregate(this, ContractItems, [
     {"$group" : {
       _id: {$concat: ["$variantId", '-', '$optionId']},
@@ -34,6 +34,6 @@ Meteor.publish("OpenVariantOptionTotals", function() {
       isOption: {$first: "$isOption"},
       openQuantity:{$sum:"$openQuantity"},
       }
-    }], { clientCollection: "OpenVariantOptionTotals" }
+    }], { clientCollection: "VariantOpenTotals" }
   );
 });

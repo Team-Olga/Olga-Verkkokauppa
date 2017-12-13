@@ -6,17 +6,13 @@ import { registerComponent, composeWithTracker } from "@reactioncommerce/reactio
 
 import ReactTable from "react-table";
 import { VelocityComponent, VelocityTransitionGroup } from 'velocity-react';
-import { SortableTablePagination } from "/imports/plugins/custom/ui/client/components/table/sortableTableComponents";
+import { OlgaTablePagination } from "@olga/olga-ui";
 import Avatar from "react-avatar";
 import ProductImage from "./productImage"
 import './styles.less';
 
 import { Products, Accounts, Groups, Media } from "/lib/collections";
-import { ContractItems, SupplierTotals } from 'imports/plugins/custom/olga-core/lib/collections/collections';
-
-import { getProductVariants, getVariantOptions, 
-         getProductSummary, getVariantSummary } from '../../helpers/productOverview';
-
+import { SupplierTotals } from '@olga/olga-collections';
 
 import AccountDetails from './accountDetails';
 
@@ -39,34 +35,13 @@ class SupplierSummaryList extends Component {
     return defaultImage;
   }
 
-/*  renderDetailView() {
-    return <AccountDetails supplier={this.props.supplier}/>
-  }
-*/
-  
-
   renderProducts(supplier) {
     const { displayMedia } = this.props;
-    //const invoice = getBillingInfo(order).invoice || {};
+    console.log("rendering products");
+    console.dir(supplier);
 
     return (
       <div className="order-info">
-        <div className="order-totals">
-{/*          <span className="order-data order-data-id">
-            <strong>Supplier ID: </strong>
-             <ClickToCopy
-              copyToClipboard={supplier._id}
-              displayText={supplier._id}
-              i18nKeyTooltip="admin.orderWorkflow.summary.copyOrderLink"
-              tooltip="Copy Order Link"
-            />
-          </span>*/}
-
-{/*          <span className="order-data order-data-total">
-            <strong>Total: {formatPriceString(invoice.total)}</strong>
-          </span>*/}
-        </div>
-
         <div className="order-items">
           {supplier.products.map((item, i) => {
             return (
@@ -115,9 +90,10 @@ class SupplierSummaryList extends Component {
       id: "",
       Cell: row => (
         <div className="rui card order">
-          <div className="content" onClick={() => this.props.setSideViewContent(
-              <AccountDetails supplier={row.original}/>
-            )}>
+          <div className="content" onClick={() => this.props.setSideViewProps({
+              content: <AccountDetails supplier={row.original}/>,
+              title: "Käyttäjän hallinta"
+            })}>
             {this.renderSupplierSummary(row.original)}
             {this.renderProducts(row.original)}
           </div>
@@ -146,7 +122,7 @@ class SupplierSummaryList extends Component {
               className: "order-table-pagination-visible"
             };
           }}
-          PaginationComponent={SortableTablePagination}
+          PaginationComponent={OlgaTablePagination}
         />
         }
       </div>
@@ -156,6 +132,7 @@ class SupplierSummaryList extends Component {
 
 SupplierSummaryList.propTypes = {
   supplierSummaries: PropTypes.arrayOf(PropTypes.object),
+  setSideViewProps: PropTypes.func
 }
 
 function composer(props, onData) {

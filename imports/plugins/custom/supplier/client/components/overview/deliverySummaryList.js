@@ -8,11 +8,11 @@ import ReactTable from "react-table";
 import moment from "moment";
 
 import { VelocityComponent, VelocityTransitionGroup } from 'velocity-react';
-import { SortableTablePagination } from "/imports/plugins/core/ui/client/components/table/sortableTableComponents";
+import { OlgaTablePagination } from "@olga/olga-ui";
 import Avatar from "react-avatar";
 
 import { Products, Accounts } from "/lib/collections";
-import { Deliveries, DeliveryProductTotals, DeliveryProductUserTotals } from '../../../../olga/lib/collections/collections';
+import { Deliveries, DeliveryProductTotals, DeliveryProductUserTotals } from '@olga/olga-collections';
 
 import './styles.less';
 
@@ -166,7 +166,6 @@ class DeliverySummaryList extends Component {
           defaultPageSize={10}
           className="rui order table -highlight table-header-visible"
           minRows={1}          
-          filterable
           headerClassName="contract-table-mid-header"
           getTableProps={getTableProps}
           getTheadProps={getTheadProps}
@@ -177,7 +176,7 @@ class DeliverySummaryList extends Component {
               className: "order-table-pagination-visible"
             };
           }}
-          PaginationComponent={SortableTablePagination}
+          PaginationComponent={OlgaTablePagination}
           SubComponent={row => {
             const deliveries = Deliveries.find({
               productId: row.original.productId

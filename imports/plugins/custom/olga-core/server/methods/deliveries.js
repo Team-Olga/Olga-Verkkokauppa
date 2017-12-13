@@ -1,6 +1,6 @@
-/*import { Meteor } from "meteor/meteor";
+import { Meteor } from "meteor/meteor";
 import { check, Match } from "meteor/check"; 
-import { Deliveries, SupplyContracts } from "../../lib/collections";
+import { Deliveries, SupplyContracts } from "@olga/olga-collections";
 import { Media, Orders } from "/lib/collections";
 import * as Collections from "/lib/collections";
 import { SimpleSchema } from "meteor/aldeed:simple-schema";
@@ -8,7 +8,6 @@ import { Logger, Reaction } from "/server/api";
 import { SSR } from "meteor/meteorhacks:ssr";
 import { Roles } from "meteor/alanning:roles";
 const bwipjs = require("bwip-js");
-import UserChecks from "../helpers/userChecks";
 import _ from "lodash";
 import path from "path";
 import moment from "moment";
@@ -182,9 +181,8 @@ export const methods = {
         }));
 
         let userId = Meteor.userId();
-        let userChecks = new UserChecks();
 
-        if(!Reaction.hasAdminAccess() && !userChecks.isInRole("supplier")) {
+        if(!Reaction.hasAdminAccess() && !Reaction.hasPermission('supplier')) {
             throw new Meteor.Error(403, "Access Denied");
         }
 
@@ -206,4 +204,4 @@ export const methods = {
 
 }
 
-Meteor.methods(methods);*/
+Meteor.methods(methods);

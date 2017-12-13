@@ -1,7 +1,6 @@
 import { Meteor } from "meteor/meteor";
-import { ContractItems } from 'imports/plugins/custom/olga-core/lib/collections/collections';
+import { ContractItems } from '@olga/olga-collections';
 import { Reaction } from "/server/api";
-import { Accounts } from "/lib/collections";
 
 
 Meteor.publish("ContractItems", function () {

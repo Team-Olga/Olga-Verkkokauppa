@@ -1,5 +1,5 @@
 import { Orders, Products } from "/lib/collections/collections";
-import { ContractItems } from 'imports/plugins/custom/olga-core/lib/collections/collections';
+import { ContractItems } from '@olga/olga-collections';
 
 import _ from "lodash";
 

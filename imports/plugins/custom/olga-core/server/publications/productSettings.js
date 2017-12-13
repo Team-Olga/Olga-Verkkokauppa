@@ -1,5 +1,5 @@
 import { Meteor } from "meteor/meteor";
-import { ProductSettings } from 'imports/plugins/custom/olga-core/lib/collections/collections';
+import { ProductSettings } from '@olga/olga-collections';
 import { Reaction } from "/server/api";
 
 

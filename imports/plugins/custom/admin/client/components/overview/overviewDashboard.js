@@ -8,7 +8,7 @@ import OverviewSearch from './overviewSearch';
 import ProductSummaryList from './productSummaryList';
 import SupplierSummaryList from './supplierSummaryList';
 import DeliverySummaryList from './deliverySummaryList';
-import SideView from './sideView';
+import { SideView } from '@olga/olga-ui';
 import AccountDetails from './accountDetails';
 import { Tooltip } from 'react-tippy';
 
@@ -30,8 +30,7 @@ class AdminOverviewDashboard extends Component {
       supplierClassName: "",
       deliveryClassName: "",
       openList: "product",
-      sideViewOpen: false,
-      sideViewContent: undefined
+      sideViewOpen: false
     };
   }
 
@@ -58,10 +57,10 @@ class AdminOverviewDashboard extends Component {
     });
   }
 
-  setSideView = (component) => {
+  setSideViewProps = (props) => {
     this.setState({
       sideViewOpen: true,
-      sideViewContent: component
+      sideViewProps: props
     })
   }
 
@@ -105,8 +104,9 @@ class AdminOverviewDashboard extends Component {
         >
         {this.state.sideViewOpen ? 
           <SideView 
-            content={this.state.sideViewContent} 
-            handleSideViewClose={this.handleSideViewClose} />
+            {...this.state.sideViewProps} 
+            handleSideViewClose={this.handleSideViewClose}
+            styles={{ right: '65px' }} />
           :
           undefined
         }
@@ -174,7 +174,7 @@ class AdminOverviewDashboard extends Component {
                   className={`order-toggle-btn ${this.state.deliveryClassName}`}
                   onClick={() => this.handleListToggle("delivery")}
                 >
-                  <i className="fa fa-list" />
+                  <i className="fa fa-cubes" />
                 </button>
               </Tooltip>
             </div>
@@ -186,7 +186,7 @@ class AdminOverviewDashboard extends Component {
           <ProductSummaryList
             searchQuery={this.state.searchQuery}
             filterOpen={this.state.filterOpen}
-            setSideViewContent={this.setSideView}
+            setSideViewProps={this.setSideViewProps}
             closeSideView={this.handleSideViewClose}
             showAlert={this.showAlert}
           />}
@@ -194,7 +194,7 @@ class AdminOverviewDashboard extends Component {
           {this.state.openList === "supplier" &&
           <SupplierSummaryList
             searchQuery={this.state.searchQuery}
-            setSideViewContent={this.setSideView}
+            setSideViewProps={this.setSideViewProps}
           />}
 
           {this.state.openList === "delivery" &&
@@ -213,6 +213,8 @@ class AdminOverviewDashboard extends Component {
 }
 */
 function composer(props, onData) {
+  Meteor.subscribe("ContractTotals");
+  Meteor.subscribe("ContractItems");
 
   onData(null, {
     ...props });
