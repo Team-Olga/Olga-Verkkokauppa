@@ -62,13 +62,6 @@ Reaction.registerPackage({
       template: "aboutUs",
       workflow: "coreProductGridWorkflow"
     }
-    /*{
-      route: "/",
-      name: "index",
-      layout: "coreLayoutOlga",
-      template: "homepageReact",
-      workflow: "coreProductGridWorkflow"
-    }*/
 
   ]
 });
