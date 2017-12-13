@@ -7,5 +7,6 @@ export const productlistSchema = new SimpleSchema({
   	label: "List of Products",
     type: [Product],
     defaultValue: [],
+    blackbox: true
   }
 });
