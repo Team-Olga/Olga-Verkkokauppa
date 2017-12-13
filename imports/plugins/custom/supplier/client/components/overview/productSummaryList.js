@@ -6,21 +6,21 @@ import { registerComponent, composeWithTracker } from "@reactioncommerce/reactio
 
 import ReactTable from "react-table";
 import { VelocityComponent, VelocityTransitionGroup } from 'velocity-react';
-import { SortableTablePagination } from "/imports/plugins/custom/ui/client/components/table/sortableTableComponents";
+import { OlgaTablePagination } from "@olga/olga-ui";
 import Avatar from "react-avatar";
-import './styles.less';
+
 
 import { Products, Accounts } from "/lib/collections";
-import { ContractItems, OpenSimpleTotals, OpenVariantOptionTotals,
-         SimpleContractTotals, VariantContractTotals } from 'imports/plugins/custom/olga-core/lib/collections/collections';
 
-import { getProductVariants, getVariantOptions, 
-         getProductSummary, getVariantSummary } from '../../helpers/productOverview';
+import { getProductVariants, 
+         getVariantOptions, 
+         getProductSummary, 
+         getVariantSummary } from '../../helpers/productOverview';
 
 import ContractDialog from './contractDialog';
 import DeliveryDialog from './deliveryDialog';
 
-class ProductOverviewList extends Component {
+class ProductSummaryList extends Component {
   constructor(props) {
     super(props);
 
@@ -47,16 +47,18 @@ class ProductOverviewList extends Component {
           <div 
             className={info.original.isVariant ? "open-total" + (info.original.openQuantity ? "" : "-zero") : "contract-info"}
             onClick={() => {(info.original.isVariant && info.original.openQuantity > 0) ? 
-              this.props.setSideViewContent(
-                <ContractDialog
+              this.props.setSideViewProps({
+                content:<ContractDialog
+                  simpleId={info.original.simpleId}
                   productId={info.original.productId}
                   productName={info.original.simpleTitle}
                   variantName={info.original.title}
                   openQuantity={info.original.openQuantity}
                   closeSideView={this.props.closeSideView}
                   showAlert={this.props.showAlert}
-                />
-              ) : 
+                />,
+                title: "Uusi Toimitussopimus"
+              }) : 
               {}
             }}
           >
@@ -70,16 +72,18 @@ class ProductOverviewList extends Component {
           <div 
             className={info.original.isVariant ? (info.original.production > 0 ? "contract-total" : "open-total-zero") : "contract-info"}
             onClick={() => {(info.original.isVariant && info.original.production > 0) ? 
-              this.props.setSideViewContent(
-                <DeliveryDialog
+              this.props.setSideViewProps({
+                content:<DeliveryDialog
+                  simpleId={info.original.simpleId}
                   productId={info.original.productId}
                   productName={info.original.simpleTitle}
                   variantName={info.original.title}
                   contractQuantity={info.original.production}
                   closeSideView={this.props.closeSideView}
                   showAlert={this.props.showAlert}
-                />
-              ) : 
+                />,
+                title: "Uusi Toimitusilmoitus"
+              }) : 
               {}
             }}
           >
@@ -130,13 +134,13 @@ class ProductOverviewList extends Component {
 
     return (
       <div className="product-summary-container">
-        {_.isEmpty(this.props.productOverviews) ?
+        {_.isEmpty(this.props.productSummaries) ?
         <div className='empty-view-message'> 
           There is nothing here
         </div>
         :
         <ReactTable
-          data={this.props.productOverviews}
+          data={this.props.productSummaries}
           columns={simpleColumns}
           defaultPageSize={10}
           className="rui order table -highlight table-header-visible"
@@ -149,7 +153,7 @@ class ProductOverviewList extends Component {
               className: "order-table-pagination-visible"
             };
           }}
-          PaginationComponent={SortableTablePagination}
+          PaginationComponent={OlgaTablePagination}
 
           SubComponent={row => {
             var variantOptions = [];
@@ -201,45 +205,46 @@ class ProductOverviewList extends Component {
   }
 }
 
-ProductOverviewList.propTypes = {
-  productOverviews: PropTypes.arrayOf(PropTypes.object),
+ProductSummaryList.propTypes = {
+  productSummaries: PropTypes.arrayOf(PropTypes.object),
   searchQuery: PropTypes.string,
   filterOpen: PropTypes.bool,
-  setSideViewContent: PropTypes.func,
+  setSideViewProps: PropTypes.func,
   closeSideView: PropTypes.func,
   showAlert: PropTypes.func
 }
 
 function composer(props, onData) {
+  const mediaSub = Meteor.subscribe("Media");
   const productSub = Meteor.subscribe("Products");
-  const simpleOpenSub = Meteor.subscribe("OpenSimpleTotals");
-  const variantOpenSub = Meteor.subscribe("OpenVariantOptionTotals");
 
-  const simpleContractSub = Meteor.subscribe("SimpleContractTotals");
-  const variantContractSub = Meteor.subscribe("VariantContractTotals");
+  const simpleOpenSub = Meteor.subscribe("SimpleOpenTotals") 
+  const variantOpenSub = Meteor.subscribe("VariantOpenTotals")
+  const simpleContractSub = Meteor.subscribe("SimpleContractTotals")
+  const variantContractSub = Meteor.subscribe("VariantContractTotals")
 
   var user = Accounts.findOne(Meteor.userId());
 
-
-  if (productSub.ready() && simpleOpenSub.ready() && variantOpenSub.ready() &&
+  if (productSub.ready() && mediaSub.ready() && 
+      simpleOpenSub.ready() && variantOpenSub.ready() &&
       simpleContractSub.ready() && variantContractSub.ready()) {
     
-    var supplierProducts = user.products.filter(
+    var filteredProducts = user.products.filter(
       p => p.title.toLowerCase().includes(props.searchQuery.toLowerCase())
     )
 
-    var productOverviews = supplierProducts.map(product => {
+    var productSummaries = filteredProducts.map(product => {
       return getProductSummary(product);
     });
 
     if (props.filterOpen) {
-      productOverviews = productOverviews.filter(p => p.openQuantity > 0)
+      productSummaries = productSummaries.filter(p => p.openQuantity > 0)
     }
 
     onData(null, { 
-      productOverviews: productOverviews,
+      productSummaries: productSummaries,
       ...props });
   }
 }
 
-export default composeWithTracker(composer)(ProductOverviewList);
+export default composeWithTracker(composer)(ProductSummaryList);

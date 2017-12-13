@@ -3,8 +3,7 @@ import { Meteor } from "meteor/meteor";
 import { check, Match } from "meteor/check"; 
 
 import { Reaction } from "/server/api";
-import { ContractItems } from '/imports/plugins/custom/olga-core/lib/collections/collections';
-import { SupplyContracts } from "/imports/plugins/custom/olga/lib/collections";
+import { ContractItems, SupplyContracts } from '@olga/olga-collections';
 
 
 Meteor.methods({

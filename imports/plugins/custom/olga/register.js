@@ -1,6 +1,6 @@
 import { Reaction } from "/server/api";
-import "./server/methods";
-import "./server/hooks";
+//import "./server/methods";
+//import "./server/hooks";
 import packingSlipHTML from "./lib/templates/packing-slip";
 
 // Register package as ReactionCommerce package

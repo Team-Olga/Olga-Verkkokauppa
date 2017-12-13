@@ -2,7 +2,7 @@ import _ from "lodash";
 import { Meteor } from "meteor/meteor";
 import { check, Match } from "meteor/check"; 
 import { Reaction } from "/server/api";
-import { ProductSettings } from 'imports/plugins/custom/olga-core/lib/collections/collections';
+import { ProductSettings } from '@olga/olga-collections';
 import { Mongo } from "meteor/mongo";
 
 Meteor.methods({

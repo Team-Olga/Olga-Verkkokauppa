@@ -1,4 +1,4 @@
-import { Meteor } from "meteor/meteor";
+/*import { Meteor } from "meteor/meteor";
 import { Reaction } from "/server/api";
 import { Roles } from "meteor/alanning:roles";
 import _ from "lodash";
@@ -49,4 +49,4 @@ export default class UserChecks {
         return [];
     }
 
-}
+}*/

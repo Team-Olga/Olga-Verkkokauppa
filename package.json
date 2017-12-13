@@ -175,6 +175,8 @@
             "@reactioncommerce/reaction-components": "./imports/plugins/core/components/lib",
             "@reactioncommerce/reaction-router": "./imports/plugins/core/router/lib",
             "@reactioncommerce/reaction-ui": "./imports/plugins/core/ui/client/components",
+            "@olga/olga-collections": "./imports/plugins/custom/olga-core/lib/collections",
+            "@olga/olga-ui": "./imports/plugins/custom/olga-core/ui/client/components",
             "underscore": "lodash"
           }
         }

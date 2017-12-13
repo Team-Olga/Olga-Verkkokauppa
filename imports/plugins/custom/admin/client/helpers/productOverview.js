@@ -1,8 +1,8 @@
 import _ from 'lodash';
 
 import { Products } from "/lib/collections";
-import { OpenSimpleTotals, OpenVariantOptionTotals,
-         SimpleContractTotals, VariantContractTotals } from 'imports/plugins/custom/olga-core/lib/collections/collections';
+import { SimpleOpenTotals, VariantOpenTotals,
+         SimpleContractTotals, VariantContractTotals } from '@olga/olga-collections';
 
 
 export function getProductVariants(productId) {
@@ -21,7 +21,7 @@ export function getProductSummary(product) {
   return _.defaults(
     _.merge(
       product,
-      OpenSimpleTotals.findOne({simpleId: product._id}),
+      SimpleOpenTotals.findOne({simpleId: product._id}),
       SimpleContractTotals.findOne({simpleId: product._id})
     ), {
       simpleTitle: product.title,
@@ -40,7 +40,7 @@ export function getVariantSummary(variant, option = false) {
 
   return _.defaults(
     _.merge(
-      OpenVariantOptionTotals.findOne({productId: productId}),
+      VariantOpenTotals.findOne({productId: productId}),
       VariantContractTotals.findOne({productId: productId})
     ), {
       variantTitle: variant.title,

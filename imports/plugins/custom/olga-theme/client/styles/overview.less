@@ -146,6 +146,7 @@
   .account-info {
     margin-top: 20px;
     border-bottom: 1px solid #98afbc;
+    border-top: 1px solid #98afbc;
     font-size: 14px;
     background: #FAFAFA;
     padding: 10px;
@@ -167,6 +168,7 @@
   .product-info {
     margin-top: 20px;
     border-bottom: 1px solid #98afbc;
+    border-top: 1px solid #98afbc;
     font-size: 14px;
     background: #FAFAFA;
     padding: 10px;
@@ -323,4 +325,210 @@
 
 .olga-total {
   text-align: center;
+}
+
+@font-size-base:          14px;
+@font-size-large:         ceil((@font-size-base * 1.25)); // ~18px
+@font-size-small:         ceil((@font-size-base * 0.85)); // ~12px
+
+.rtl(@rules) {
+  html.rtl & {
+    @rules();
+  }
+}
+.ltr(@rules) {
+  html:not(.rtl) & {
+    @rules();
+  }
+}
+
+.left(@n) {
+  .ltr({ left: @n; });
+  .rtl({ right: @n; });
+}
+.right(@n) {
+  .ltr({ right: @n; });
+  .rtl({ left: @n; });
+}
+
+
+input[type=number]::-webkit-inner-spin-button, 
+input[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  margin: 0;
+  border: none; 
+}
+
+.open-total {
+  border-radius: 25px;
+  background: #4ede7d;
+  color: white;
+  width: 50%;
+  max-width: 60px;
+  margin: 0 auto;
+  cursor: pointer;
+  text-align: center;
+  height: 19px;
+}
+
+.open-total-zero {
+  border-radius: 25px;
+  background: #CCC;
+  color: white;
+  width: 50%;
+  max-width: 60px;
+  margin: 0 auto;
+  text-align: center;
+  height: 19px;
+}
+
+.open-total:hover {
+  background: #4ede7dbf;
+}
+
+.variant-table-container {
+  margin-left: 34px;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
+  border-left: 1px solid rgba(0, 0, 0, 0.03);
+
+}
+
+.product-summary-container {
+  .rt-tr-group {
+    box-shadow: -1px 1px 1px 0px rgba(152, 175, 188, 0.15);
+    border-right: solid 1px rgba(0, 0, 0, 0.04);
+    margin-bottom: 1px;
+  }
+
+  .variant-table-container .rt-tr-group {
+    box-shadow: 0px 0px 0px 0px rgba(25, 153, 221, 0.2);
+    border-right: none;
+    margin-bottom: 0px;
+  }
+}
+
+.product-name {
+  font-weight: bold;
+  color: #182227;
+}
+
+
+.product-summary-container {
+  margin-top: 20px;
+}
+
+
+/*DASHBOARD*/
+
+.supplier-overview-container {
+  margin: 25px;
+
+  .order-search {
+    width: 100%;
+    position: relative;
+    .form-group {
+      margin-bottom: 0;
+    }
+    .search-input {
+      font-size: @font-size-base;
+      padding-left: 60px;
+      border-width: 1px 0;
+      height: 40px;
+    }
+    .btn {
+      text-decoration: underline;
+      outline:none;
+    }
+    .btn, .fa {
+      position: absolute;
+      top: 50%;
+      .right(20px);
+      margin-top: -14px;
+      padding: 0;
+      font-weight: normal
+    }
+    .fa {
+      .left(25px);
+      font-size: @font-size-large;
+      margin-top: -8px;
+    }
+  }
+
+  /*OPEN FILTER*/
+  input[type=checkbox] {
+    visibility: hidden;
+  }
+
+  .toggle-open-orders {
+    width: 40px;
+    height: 100%;
+    position: relative;
+  }
+
+  .toggle-open-orders label {
+    cursor: pointer;
+    position: absolute;
+    width: 55px;
+    height: 100%;
+    top: 0;
+      left: 0;
+    background: #fafafa;
+    border:1px solid #ddd;
+    transition: all .5s ease;
+  }
+  .toggle-open-orders label:after {
+    opacity: 1;
+    content: '';
+    position: absolute;
+    width: 20px;
+    height: 10px;
+    background: transparent;
+    top: 30%;
+    left: 23%;
+    border: 4px solid #CCC;
+    border-top: none;
+    border-right: none;
+    transition: all .5s ease;
+
+    transform: rotate(-45deg);
+  }
+  .toggle-open-orders label:hover::after {
+    border: 4px solid #d9d9d9;
+    border-top: none;
+    border-right: none;
+  }
+
+  .toggle-open-orders input[type=checkbox]:checked + label:after {
+    opacity: 1;
+    border: 4px solid #5cde86;
+    border-top: none;
+    border-right: none;
+  }
+}
+
+
+.overview-toolbar {
+  display: flex;
+  height: 40px;
+
+  .overview-toolbar-item {
+    display: flex;
+    flex: 1 1 auto;
+    width: 50%;
+    height: 100%;
+    align-items: center;
+    margin: 0 .5px 0 .5px;
+    justify-content: flex-start;
+    position: relative;
+  }
+}
+
+.olga-dialogpanel {
+  margin: 20px;
+}
+
+.olga-dialogpanel-cell {
+  padding: 5px 15px 5px 5px;
 }
